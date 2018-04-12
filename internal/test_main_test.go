@@ -37,6 +37,7 @@ import (
 	"github.com/ghts/lib"
 
 	"testing"
+	"github.com/ghts/types_xing"
 )
 
 func TestMain(m *testing.M) {
@@ -47,4 +48,7 @@ func TestMain(m *testing.M) {
 	defer F자원_해제()
 
 	m.Run()
+
+	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.P변환형식_기본값, lib.P10초)
+	소켓_질의.S질의(xing.S호출_인수_단순형{M함수: xing.P함수_종료}).G응답()
 }

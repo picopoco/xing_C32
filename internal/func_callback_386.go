@@ -147,28 +147,14 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	코드 := C.GoString(wParam)
 	//메시지 := C.GoString(lParam)
 
-	응답값 := new(xing.S콜백_로그인)
-	응답값.M콜백 = xing.P콜백_로그인
+	// '접속_처리_잠금'에 의해서 접속 처리는 1개씩만 처리되므로, 'ch접속_처리'는 비어있어야 함.
+	lib.F조건부_패닉(len(ch접속_처리) > 0, "'ch접속_처리'는 비어있어야 함.")
 
-	정수, 에러 := lib.F2정수(코드)
-	if 에러 == nil && 정수 == 0 {
-		응답값.M로그인_성공_여부 = true
+	if 정수, 에러 := lib.F2정수(코드); 에러 == nil && 정수 == 0 {
+		ch접속_처리 <- true
 	} else {
-		응답값.M로그인_성공_여부 = false
+		ch접속_처리 <- false
 	}
-
-	// 계좌정보 설정
-	계좌_수량 := F계좌_수량()
-	응답값.M계좌번호_모음 = make([]string, 계좌_수량)
-
-	for i := 0; i < 계좌_수량; i++ {
-		응답값.M계좌번호_모음[i], 에러 = F계좌_번호(i)
-		lib.F에러체크(에러)
-
-		lib.F문자열_출력("계좌번호 %v : %v", i, 응답값.M계좌번호_모음[i])
-	}
-
-	f콜백(응답값)
 }
 
 //export OnLogout_Go

@@ -84,10 +84,14 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 
 	defer C.free(unsafe.Pointer(c서버_이름))
 
-	return bool(C.etkConnect(c서버_이름, c포트_번호))
+	결과값 := bool(C.etkConnect(c서버_이름, c포트_번호))
+
+	return 결과값
 }
 
-func F접속됨() bool { return bool(C.etkIsConnected()) }
+func F접속됨() bool {
+	return bool(C.etkIsConnected())
+}
 
 func F로그아웃_및_접속해제() error {
 	if !bool(C.etkLogout()) {
@@ -138,11 +142,7 @@ func F로그인() bool {
 	c공인인증서_암호 := C.CString(공인인증서_암호)
 	defer C.free(unsafe.Pointer(c공인인증서_암호))
 
-	결과 := bool(C.etkLogin(c아이디, c암호, c공인인증서_암호))
-
-	//lib.F체크포인트()
-
-	return 결과
+	return bool(C.etkLogin(c아이디, c암호, c공인인증서_암호))
 }
 
 func F질의(TR코드 string, c데이터 unsafe.Pointer, 길이 int,

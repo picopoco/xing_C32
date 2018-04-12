@@ -3,7 +3,7 @@ REM @echo off
 call %GOPATH%\ghts_dependency\batch_scripts\32.bat
 
 cls
-cd %PROJECT_ROOT%\api_bridge_xing_C
+cd %PROJECT_ROOT%\xing_C32\internal
 copy type_c.orig type_1.go
 go tool cgo -godefs type_1.go > type_2.go
 sed -e 's/uint8/byte/g' type_2.go > type_3.go

@@ -34,16 +34,15 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 package xing_C32
 
 import (
-	"bytes"
-	"github.com/ghts/api_bridge_xing_C"
 	"github.com/ghts/lib"
 	"github.com/ghts/types_xing"
 
+	"bytes"
 	"math"
 	"strings"
 )
 
-func New현물호가조회(g *c.T1101OutBlock) (s *xing.S현물호가조회_응답, 에러 error) {
+func New현물호가조회(g *T1101OutBlock) (s *xing.S현물호가조회_응답, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
@@ -147,7 +146,7 @@ func New현물호가조회(g *c.T1101OutBlock) (s *xing.S현물호가조회_응�
 	return s, nil
 }
 
-func New현물시세조회_응답(g *c.T1102OutBlock) (s *xing.S현물시세조회_응답, 에러 error) {
+func New현물시세조회_응답(g *T1102OutBlock) (s *xing.S현물시세조회_응답, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() {
@@ -343,10 +342,10 @@ func New현물시세조회_응답(g *c.T1102OutBlock) (s *xing.S현물시세조�
 	return s, nil
 }
 
-func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상주문) (g *c.CSPAT00600InBlock1) {
+func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상주문) (g *CSPAT00600InBlock1) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
-	g = new(c.CSPAT00600InBlock1)
+	g = new(CSPAT00600InBlock1)
 	lib.F바이트_복사_문자열(g.AcntNo[:], 질의값.M계좌번호)
 	lib.F바이트_복사_문자열(g.InptPwd[:], 질의값.M계좌_비밀번호)
 	lib.F바이트_복사_문자열(g.IsuNo[:], 질의값.M종목코드)
@@ -369,7 +368,7 @@ func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상주문) (g *c.CSPAT00
 	return g
 }
 
-func New현물_정상주문_응답1(g *c.CSPAT00600OutBlock1) (s *xing.S현물_정상주문_응답1, 에러 error) {
+func New현물_정상주문_응답1(g *CSPAT00600OutBlock1) (s *xing.S현물_정상주문_응답1, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
@@ -408,7 +407,7 @@ func New현물_정상주문_응답1(g *c.CSPAT00600OutBlock1) (s *xing.S현물_�
 	return s, nil
 }
 
-func New현물_정상주문_응답2(g *c.CSPAT00600OutBlock2) (s *xing.S현물_정상주문_응답2, 에러 error) {
+func New현물_정상주문_응답2(g *CSPAT00600OutBlock2) (s *xing.S현물_정상주문_응답2, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러:         &에러,
 		M함수with패닉내역: func(r interface{}) { s = nil }})
@@ -446,10 +445,10 @@ func New현물_정상주문_응답2(g *c.CSPAT00600OutBlock2) (s *xing.S현물_�
 	return s, nil
 }
 
-func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정주문) (s *c.CSPAT00700InBlock1) {
+func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정주문) (s *CSPAT00700InBlock1) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { s = nil }})
 
-	s = new(c.CSPAT00700InBlock1)
+	s = new(CSPAT00700InBlock1)
 	lib.F바이트_복사_정수(s.OrgOrdNo[:], 질의값.M원주문번호)
 	lib.F바이트_복사_문자열(s.AcntNo[:], 질의값.M계좌번호)
 	lib.F바이트_복사_문자열(s.InptPwd[:], 질의값.M계좌_비밀번호)
@@ -462,7 +461,7 @@ func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정주문) (s *c.CSPAT00
 	return s
 }
 
-func New현물_정정주문_응답1(g *c.CSPAT00700OutBlock1) (s *xing.S현물_정정주문_응답1, 에러 error) {
+func New현물_정정주문_응답1(g *CSPAT00700OutBlock1) (s *xing.S현물_정정주문_응답1, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
@@ -489,7 +488,7 @@ func New현물_정정주문_응답1(g *c.CSPAT00700OutBlock1) (s *xing.S현물_�
 	return s, nil
 }
 
-func New현물_정정주문_응답2(g *c.CSPAT00700OutBlock2) (s *xing.S현물_정정주문_응답2, 에러 error) {
+func New현물_정정주문_응답2(g *CSPAT00700OutBlock2) (s *xing.S현물_정정주문_응답2, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러:         &에러,
 		M함수with패닉내역: func(r interface{}) { s = nil }})
@@ -537,10 +536,10 @@ func New현물_정정주문_응답2(g *c.CSPAT00700OutBlock2) (s *xing.S현물_�
 	return s, nil
 }
 
-func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소주문) (g *c.CSPAT00800InBlock1) {
+func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소주문) (g *CSPAT00800InBlock1) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
-	g = new(c.CSPAT00800InBlock1)
+	g = new(CSPAT00800InBlock1)
 	lib.F바이트_복사_정수(g.OrgOrdNo[:], 질의값.M원주문번호)
 	lib.F바이트_복사_문자열(g.AcntNo[:], 질의값.M계좌번호)
 	lib.F바이트_복사_문자열(g.InptPwd[:], 질의값.M계좌_비밀번호)
@@ -550,7 +549,7 @@ func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소주문) (g *c.CSPAT00
 	return g
 }
 
-func New현물_취소주문_응답1(g *c.CSPAT00800OutBlock1) (s *xing.S현물_취소주문_응답1, 에러 error) {
+func New현물_취소주문_응답1(g *CSPAT00800OutBlock1) (s *xing.S현물_취소주문_응답1, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
@@ -574,7 +573,7 @@ func New현물_취소주문_응답1(g *c.CSPAT00800OutBlock1) (s *xing.S현물_�
 	return s, nil
 }
 
-func New현물_취소주문_응답2(g *c.CSPAT00800OutBlock2) (s *xing.S현물_취소주문_응답2, 에러 error) {
+func New현물_취소주문_응답2(g *CSPAT00800OutBlock2) (s *xing.S현물_취소주문_응답2, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
@@ -618,10 +617,10 @@ func New현물_취소주문_응답2(g *c.CSPAT00800OutBlock2) (s *xing.S현물_�
 	return s, nil
 }
 
-func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *c.T1902InBlock) {
+func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *T1902InBlock) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
-	g = new(c.T1902InBlock)
+	g = new(T1902InBlock)
 	lib.F바이트_복사_문자열(g.ShCode[:], 질의값.M종목코드)
 
 	if lib.F2문자열_공백제거(질의값.M연속키) == "" {
@@ -633,7 +632,7 @@ func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *c.T1
 	return g
 }
 
-func NewETF시간별_추이_응답_헤더(g *c.T1902OutBlock) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
+func NewETF시간별_추이_응답_헤더(g *T1902OutBlock) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
@@ -646,7 +645,7 @@ func NewETF시간별_추이_응답_헤더(g *c.T1902OutBlock) (s *xing.S_ETF시�
 	return s, nil
 }
 
-func NewETF시간별_추이_응답_반복값_모음(g_모음 []c.T1902OutBlock1) (반복값_모음 []*xing.S_ETF시간별_추이_응답_반복값, 에러 error) {
+func NewETF시간별_추이_응답_반복값_모음(g_모음 []T1902OutBlock1) (반복값_모음 []*xing.S_ETF시간별_추이_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 반복값_모음 = nil }})
@@ -689,10 +688,10 @@ func NewETF시간별_추이_응답_반복값_모음(g_모음 []c.T1902OutBlock1)
 	return 반복값_모음, nil
 }
 
-func NewT1305InBlock(질의값 *xing.S질의값_기간별_주가_조회) (g *c.T1305InBlock) {
+func NewT1305InBlock(질의값 *xing.S질의값_기간별_주가_조회) (g *T1305InBlock) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
-	g = new(c.T1305InBlock)
+	g = new(T1305InBlock)
 	lib.F바이트_복사_문자열(g.Shcode[:], 질의값.M종목코드)
 	lib.F바이트_복사_문자열(g.Dwmcode[:], lib.F2문자열(uint8(질의값.M일주월_구분)))
 	lib.F바이트_복사_문자열(g.Date[:], 질의값.M연속키)
@@ -706,7 +705,7 @@ func NewT1305InBlock(질의값 *xing.S질의값_기간별_주가_조회) (g *c.T
 	return g
 }
 
-func New기간별_조회_응답_헤더(g *c.T1305OutBlock) (값 *xing.S기간별_주가_조회_응답_헤더, 에러 error) {
+func New기간별_조회_응답_헤더(g *T1305OutBlock) (값 *xing.S기간별_주가_조회_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
@@ -718,7 +717,7 @@ func New기간별_조회_응답_헤더(g *c.T1305OutBlock) (값 *xing.S기간별
 	return 값, nil
 }
 
-func New기간별_조회_응답_반복값_모음(g_모음 []c.T1305OutBlock1) (값 []*xing.S기간별_주가_조회_응답_반복값, 에러 error) {
+func New기간별_조회_응답_반복값_모음(g_모음 []T1305OutBlock1) (값 []*xing.S기간별_주가_조회_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
@@ -785,10 +784,10 @@ func New기간별_조회_응답_반복값_모음(g_모음 []c.T1305OutBlock1) (�
 	return 값, nil
 }
 
-func NewT1310InBlock(질의값 *xing.S질의값_현물_전일당일_분틱_조회) (g *c.T1310InBlock) {
+func NewT1310InBlock(질의값 *xing.S질의값_현물_전일당일_분틱_조회) (g *T1310InBlock) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
-	g = new(c.T1310InBlock)
+	g = new(T1310InBlock)
 	lib.F바이트_복사_문자열(g.Daygb[:], 질의값.M당일전일구분)
 	lib.F바이트_복사_문자열(g.Timegb[:], 질의값.M분틱구분)
 	lib.F바이트_복사_문자열(g.Shcode[:], 질의값.M종목코드)
@@ -802,7 +801,7 @@ func NewT1310InBlock(질의값 *xing.S질의값_현물_전일당일_분틱_조�
 	return g
 }
 
-func New현물_당일전일분틱조회_응답_헤더(g *c.T1310OutBlock) (값 *xing.S현물_전일당일분틱조회_응답_헤더, 에러 error) {
+func New현물_당일전일분틱조회_응답_헤더(g *T1310OutBlock) (값 *xing.S현물_전일당일분틱조회_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
@@ -813,7 +812,7 @@ func New현물_당일전일분틱조회_응답_헤더(g *c.T1310OutBlock) (값 *
 	return 값, nil
 }
 
-func New현물_당일전일분틱조회_응답_반복값_모음(g_모음 []c.T1310OutBlock1,
+func New현물_당일전일분틱조회_응답_반복값_모음(g_모음 []T1310OutBlock1,
 	질의값 *xing.S질의값_현물_전일당일_분틱_조회) (반복값_모음 []*xing.S현물_전일당일분틱조회_응답_반복값, 에러 error) {
 
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
@@ -871,7 +870,7 @@ func New현물_당일전일분틱조회_응답_반복값_모음(g_모음 []c.T13
 	return 반복값_모음, nil
 }
 
-func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *c.T8428InBlock) {
+func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *T8428InBlock) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
 	lib.F조건부_패닉(질의값.TR구분 != lib.TR조회, "예상하지 못한 TR구분 : '%v'", 질의값.TR구분)
@@ -887,7 +886,7 @@ func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *c.
 		lib.F패닉("예상하지 못한 시장구분 값 : '%v'", 질의값.M시장구분)
 	}
 
-	g = new(c.T8428InBlock)
+	g = new(T8428InBlock)
 	lib.F바이트_복사_문자열(g.KeyDate[:], 질의값.M연속키)
 	lib.F바이트_복사_문자열(g.Upcode[:], 시장구분_문자열)
 	lib.F바이트_복사_정수(g.Cnt[:], 질의값.M수량)
@@ -899,7 +898,7 @@ func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *c.
 	return g
 }
 
-func New증시주변자금추이_응답_헤더(g *c.T8428OutBlock) (값 *xing.S증시주변자금추이_응답_헤더, 에러 error) {
+func New증시주변자금추이_응답_헤더(g *T8428OutBlock) (값 *xing.S증시주변자금추이_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
@@ -911,7 +910,7 @@ func New증시주변자금추이_응답_헤더(g *c.T8428OutBlock) (값 *xing.S�
 	return 값, nil
 }
 
-func New증시주변자금추이_응답_반복값_모음(g_모음 []c.T8428OutBlock1) (반복값_모음 []*xing.S증시주변자금추이_응답_반복값, 에러 error) {
+func New증시주변자금추이_응답_반복값_모음(g_모음 []T8428OutBlock1) (반복값_모음 []*xing.S증시주변자금추이_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 반복값_모음 = nil }})
@@ -969,7 +968,7 @@ func New증시주변자금추이_응답_반복값_모음(g_모음 []c.T8428OutBl
 	return 반복값_모음, nil
 }
 
-func NewT8436InBlock(질의값 *lib.S질의값_문자열) (g *c.T8436InBlock) {
+func NewT8436InBlock(질의값 *lib.S질의값_문자열) (g *T8436InBlock) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수: func() { g = nil }})
 
 	lib.F조건부_패닉(질의값.TR구분 != lib.TR조회, "예상하지 못한 TR구분 : '%v'", 질의값.TR구분)
@@ -977,13 +976,13 @@ func NewT8436InBlock(질의값 *lib.S질의값_문자열) (g *c.T8436InBlock) {
 	lib.F조건부_패닉(질의값.M문자열 != "0" && 질의값.M문자열 != "1" && 질의값.M문자열 != "2",
 		"예상하지 못한 구분값 : '%v'", 질의값.G문자열())
 
-	g = new(c.T8436InBlock)
+	g = new(T8436InBlock)
 	lib.F바이트_복사_문자열(g.Gubun[:], 질의값.G문자열())
 
 	return g
 }
 
-func New현물_주식종목조회_모음(g_모음 []c.T8436OutBlock) (값_모음 []*xing.S주식종목조회_응답, 에러 error) {
+func New현물_주식종목조회_모음(g_모음 []T8436OutBlock) (값_모음 []*xing.S주식종목조회_응답, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값_모음 = nil }})

@@ -34,7 +34,6 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 package xing_C32
 
 import (
-	"github.com/ghts/api_bridge_xing_C"
 	"github.com/ghts/lib"
 	"github.com/ghts/types_xing"
 
@@ -50,11 +49,11 @@ func New코스피_호가_잔량_실시간정보(데이터 unsafe.Pointer, 길이
 		M함수: func() { 값 = nil }})
 
 	once_H1_OutBlock.Do(func() {
-		lib.F조건부_패닉(unsafe.Sizeof(c.H1_OutBlock{}) != uintptr(길이),
-			"H1_OutBlock 길이 불일치. '%v' '%v'", unsafe.Sizeof(c.H1_OutBlock{}), 길이)
+		lib.F조건부_패닉(unsafe.Sizeof(H1_OutBlock{}) != uintptr(길이),
+			"H1_OutBlock 길이 불일치. '%v' '%v'", unsafe.Sizeof(H1_OutBlock{}), 길이)
 	})
 
-	g := (*c.H1_OutBlock)(데이터)
+	g := (*H1_OutBlock)(데이터)
 	s := new(xing.S코스피_호가_잔량_실시간_정보)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M시각 = lib.F2금일_시각_단순형("150405", g.Hotime)
@@ -131,11 +130,11 @@ func New코스피_시간외_호가_잔량_실시간_정보(데이터 unsafe.Poin
 		M함수: func() { 값 = nil }})
 
 	once_H2_OutBlock.Do(func() {
-		lib.F조건부_패닉(unsafe.Sizeof(c.H2_OutBlock{}) != uintptr(길이),
-			"H2_OutBlock 길이 불일치. '%v' '%v'", unsafe.Sizeof(c.H2_OutBlock{}), 길이)
+		lib.F조건부_패닉(unsafe.Sizeof(H2_OutBlock{}) != uintptr(길이),
+			"H2_OutBlock 길이 불일치. '%v' '%v'", unsafe.Sizeof(H2_OutBlock{}), 길이)
 	})
 
-	g := (*c.H2_OutBlock)(데이터)
+	g := (*H2_OutBlock)(데이터)
 	s := new(xing.S코스피_시간외_호가_잔량_실시간_정보)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M시각 = lib.F2금일_시각_단순형("150405", g.Hotime)
@@ -152,7 +151,7 @@ func New코스피_체결(데이터 unsafe.Pointer, 길이 int) (값 *xing.S코�
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
 
-	g := (*c.S3_OutBlock)(데이터)
+	g := (*S3_OutBlock)(데이터)
 	s := new(xing.S코스피_체결)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M시각 = lib.F2금일_시각_단순형("150405", g.Chetime)
@@ -209,7 +208,7 @@ func New코스피_예상_체결(데이터 unsafe.Pointer, 길이 int) (값 *xing
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
 
-	g := (*c.YS3OutBlock)(데이터)
+	g := (*YS3OutBlock)(데이터)
 	s := new(xing.S코스피_예상_체결)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M시각 = lib.F2금일_시각_단순형("150405", g.Hotime)
@@ -231,7 +230,7 @@ func New코스피_ETF_NAV(데이터 unsafe.Pointer, 길이 int) (값 *xing.S코�
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
 
-	g := (*c.I5_OutBlock)(데이터)
+	g := (*I5_OutBlock)(데이터)
 	s := new(xing.S코스피_ETF_NAV)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M시각 = lib.F2금일_시각_단순형("15:04:05", g.Time)
@@ -258,7 +257,7 @@ func New주식_VI발동해제(데이터 unsafe.Pointer, 길이 int) (값 *xing.S
 			값 = nil
 		}})
 
-	g := (*c.VI_OutBlock)(데이터)
+	g := (*VI_OutBlock)(데이터)
 	s := new(xing.S주식_VI발동해제)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M참조코드 = lib.F2문자열(g.Ref_shcode)
@@ -278,7 +277,7 @@ func New시간외_단일가VI발동해제(데이터 unsafe.Pointer, 길이 int) 
 			값 = nil
 		}})
 
-	g := (*c.DVIOutBlock)(데이터)
+	g := (*DVIOutBlock)(데이터)
 	s := new(xing.S시간외_단일가VI발동해제)
 	s.M종목코드 = lib.F2문자열(g.Shcode)
 	s.M참조코드 = lib.F2문자열(g.Ref_shcode)
@@ -298,7 +297,7 @@ func New장_운영정보(데이터 unsafe.Pointer, 길이 int) (값 *xing.S장_�
 			값 = nil
 		}})
 
-	g := (*c.JIFOutBlock)(데이터)
+	g := (*JIFOutBlock)(데이터)
 	s := new(xing.S장_운영정보)
 	s.M장_구분 = xing.T시장구분(lib.F2문자열(g.Jangubun))
 	s.M장_상태 = xing.T시장상태(lib.F2정수_단순형(g.Jstatus))
