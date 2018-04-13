@@ -35,7 +35,7 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/types_xing"
+	"github.com/ghts/xing_types"
 
 	"testing"
 )
@@ -66,7 +66,7 @@ func TestP접속됨(t *testing.T) {
 	t.Parallel()
 
 	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P10초)
-	응답 := 소켓_질의.S질의(xing.S호출_인수_단순형{M함수: xing.P함수_접속됨}).G응답()
+	응답 := 소켓_질의.S질의(xt.S호출_인수_단순형{M함수: xt.P함수_접속됨}).G응답()
 
 	lib.F테스트_에러없음(t, 응답.G에러())
 	lib.F테스트_같음(t, 응답.G길이(), 1)
@@ -80,7 +80,7 @@ func TestP접속됨(t *testing.T) {
 // 초기화 중 접속이 되므로,개발 과정에서만 사용됨.
 //func TestP접속(t *testing.T) {
 //	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P30초)
-//	소켓_질의.S질의(xing.S호출_인수_단순형{M함수: xing.P함수_접속})
+//	소켓_질의.S질의(xt.S호출_인수_단순형{M함수: xt.P함수_접속})
 //
 //	응답 := 소켓_질의.G응답()
 //

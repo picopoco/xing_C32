@@ -41,7 +41,7 @@ import "C"
 import (
 	"github.com/ghts/lib"
 
-	"github.com/ghts/types_xing"
+	"github.com/ghts/xing_types"
 	"os"
 	"strings"
 	"time"
@@ -280,24 +280,24 @@ func f2시장구분(값 interface{}) lib.T시장구분 {
 	return lib.T시장구분(-1)
 }
 
-func f2Xing매수매도(매수_매도 lib.T매수_매도) xing.T매수_매도 {
+func f2Xing매수매도(매수_매도 lib.T매수_매도) xt.T매수_매도 {
 	switch 매수_매도 {
 	case lib.P매도:
-		return xing.P매도
+		return xt.P매도
 	case lib.P매수:
-		return xing.P매수
+		return xt.P매수
 	default:
 		lib.F패닉("예상하지 못한 매수 매도 구분값. %v", 매수_매도)
 	}
 
-	return xing.T매수_매도("")
+	return xt.T매수_매도("")
 }
 
-func f2매수매도(매수_매도 xing.T매수_매도) lib.T매수_매도 {
+func f2매수매도(매수_매도 xt.T매수_매도) lib.T매수_매도 {
 	switch 매수_매도 {
-	case xing.P매도:
+	case xt.P매도:
 		return lib.P매도
-	case xing.P매수:
+	case xt.P매수:
 		return lib.P매수
 	default:
 		lib.F패닉("예상하지 못한 매수 매도 구분값. %v", 매수_매도)
@@ -306,28 +306,28 @@ func f2매수매도(매수_매도 xing.T매수_매도) lib.T매수_매도 {
 	return lib.P매도
 }
 
-func f2Xing주문조건(주문_조건 lib.T주문조건) xing.T주문조건 {
+func f2Xing주문조건(주문_조건 lib.T주문조건) xt.T주문조건 {
 	switch 주문_조건 {
 	case lib.P주문조건_없음:
-		return xing.P주문조건_없음
+		return xt.P주문조건_없음
 	case lib.P주문조건_IOC:
-		return xing.P주문조건_IOC
+		return xt.P주문조건_IOC
 	case lib.P주문조건_FOK:
-		return xing.P주문조건_FOK
+		return xt.P주문조건_FOK
 	default:
 		lib.F패닉("예상하지 못한 신용거래_구분 값. %v", 주문_조건)
 	}
 
-	return xing.P주문조건_없음
+	return xt.P주문조건_없음
 }
 
-func f2주문조건(주문_조건 xing.T주문조건) lib.T주문조건 {
+func f2주문조건(주문_조건 xt.T주문조건) lib.T주문조건 {
 	switch 주문_조건 {
-	case xing.P주문조건_없음:
+	case xt.P주문조건_없음:
 		return lib.P주문조건_없음
-	case xing.P주문조건_IOC:
+	case xt.P주문조건_IOC:
 		return lib.P주문조건_IOC
-	case xing.P주문조건_FOK:
+	case xt.P주문조건_FOK:
 		return lib.P주문조건_FOK
 	default:
 		lib.F패닉("예상하지 못한 신용거래_구분 값. %v", 주문_조건)
@@ -336,98 +336,98 @@ func f2주문조건(주문_조건 xing.T주문조건) lib.T주문조건 {
 	return lib.P주문조건_없음
 }
 
-func f2Xing신용거래_구분(신용거래_구분 lib.T신용거래_구분) xing.T신용거래_구분 {
+func f2Xing신용거래_구분(신용거래_구분 lib.T신용거래_구분) xt.T신용거래_구분 {
 	switch 신용거래_구분 {
 	case lib.P신용거래_해당없음:
-		return xing.P신용거래_아님
+		return xt.P신용거래_아님
 	case lib.P신용거래_유통융자신규:
-		return xing.P유통융자신규
+		return xt.P유통융자신규
 	case lib.P신용거래_자기융자신규:
-		return xing.P자기융자신규
+		return xt.P자기융자신규
 	case lib.P신용거래_유통대주신규:
-		return xing.P유통대주신규
+		return xt.P유통대주신규
 	case lib.P신용거래_자기대주신규:
-		return xing.P자기대주신규
+		return xt.P자기대주신규
 	case lib.P신용거래_유통융자상환:
-		return xing.P유통융자상환
+		return xt.P유통융자상환
 	case lib.P신용거래_자기융자상환:
-		return xing.P자기융자상환
+		return xt.P자기융자상환
 	case lib.P신용거래_유통대주상환:
-		return xing.P유통대주상환
+		return xt.P유통대주상환
 	case lib.P신용거래_자기대주상환:
-		return xing.P자기대주상환
+		return xt.P자기대주상환
 	case lib.P신용거래_예탁담보대출상환:
-		return xing.P예탁담보대출상환
+		return xt.P예탁담보대출상환
 	default:
 		lib.F패닉("예상하지 못한 신용거래_구분 값. %v", 신용거래_구분)
 	}
 
-	return xing.P신용거래_아님
+	return xt.P신용거래_아님
 }
 
-func f2신용거래_구분(신용거래_구분 xing.T신용거래_구분) lib.T신용거래_구분 {
+func f2신용거래_구분(신용거래_구분 xt.T신용거래_구분) lib.T신용거래_구분 {
 	switch 신용거래_구분 {
-	case xing.P유통융자신규:
+	case xt.P유통융자신규:
 		return lib.P신용거래_유통융자신규
-	case xing.P자기융자신규:
+	case xt.P자기융자신규:
 		return lib.P신용거래_자기융자신규
-	case xing.P유통대주신규:
+	case xt.P유통대주신규:
 		return lib.P신용거래_유통대주신규
-	case xing.P자기대주신규:
+	case xt.P자기대주신규:
 		return lib.P신용거래_자기대주신규
-	case xing.P유통융자상환:
+	case xt.P유통융자상환:
 		return lib.P신용거래_유통융자상환
-	case xing.P자기융자상환:
+	case xt.P자기융자상환:
 		return lib.P신용거래_자기융자상환
-	case xing.P유통대주상환:
+	case xt.P유통대주상환:
 		return lib.P신용거래_유통대주상환
 	}
 
 	return lib.P신용거래_해당없음
 }
 
-func f2Xing호가유형(호가_유형 lib.T호가유형) xing.T호가유형 {
+func f2Xing호가유형(호가_유형 lib.T호가유형) xt.T호가유형 {
 	switch 호가_유형 {
 	case lib.P호가유형_지정가:
-		return xing.P지정가
+		return xt.P지정가
 	case lib.P호가유형_시장가:
-		return xing.P시장가
+		return xt.P시장가
 	case lib.P호가유형_조건부_지정가:
-		return xing.P조건부_지정가
+		return xt.P조건부_지정가
 	case lib.P호가유형_최유리_지정가:
-		return xing.P최유리_지정가
+		return xt.P최유리_지정가
 	case lib.P호가유형_최우선_지정가:
-		return xing.P최우선_지정가
+		return xt.P최우선_지정가
 	case lib.P호가유형_시간외종가_장개시전:
-		return xing.P시간외종가_장개시전
+		return xt.P시간외종가_장개시전
 	case lib.P호가유형_시간외종가:
-		return xing.P시간외종가
+		return xt.P시간외종가
 	case lib.P호가유형_시간외단일가:
-		return xing.P시간외단일가
+		return xt.P시간외단일가
 	default:
 		lib.F패닉("예상하지 못한 호가_유형 값. %v", 호가_유형)
 	}
 
-	return xing.T호가유형("")
+	return xt.T호가유형("")
 }
 
-func f2호가유형(호가_유형 xing.T호가유형) lib.T호가유형 {
+func f2호가유형(호가_유형 xt.T호가유형) lib.T호가유형 {
 	switch 호가_유형 {
-	case xing.P지정가:
+	case xt.P지정가:
 		return lib.P호가유형_지정가
-	case xing.P시장가:
+	case xt.P시장가:
 		return lib.P호가유형_시장가
-	case xing.P조건부_지정가:
+	case xt.P조건부_지정가:
 		return lib.P호가유형_조건부_지정가
-	case xing.P최유리_지정가:
+	case xt.P최유리_지정가:
 		return lib.P호가유형_최유리_지정가
-	case xing.P최우선_지정가:
+	case xt.P최우선_지정가:
 		return lib.P호가유형_최우선_지정가
-	case xing.P시간외종가_장개시전:
+	case xt.P시간외종가_장개시전:
 		return lib.P호가유형_시간외종가_장개시전
-	case xing.P시간외종가:
+	case xt.P시간외종가:
 		return lib.P호가유형_시간외종가
-	case xing.P시간외단일가:
+	case xt.P시간외단일가:
 		return lib.P호가유형_시간외단일가
 	}
 

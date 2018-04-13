@@ -43,12 +43,12 @@ import (
 
 // 다중 사용에 안전한 값들.
 var (
-	소켓REP_TR수신 mangos.Socket = nil
-	소켓PUB_콜백   mangos.Socket = nil // PUB소켓은 수신 기능이 없으며, 지연없는 'non-blocking'방식으로 동작.
+	소켓REP_TR수신   mangos.Socket = nil
+	소켓PUB_콜백     mangos.Socket = nil // PUB소켓은 수신 기능이 없으며, 지연없는 'non-blocking'방식으로 동작.
+	소켓PUB_실시간_정보 mangos.Socket = nil
 
 	ch호출_도우미_종료 chan error
-
-	메시지_저장소 = New메시지_저장소()
+	메시지_저장소     = New메시지_저장소()
 )
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
@@ -56,7 +56,7 @@ var (
 	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한_TR코드별)
 	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한_TR코드별)
 
-	설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/api_bridge_xing/internal/` + "config.ini"
+	설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/xing_C32/internal/config.ini`
 
 	전일_금일_초기값            = time.Time{}
 	영업일_기준_전일, 영업일_기준_당일 time.Time

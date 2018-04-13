@@ -45,12 +45,12 @@ import (
 
 	"bytes"
 	"fmt"
-	"github.com/ghts/types_xing"
+	"github.com/ghts/xing_types"
 	"time"
 	"unsafe"
 )
 
-func F접속(서버_구분 xing.T서버_구분) bool {
+func F접속(서버_구분 xt.T서버_구분) bool {
 	if F접속됨() {
 		return true
 	}
@@ -59,21 +59,21 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 	var c포트_번호 C.int
 
 	switch 서버_구분 {
-	case xing.P서버_실거래:
+	case xt.P서버_실거래:
 		if lib.F테스트_모드_실행_중() {
 			lib.F패닉("테스트 모드에서 실서버 접속 시도.")
 		}
 
 		c서버_이름 = C.CString("hts.ebestsec.co.kr")
 		c포트_번호 = C.int(20001)
-	case xing.P서버_모의투자:
+	case xt.P서버_모의투자:
 		if !lib.F테스트_모드_실행_중() {
 			lib.F패닉("실제 운용 모드에서 모의투자서버 접속 시도.")
 		}
 
 		c서버_이름 = C.CString("demo.ebestsec.co.kr")
 		c포트_번호 = C.int(20001)
-	case xing.P서버_XingACE:
+	case xt.P서버_XingACE:
 		if !lib.F테스트_모드_실행_중() {
 			lib.F패닉("실제 운용 모드에서 XingACE 가상거래소 접속 시도.")
 		}
