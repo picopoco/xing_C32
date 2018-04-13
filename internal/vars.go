@@ -35,11 +35,29 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
-	"testing"
+	"github.com/go-mangos/mangos"
+	"time"
 )
 
-func TestF초기화_Go_C_자료형_크기_비교(t *testing.T) {
-	t.Parallel()
+// 전역 변수는 항상 동시 액세스로 인한 오류의 위험이 있어서 한 군데 몰아서 관리함.
 
-	lib.F테스트_에러없음(t, 자료형_크기_비교_확인())
-}
+// 다중 사용에 안전한 값들.
+var (
+	소켓REP_TR수신 mangos.Socket = nil
+	소켓PUB_콜백   mangos.Socket = nil // PUB소켓은 수신 기능이 없으며, 지연없는 'non-blocking'방식으로 동작.
+
+	ch호출_도우미_종료 chan error
+
+	메시지_저장소 = New메시지_저장소()
+)
+
+// 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
+var (
+	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한_TR코드별)
+	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한_TR코드별)
+
+	설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/api_bridge_xing/internal/` + "config.ini"
+
+	전일_금일_초기값            = time.Time{}
+	영업일_기준_전일, 영업일_기준_당일 time.Time
+)

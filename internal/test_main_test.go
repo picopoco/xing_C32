@@ -37,18 +37,27 @@ import (
 	"github.com/ghts/lib"
 
 	"testing"
-	"github.com/ghts/types_xing"
 )
 
 func TestMain(m *testing.M) {
+	defer func() {
+		f테스트_정리()
+		lib.F테스트_모드_종료()
+	}()
+
 	lib.F테스트_모드_시작()
-	defer lib.F테스트_모드_종료()
-
 	lib.F에러체크(F초기화())
-	defer F자원_해제()
-
 	m.Run()
+}
 
-	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.P변환형식_기본값, lib.P10초)
-	소켓_질의.S질의(xing.S호출_인수_단순형{M함수: xing.P함수_종료}).G응답()
+func f테스트_정리() {
+	F실시간_정보_모두_해지()
+	F로그아웃_및_접속해제()
+	F자원_해제()
+	lib.F공통_종료_채널_닫기()
+	lib.F테스트_모드_종료()
+
+	if 소켓PUB_콜백 != nil {
+		소켓PUB_콜백.Close()
+	}
 }

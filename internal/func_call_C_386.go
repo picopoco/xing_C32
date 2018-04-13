@@ -84,9 +84,7 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 
 	defer C.free(unsafe.Pointer(c서버_이름))
 
-	결과값 := bool(C.etkConnect(c서버_이름, c포트_번호))
-
-	return 결과값
+	return bool(C.etkConnect(c서버_이름, c포트_번호))
 }
 
 func F접속됨() bool {
@@ -206,27 +204,21 @@ func F실시간_정보_모두_해지() error {
 
 func F계좌_수량() int { return int(C.etkGetAccountListCount()) }
 
-func F계좌_번호(인덱스 int) (string, error) {
+func F계좌_번호(인덱스 int) string {
 	버퍼_초기값 := "            " // 12자리 공백문자열
+	버퍼_크기 := C.int(len(버퍼_초기값))
 	c버퍼 := C.CString(버퍼_초기값)
 	defer C.free(unsafe.Pointer(c버퍼))
 
-	실행_성공 := C.etkGetAccountNo(C.int(인덱스), c버퍼, C.int(len(버퍼_초기값)))
-	if !bool(실행_성공) {
-		return "", lib.New에러("계좌 번호를 구할 수 없음.")
-	}
+	C.etkGetAccountNo(C.int(인덱스), c버퍼, 버퍼_크기)
 
-	계좌_번호 := C.GoString(c버퍼)
-	if 계좌_번호 == "" {
-		return "", lib.New에러("계좌 번호 내용이 없음.")
-	}
-
-	return 계좌_번호, nil
+	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
+	return lib.F2문자열_공백제거(바이트_모음)
 }
 
 func F계좌_이름(계좌_번호 string) string {
 	버퍼_초기값 := "                                         "
-	버퍼_크기 := len(버퍼_초기값)
+	버퍼_크기 := C.int(len(버퍼_초기값))
 	c버퍼 := C.CString(버퍼_초기값)
 	c계좌번호 := C.CString(계좌_번호)
 
@@ -235,17 +227,17 @@ func F계좌_이름(계좌_번호 string) string {
 		C.free(unsafe.Pointer(c계좌번호))
 	}()
 
-	C.etkGetAccountName(c계좌번호, c버퍼, C.int(버퍼_크기))
+	C.etkGetAccountName(c계좌번호, c버퍼, 버퍼_크기)
 
-	return C.GoString(c버퍼)
+	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
+	return lib.F2문자열_CP949(바이트_모음)
 
-	//바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	//return lib.F2문자열_CP949(바이트_모음)
+	//return C.GoString(c버퍼)
 }
 
 func F계좌_상세명(계좌_번호 string) string {
 	버퍼_초기값 := "                                         "
-	버퍼_크기 := len(버퍼_초기값)
+	버퍼_크기 := C.int(len(버퍼_초기값))
 	c버퍼 := C.CString(버퍼_초기값)
 	c계좌번호 := C.CString(계좌_번호)
 
@@ -254,9 +246,12 @@ func F계좌_상세명(계좌_번호 string) string {
 		C.free(unsafe.Pointer(c계좌번호))
 	}()
 
-	C.etkGetAccountDetailName(c계좌번호, c버퍼, C.int(버퍼_크기))
+	C.etkGetAccountDetailName(c계좌번호, c버퍼, 버퍼_크기)
 
-	return C.GoString(c버퍼)
+	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
+	return lib.F2문자열_CP949(바이트_모음)
+
+	//return C.GoString(c버퍼)
 }
 
 // 원인미상의 메모리 에러가 발생함.

@@ -59,7 +59,7 @@ import (
 func TestF자료형_크기_비교_확인(t *testing.T) {
 	t.Parallel()
 
-	lib.F테스트_패닉없음(t, 자료형_크기_비교_확인)
+	lib.F테스트_에러없음(t, lib.F패닉2에러(자료형_크기_비교_확인))
 }
 
 func TestP접속됨(t *testing.T) {
@@ -77,16 +77,28 @@ func TestP접속됨(t *testing.T) {
 	lib.F테스트_참임(t, 접속됨)
 }
 
-func TestP접속(t *testing.T) {
-	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P10초)
-	소켓_질의.S질의(xing.S호출_인수_단순형{M함수: xing.P함수_접속})
-
-	응답 := 소켓_질의.G응답()
-	lib.F테스트_에러없음(t, 응답.G에러())
-	lib.F테스트_같음(t, 응답.G길이(), 1)
-
-	var 로그인_됨 bool
-	lib.F테스트_같음(t, 응답.G자료형_문자열(0), "bool")
-	lib.F테스트_에러없음(t, 응답.G값(0, &로그인_됨))
-	lib.F테스트_참임(t, 로그인_됨)
-}
+// 초기화 중 접속이 되므로,개발 과정에서만 사용됨.
+//func TestP접속(t *testing.T) {
+//	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P30초)
+//	소켓_질의.S질의(xing.S호출_인수_단순형{M함수: xing.P함수_접속})
+//
+//	응답 := 소켓_질의.G응답()
+//
+//	lib.F테스트_에러없음(t, 응답.G에러())
+//	lib.F테스트_같음(t, 응답.G길이(), 1)
+//
+//	해석값, 에러 := 응답.G해석값(0)
+//	lib.F테스트_에러없음(t, 에러)
+//
+//	switch 해석값.(type) {
+//	case bool:
+//		var 로그인_됨 bool
+//		lib.F테스트_에러없음(t, 응답.G값(0, &로그인_됨))
+//		lib.F테스트_참임(t, 로그인_됨)
+//	case error:
+//		var 에러 error
+//		lib.F테스트_에러없음(t, 응답.G값(0, &에러))
+//		lib.F에러_출력(에러)
+//		t.Fail()
+//	}
+//}

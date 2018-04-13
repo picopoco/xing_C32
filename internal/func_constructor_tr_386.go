@@ -40,12 +40,147 @@ import (
 	"bytes"
 	"math"
 	"strings"
+	"time"
+	"unsafe"
 )
 
-func New현물호가조회(g *T1101OutBlock) (s *xing.S현물호가조회_응답, 에러 error) {
+const 크기CSPAT00600OutBlock1 = int(unsafe.Sizeof(CSPAT00600OutBlock1{}))
+const 크기CSPAT00600OutBlock2 = int(unsafe.Sizeof(CSPAT00600OutBlock2{}))
+const 크기CSPAT00700OutBlock1 = int(unsafe.Sizeof(CSPAT00700OutBlock1{}))
+const 크기CSPAT00700OutBlock2 = int(unsafe.Sizeof(CSPAT00700OutBlock2{}))
+const 크기CSPAT00800OutBlock1 = int(unsafe.Sizeof(CSPAT00800OutBlock1{}))
+const 크기CSPAT00800OutBlock2 = int(unsafe.Sizeof(CSPAT00800OutBlock2{}))
+const 크기T1305OutBlock = int(unsafe.Sizeof(T1305OutBlock{}))
+const 크기T1305OutBlock1 = int(unsafe.Sizeof(T1305OutBlock1{}))
+const 크기T1310OutBlock = int(unsafe.Sizeof(T1310OutBlock{}))
+const 크기T1310OutBlock1 = int(unsafe.Sizeof(T1310OutBlock1{}))
+const 크기T1902OutBlock = int(unsafe.Sizeof(T1902OutBlock{}))
+const 크기T1902OutBlock1 = int(unsafe.Sizeof(T1902OutBlock1{}))
+const 크기T8428OutBlock = int(unsafe.Sizeof(T8428OutBlock{}))
+const 크기T8428OutBlock1 = int(unsafe.Sizeof(T8428OutBlock1{}))
+const 크기T8436OutBlock = int(unsafe.Sizeof(T8436OutBlock{}))
+
+func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
+	TR코드 := lib.F2문자열(tr.TrCode)
+	데이터_길이 := int(tr.DataLength)
+
+	switch TR코드 {
+	case xing.TR현물_호가_조회:
+		return New현물호가조회(tr)
+	case xing.TR현물_시세_조회:
+		return New현물시세조회_응답(tr)
+	case xing.TR현물_정상주문:
+		switch 데이터_길이 {
+		case 크기CSPAT00600OutBlock1:
+			return New현물_정상주문_응답1(tr)
+		case 크기CSPAT00600OutBlock2:
+			return New현물_정상주문_응답2(tr)
+		default:
+			s := new(xing.S현물_정상주문_응답)
+
+			s.M응답1, 에러 = New현물_정상주문_응답1(tr)
+			lib.F에러체크(에러)
+
+			s.M응답2, 에러 = New현물_정상주문_응답2(tr)
+			lib.F에러체크(에러)
+
+			return s, nil
+		}
+	case xing.TR현물_정정주문:
+		switch 데이터_길이 {
+		case 크기CSPAT00700OutBlock1:
+			return New현물_정정주문_응답1(tr)
+		case 크기CSPAT00700OutBlock2:
+			return New현물_정정주문_응답2(tr)
+		default:
+			s := new(xing.S현물_정정주문_응답)
+
+			s.M응답1, 에러 = New현물_정정주문_응답1(tr)
+			lib.F에러체크(에러)
+
+			s.M응답2, 에러 = New현물_정정주문_응답2(tr)
+			lib.F에러체크(에러)
+
+			return s, nil
+		}
+	case xing.TR현물_취소주문:
+		switch 데이터_길이 {
+		case 크기CSPAT00800OutBlock1:
+			return New현물_취소주문_응답1(tr)
+		case 크기CSPAT00800OutBlock2:
+			return New현물_취소주문_응답2(tr)
+		default:
+			s := new(xing.S현물_취소주문_응답)
+
+			s.M응답1, 에러 = New현물_취소주문_응답1(tr)
+			lib.F에러체크(에러)
+
+			s.M응답2, 에러 = New현물_취소주문_응답2(tr)
+			lib.F에러체크(에러)
+
+			return s, nil
+		}
+	case xing.TR시간_조회:
+		g := (*T0167OutBlock)(unsafe.Pointer(tr.Data))
+		날짜_문자열 := lib.F2문자열(g.Date)
+		시간_문자열 := lib.F2문자열(g.Time)
+
+		return lib.F2포맷된_시각("20060102150405.99999999", 날짜_문자열+시간_문자열[:6]+"."+시간_문자열[7:])
+	case xing.TR현물_기간별_조회:
+		switch 데이터_길이 {
+		case 0:
+			return make([]*xing.S기간별_주가_조회_응답_반복값, 0, 0), nil
+		case 크기T1305OutBlock:
+			return New기간별_조회_응답_헤더(tr)
+		default:
+			return New기간별_조회_응답_반복값_모음(tr)
+		}
+	case xing.TR현물_당일_전일_분틱_조회:
+		switch 데이터_길이 {
+		case 0:
+			return make([]*xing.S현물_전일당일분틱조회_응답_반복값, 0, 0), nil
+		case 크기T1310OutBlock:
+			return New현물_당일전일분틱조회_응답_헤더(tr)
+		default:
+			return New현물_당일전일분틱조회_응답_반복값_모음(tr)
+		}
+	case xing.TR_ETF_시간별_추이:
+		switch 데이터_길이 {
+		case 0:
+			return make([]*xing.S_ETF시간별_추이_응답_반복값, 0, 0), nil
+		case 크기T1902OutBlock:
+			return NewETF시간별_추이_응답_헤더(tr)
+		default:
+			return NewETF시간별_추이_응답_반복값_모음(tr)
+		}
+	case xing.TR증시_주변_자금_추이:
+		switch 데이터_길이 {
+		case 0:
+			return make([]*xing.S증시주변자금추이_응답_반복값, 0, 0), nil
+		case 크기T8428OutBlock:
+			return New증시주변자금추이_응답_헤더(tr)
+		default:
+			return New증시주변자금추이_응답_반복값_모음(tr)
+		}
+	case xing.TR현물_종목_조회:
+		// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+		배열_길이 := 데이터_길이 / 크기T8436OutBlock
+		lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
+
+		g_모음 := (*[1 << 20]T8436OutBlock)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
+
+		return New현물_주식종목조회_모음(g_모음)
+	default:
+		return nil, lib.New에러("구현되지 않은 TR코드. %v", TR코드)
+	}
+}
+
+func New현물호가조회(tr *TR_DATA) (s *xing.S현물호가조회_응답, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
+
+	g := (*T1101OutBlock)(unsafe.Pointer(tr.Data))
 
 	s = new(xing.S현물호가조회_응답)
 	s.M한글명 = lib.F2문자열_CP949(g.Hname)
@@ -146,13 +281,15 @@ func New현물호가조회(g *T1101OutBlock) (s *xing.S현물호가조회_응답
 	return s, nil
 }
 
-func New현물시세조회_응답(g *T1102OutBlock) (s *xing.S현물시세조회_응답, 에러 error) {
+func New현물시세조회_응답(tr *TR_DATA) (s *xing.S현물시세조회_응답, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() {
 			lib.F문자열_출력("'%v' : '%v'", s.M종목코드, s.M한글명)
 			s = nil
 		}})
+
+	g := (*T1102OutBlock)(unsafe.Pointer(tr.Data))
 
 	s = new(xing.S현물시세조회_응답)
 	s.M종목코드 = lib.F2문자열_공백제거(g.Shcode)
@@ -368,10 +505,12 @@ func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상주문) (g *CSPAT0060
 	return g
 }
 
-func New현물_정상주문_응답1(g *CSPAT00600OutBlock1) (s *xing.S현물_정상주문_응답1, 에러 error) {
+func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상주문_응답1, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
+
+	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
 	if lib.F2문자열(g.LoanDt) == "00000000" {
 		lib.F바이트_복사_문자열(g.LoanDt[:], "")
@@ -407,16 +546,18 @@ func New현물_정상주문_응답1(g *CSPAT00600OutBlock1) (s *xing.S현물_정
 	return s, nil
 }
 
-func New현물_정상주문_응답2(g *CSPAT00600OutBlock2) (s *xing.S현물_정상주문_응답2, 에러 error) {
-	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
-		M에러:         &에러,
-		M함수with패닉내역: func(r interface{}) { s = nil }})
-
+func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상주문_응답2, 에러 error) {
 	defer func() {
+		lib.F에러패닉_처리(lib.S에러패닉_처리{
+			M에러:         &에러,
+			M함수with패닉내역: func(r interface{}) { s = nil }})
+
 		if s != nil && strings.HasPrefix(s.M종목코드, "A") {
 			s.M종목코드 = s.M종목코드[1:]
 		}
 	}()
+
+	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
 	if 시각_문자열 != "" {
@@ -461,10 +602,12 @@ func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정주문) (s *CSPAT0070
 	return s
 }
 
-func New현물_정정주문_응답1(g *CSPAT00700OutBlock1) (s *xing.S현물_정정주문_응답1, 에러 error) {
+func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정주문_응답1, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
+
+	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
 	s = new(xing.S현물_정정주문_응답1)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
@@ -488,16 +631,12 @@ func New현물_정정주문_응답1(g *CSPAT00700OutBlock1) (s *xing.S현물_정
 	return s, nil
 }
 
-func New현물_정정주문_응답2(g *CSPAT00700OutBlock2) (s *xing.S현물_정정주문_응답2, 에러 error) {
+func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정주문_응답2, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러:         &에러,
 		M함수with패닉내역: func(r interface{}) { s = nil }})
 
-	defer func() {
-		if s != nil && strings.HasPrefix(s.M종목코드, "A") {
-			s.M종목코드 = s.M종목코드[1:]
-		}
-	}()
+	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
 	if 시각_문자열 != "" {
@@ -533,6 +672,10 @@ func New현물_정정주문_응답2(g *CSPAT00700OutBlock2) (s *xing.S현물_정
 	s.M계좌명 = lib.F2문자열_공백제거(g.AcntNm)
 	s.M종목명 = lib.F2문자열_공백제거(g.IsuNm)
 
+	if strings.HasPrefix(s.M종목코드, "A") {
+		s.M종목코드 = s.M종목코드[1:]
+	}
+
 	return s, nil
 }
 
@@ -549,10 +692,12 @@ func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소주문) (g *CSPAT0080
 	return g
 }
 
-func New현물_취소주문_응답1(g *CSPAT00800OutBlock1) (s *xing.S현물_취소주문_응답1, 에러 error) {
+func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소주문_응답1, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
+
+	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
 	s = new(xing.S현물_취소주문_응답1)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
@@ -573,16 +718,12 @@ func New현물_취소주문_응답1(g *CSPAT00800OutBlock1) (s *xing.S현물_취
 	return s, nil
 }
 
-func New현물_취소주문_응답2(g *CSPAT00800OutBlock2) (s *xing.S현물_취소주문_응답2, 에러 error) {
+func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소주문_응답2, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
 
-	defer func() {
-		if s != nil && strings.HasPrefix(s.M종목코드, "A") {
-			s.M종목코드 = s.M종목코드[1:]
-		}
-	}()
+	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
 	if 시각_문자열 != "" {
@@ -614,6 +755,10 @@ func New현물_취소주문_응답2(g *CSPAT00800OutBlock2) (s *xing.S현물_취
 	s.M계좌명 = lib.F2문자열_공백제거(g.AcntNm)
 	s.M종목명 = lib.F2문자열_공백제거(g.IsuNm)
 
+	if strings.HasPrefix(s.M종목코드, "A") {
+		s.M종목코드 = s.M종목코드[1:]
+	}
+
 	return s, nil
 }
 
@@ -632,10 +777,12 @@ func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *T190
 	return g
 }
 
-func NewETF시간별_추이_응답_헤더(g *T1902OutBlock) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
+func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { s = nil }})
+
+	g := (*T1902OutBlock)(unsafe.Pointer(tr.Data))
 
 	s = new(xing.S_ETF시간별_추이_응답_헤더)
 	s.M연속키 = lib.F2문자열_공백제거(g.Time)
@@ -645,16 +792,17 @@ func NewETF시간별_추이_응답_헤더(g *T1902OutBlock) (s *xing.S_ETF시간
 	return s, nil
 }
 
-func NewETF시간별_추이_응답_반복값_모음(g_모음 []T1902OutBlock1) (반복값_모음 []*xing.S_ETF시간별_추이_응답_반복값, 에러 error) {
+func NewETF시간별_추이_응답_반복값_모음(tr *TR_DATA) (반복값_모음 []*xing.S_ETF시간별_추이_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 반복값_모음 = nil }})
 
-	반복값_모음 = make([]*xing.S_ETF시간별_추이_응답_반복값, len(g_모음), len(g_모음))
+	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+	배열_길이 := int(tr.DataLength) / 크기T1902OutBlock1
+	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
 
-	if len(g_모음) == 0 {
-		return 반복값_모음, nil
-	}
+	g_모음 := (*[1 << 20]T1902OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
+	반복값_모음 = make([]*xing.S_ETF시간별_추이_응답_반복값, len(g_모음), len(g_모음))
 
 	for i, g := range g_모음 {
 		s := new(xing.S_ETF시간별_추이_응답_반복값)
@@ -705,10 +853,12 @@ func NewT1305InBlock(질의값 *xing.S질의값_기간별_주가_조회) (g *T13
 	return g
 }
 
-func New기간별_조회_응답_헤더(g *T1305OutBlock) (값 *xing.S기간별_주가_조회_응답_헤더, 에러 error) {
+func New기간별_조회_응답_헤더(tr *TR_DATA) (값 *xing.S기간별_주가_조회_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
+
+	g := (*T1305OutBlock)(unsafe.Pointer(tr.Data))
 
 	값 = new(xing.S기간별_주가_조회_응답_헤더)
 	값.M수량 = lib.F2정수64_단순형(g.Cnt)
@@ -717,16 +867,17 @@ func New기간별_조회_응답_헤더(g *T1305OutBlock) (값 *xing.S기간별_�
 	return 값, nil
 }
 
-func New기간별_조회_응답_반복값_모음(g_모음 []T1305OutBlock1) (값 []*xing.S기간별_주가_조회_응답_반복값, 에러 error) {
+func New기간별_조회_응답_반복값_모음(tr *TR_DATA) (값 []*xing.S기간별_주가_조회_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
 
-	값 = make([]*xing.S기간별_주가_조회_응답_반복값, len(g_모음), len(g_모음))
+	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+	배열_길이 := int(tr.DataLength) / 크기T1305OutBlock1
+	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
 
-	if len(g_모음) == 0 {
-		return 값, nil
-	}
+	g_모음 := (*[1 << 20]T1305OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
+	값 = make([]*xing.S기간별_주가_조회_응답_반복값, len(g_모음), len(g_모음))
 
 	for i, g := range g_모음 {
 		일자_문자열_원본 := lib.F2문자열(g.Date)
@@ -801,10 +952,12 @@ func NewT1310InBlock(질의값 *xing.S질의값_현물_전일당일_분틱_조�
 	return g
 }
 
-func New현물_당일전일분틱조회_응답_헤더(g *T1310OutBlock) (값 *xing.S현물_전일당일분틱조회_응답_헤더, 에러 error) {
+func New현물_당일전일분틱조회_응답_헤더(tr *TR_DATA) (값 *xing.S현물_전일당일분틱조회_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
+
+	g := (*T1310OutBlock)(unsafe.Pointer(tr.Data))
 
 	값 = new(xing.S현물_전일당일분틱조회_응답_헤더)
 	값.M연속키 = lib.F2문자열(g.Time)
@@ -812,31 +965,19 @@ func New현물_당일전일분틱조회_응답_헤더(g *T1310OutBlock) (값 *xi
 	return 값, nil
 }
 
-func New현물_당일전일분틱조회_응답_반복값_모음(g_모음 []T1310OutBlock1,
-	질의값 *xing.S질의값_현물_전일당일_분틱_조회) (반복값_모음 []*xing.S현물_전일당일분틱조회_응답_반복값, 에러 error) {
-
+func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (반복값_모음 []*xing.S현물_전일당일분틱조회_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 반복값_모음 = nil }})
 
+	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+	배열_길이 := int(tr.DataLength) / 크기T1310OutBlock1
+	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
+
+	g_모음 := (*[1 << 20]T1310OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
 	반복값_모음 = make([]*xing.S현물_전일당일분틱조회_응답_반복값, len(g_모음), len(g_모음))
 
-	if len(g_모음) == 0 {
-		return 반복값_모음, nil
-	}
-
-	var 일자_문자열 string
-
-	switch xing.T당일전일_구분(질의값.M당일전일구분) {
-	case xing.P당일전일구분_전일:
-		일자_문자열 = f영업일_기준_전일().Format("2006/01/02 ")
-	case xing.P당일전일구분_당일:
-		일자_문자열 = f영업일_기준_당일().Format("2006/01/02 ")
-	default:
-		lib.F패닉("예상하지 못한 경우. '%v'", 질의값.M당일전일구분)
-	}
-
-	일자_문자열 = f영업일_기준_당일().Format("2006/01/02 ")
+	일자_문자열 := time.Now().Format("2006/01/02 ")
 
 	for i, g := range g_모음 {
 		시각_문자열_원본 := lib.F2문자열(g.Chetime[:6])
@@ -898,10 +1039,12 @@ func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *T8
 	return g
 }
 
-func New증시주변자금추이_응답_헤더(g *T8428OutBlock) (값 *xing.S증시주변자금추이_응답_헤더, 에러 error) {
+func New증시주변자금추이_응답_헤더(tr *TR_DATA) (값 *xing.S증시주변자금추이_응답_헤더, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 값 = nil }})
+
+	g := (*T8428OutBlock)(unsafe.Pointer(tr.Data))
 
 	값 = new(xing.S증시주변자금추이_응답_헤더)
 	값.M연속키 = lib.F2문자열(g.Date)
@@ -910,16 +1053,17 @@ func New증시주변자금추이_응답_헤더(g *T8428OutBlock) (값 *xing.S증
 	return 값, nil
 }
 
-func New증시주변자금추이_응답_반복값_모음(g_모음 []T8428OutBlock1) (반복값_모음 []*xing.S증시주변자금추이_응답_반복값, 에러 error) {
+func New증시주변자금추이_응답_반복값_모음(tr *TR_DATA) (반복값_모음 []*xing.S증시주변자금추이_응답_반복값, 에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{
 		M에러: &에러,
 		M함수: func() { 반복값_모음 = nil }})
 
-	반복값_모음 = make([]*xing.S증시주변자금추이_응답_반복값, 0)
+	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+	배열_길이 := int(tr.DataLength) / 크기T8428OutBlock1
+	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
 
-	if len(g_모음) == 0 {
-		return 반복값_모음, nil
-	}
+	g_모음 := (*[1 << 20]T8428OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
+	반복값_모음 = make([]*xing.S증시주변자금추이_응답_반복값, len(g_모음), len(g_모음))
 
 	for _, g := range g_모음 {
 		시각_문자열_원본 := lib.F2문자열(g.Date)

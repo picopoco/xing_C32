@@ -44,8 +44,19 @@ import (
 	"unsafe"
 )
 
-func f콜백(응답값 interface{}) lib.I소켓_메시지 {
-	return lib.New소켓_질의(lib.P주소_Xing_C함수_콜백, lib.P변환형식_기본값, lib.P30초).S질의(응답값).G응답()
+func f콜백(콜백값 interface{}) (에러 error) {
+	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M함수with패닉내역: func(r interface{}) {
+		lib.F문자열_출력("PUB소켓 전송 에러 : %T %v", 콜백값, 콜백값)
+		lib.F에러_출력(r)
+	}})
+
+	소켓_메시지, 에러 := lib.New소켓_메시지(lib.P변환형식_기본값, 콜백값)
+	lib.F에러체크(에러)
+
+	에러 = 소켓_메시지.S소켓_송신_단순형(소켓PUB_콜백)
+	lib.F에러체크(에러)
+
+	return nil
 }
 
 //export OnDisconnected_Go
@@ -58,43 +69,45 @@ func OnDisconnected_Go() {
 
 //export OnTrData_Go
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
-	defer F메모리_해제(unsafe.Pointer(c))
+	defer func() {
+		if c != nil {
+			F메모리_해제(unsafe.Pointer(c))
+		}
+
+		lib.F에러패닉_처리(lib.S에러패닉_처리{M함수with패닉내역: func(r interface{}) {
+			lib.F에러_출력(r)
+		}})
+	}()
 
 	g := (*TR_DATA)(unsafe.Pointer(c))
 
-	응답값 := new(xing.S콜백_TR_데이터)
-	응답값.M콜백 = xing.P콜백_데이터
+	데이터, 에러 := tr데이터_해석(g)
+	lib.F에러체크(에러)
+
+	바이트_변환값, 에러 := lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)
+	lib.F에러체크(에러)
+
+	응답값 := xing.New콜백_TR데이터()
 	응답값.M식별번호 = int(g.RequestID)
-	응답값.TR코드 = lib.F2문자열(g.TrCode)
-	응답값.M소요시간_ms = int(g.ElapsedTime)
-	응답값.M데이터_모드 = int8(g.DataMode)
-
-	switch lib.F2문자열(g.Cont) {
-	case "0", "N":
-		응답값.M연속조회_여부 = false
-	case "1", "Y":
-		응답값.M연속조회_여부 = true
-	default:
-		응답값.M연속조회_여부 = false
-	}
-
-	응답값.M연속키 = lib.F2문자열(g.ContKey)
-	응답값.M블록_이름 = lib.F2문자열(g.BlockName)
-	응답값.M데이터 = C.GoBytes(unsafe.Pointer(g.Data), c.DataLength)
+	응답값.M데이터 = 바이트_변환값
 
 	f콜백(응답값)
 }
 
 //export OnMessageAndError_Go
 func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
-	defer F메모리_해제(unsafe.Pointer(c))
+	defer func() {
+		if c != nil {
+			F메모리_해제(unsafe.Pointer(c))
+		}
+	}()
 
 	g := (*MSG_DATA)(unsafe.Pointer(c))
 
+	// f메시지_해제() 에서 포인터가 필요함.
 	메시지_저장소.S추가(int(g.RequestID), unsafe.Pointer(pointer))
 
-	응답값 := new(xing.S콜백_메시지_및_에러)
-	응답값.M콜백 = xing.P콜백_메시지_및_에러
+	응답값 := xing.New콜백_메시지_및_에러()
 	응답값.M식별번호 = int(g.RequestID)
 
 	switch g.SystemError {
@@ -128,16 +141,29 @@ func OnReleaseData_Go(c C.int) {
 
 //export OnRealtimeData_Go
 func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
-	defer F메모리_해제(unsafe.Pointer(c))
+	defer func() {
+		if c != nil {
+			F메모리_해제(unsafe.Pointer(c))
+		}
+
+		lib.F에러패닉_처리(lib.S에러패닉_처리{M함수with패닉내역: func(r interface{}) {
+			lib.F에러_출력(r)
+		}})
+	}()
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 
-	응답값 := new(xing.S콜백_실시간_데이터)
-	응답값.M콜백 = xing.P콜백_데이터
-	응답값.TR코드 = lib.F2문자열(g.TrCode)
-	응답값.M키_데이터 = C.GoBytes(unsafe.Pointer(&g.KeyData), c.KeyLength)
-	응답값.M등록키 = C.GoBytes(unsafe.Pointer(&g.RegKey), C.int(len(g.RegKey)))
-	응답값.M데이터 = C.GoBytes(unsafe.Pointer(&g.Data), c.DataLength)
+	RT코드 := lib.F2문자열(g.TrCode)
+
+	데이터, 에러 := f실시간_데이터_해석(RT코드, g)
+	lib.F에러체크(에러)
+
+	바이트_변환값, 에러 := lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)
+	lib.F에러체크(에러)
+
+	응답값 := xing.New콜백_실시간_데이터()
+	응답값.RT코드 = RT코드
+	응답값.M데이터 = 바이트_변환값
 
 	f콜백(응답값)
 }
@@ -153,6 +179,7 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	if 정수, 에러 := lib.F2정수(코드); 에러 == nil && 정수 == 0 {
 		ch접속_처리 <- true
 	} else {
+		lib.F체크포인트()
 		ch접속_처리 <- false
 	}
 }

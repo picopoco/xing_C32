@@ -42,19 +42,7 @@ import (
 	"github.com/ghts/types_xing"
 
 	"os"
-	"sync"
-	"time"
 )
-
-var 전일_금일_초기값 = time.Time{}
-var 영업일_기준_전일, 영업일_기준_당일 time.Time
-var 영업일_기준_전일_당일_설정_잠금 sync.Mutex
-
-var tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한_TR코드별)
-var tr전송_코드별_초당_제한 = make(map[string]lib.I전송_권한_TR코드별)
-
-var 메시지_저장소 = New메시지_저장소()
-var 설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/api_bridge_xing/internal/` + "config.ini"
 
 func F초기화() (에러 error) {
 	defer lib.F에러패닉_처리(lib.S에러패닉_처리{M에러: &에러})
@@ -64,9 +52,7 @@ func F초기화() (에러 error) {
 	f초기화_Go루틴()
 	f초기화_서버_접속()
 	f초기화_TR전송_제한()
-
-	lib.F메모("전일 당일 초기화 임시 보류")
-	//f초기화_영업일_기준_전일_당일()
+	f초기화_소켓()
 
 	return nil
 }
@@ -95,9 +81,15 @@ func f초기화_XingAPI() {
 func f초기화_Go루틴() {
 	ch초기화 := make(chan lib.T신호)
 	go Go루틴_소켓_C함수_호출(ch초기화)
-	신호 := <-ch초기화
+	<-ch초기화
+}
 
-	lib.F조건부_패닉(신호 != lib.P신호_초기화, "예상하지 못한 초기화 결과 : '%v'", 신호)
+func f초기화_소켓() {
+	var 에러 error
+	소켓PUB_콜백, 에러 = lib.New소켓PUB(lib.P주소_Xing_C함수_콜백)
+	lib.F에러체크(에러)
+
+	lib.F대기(lib.P1초)
 }
 
 func f초기화_서버_접속() {
@@ -166,9 +158,6 @@ func f초기화_TR전송_제한() {
 }
 
 func f초기화_영업일_기준_전일_당일() {
-	영업일_기준_전일_당일_설정_잠금.Lock()
-	defer 영업일_기준_전일_당일_설정_잠금.Unlock()
-
 	질의값 := xing.New질의값_기간별_주가_조회()
 	질의값.TR구분 = lib.TR조회
 	질의값.TR코드 = xing.TR현물_기간별_조회

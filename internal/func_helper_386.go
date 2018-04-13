@@ -176,7 +176,9 @@ func XingAPI디렉토리() (string, error) {
 	return "", lib.New에러("DLL파일을 찾을 수 없습니다.")
 }
 
-func 자료형_크기_비교_확인() {
+func 자료형_크기_비교_확인() (에러 error) {
+	lib.F에러패닉_처리(lib.S에러패닉_처리{M에러: &에러})
+
 	lib.F조건부_패닉(unsafe.Sizeof(TR_DATA{}) != unsafe.Sizeof(C.TR_DATA_UNPACKED{}), "TR_DATA_UNPACKED 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(REALTIME_DATA{}) != unsafe.Sizeof(C.REALTIME_DATA_UNPACKED{}), "REALTIME_DATA_UNPACKED 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(MSG_DATA{}) != unsafe.Sizeof(C.MSG_DATA_UNPACKED{}), "MSG_DATA_UNPACKED 크기 불일치")
@@ -259,6 +261,8 @@ func 자료형_크기_비교_확인() {
 
 	lib.F조건부_패닉(unsafe.Sizeof(JIFInBlock{}) != unsafe.Sizeof(C.JIFInBlock{}), "JIFInBlock 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(JIFOutBlock{}) != unsafe.Sizeof(C.JIFOutBlock{}), "JIFOutBlock 크기 불일치")
+
+	return nil
 }
 
 func f2시장구분(값 interface{}) lib.T시장구분 {
