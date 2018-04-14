@@ -43,12 +43,12 @@ import (
 func TestXM메시지_구분_상수(t *testing.T) {
 	t.Parallel()
 
-	lib.F테스트_같음(t, pXM_DISCONNECT, pXM_INIT+1)
-	lib.F테스트_같음(t, pXM_RECEIVE_DATA, pXM_INIT+3)
-	lib.F테스트_같음(t, pXM_RECEIVE_REAL_DATA, pXM_INIT+4)
-	lib.F테스트_같음(t, pXM_LOGIN, pXM_INIT+5)
-	lib.F테스트_같음(t, pXM_LOGOUT, pXM_INIT+6)
-	lib.F테스트_같음(t, pXM_TIMEOUT, pXM_INIT+7)
-	lib.F테스트_같음(t, pXM_RECEIVE_LINK_DATA, pXM_INIT+8)
-	lib.F테스트_같음(t, pXM_RECEIVE_REAL_DATA_CHART, pXM_INIT+10)
+	l.F테스트_같음(t, pXM_DISCONNECT, pXM_INIT+1)
+	l.F테스트_같음(t, pXM_RECEIVE_DATA, pXM_INIT+3)
+	l.F테스트_같음(t, pXM_RECEIVE_REAL_DATA, pXM_INIT+4)
+	l.F테스트_같음(t, pXM_LOGIN, pXM_INIT+5)
+	l.F테스트_같음(t, pXM_LOGOUT, pXM_INIT+6)
+	l.F테스트_같음(t, pXM_TIMEOUT, pXM_INIT+7)
+	l.F테스트_같음(t, pXM_RECEIVE_LINK_DATA, pXM_INIT+8)
+	l.F테스트_같음(t, pXM_RECEIVE_REAL_DATA_CHART, pXM_INIT+10)
 }

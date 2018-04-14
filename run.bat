@@ -11,4 +11,4 @@ if EXIST *.exe (
 call %GOPATH%\src\github.com\ghts\ghts_dependency\batch_scripts\32.bat
 cd %GOPATH%\src\github.com\ghts\xing_C32
 
-go build
+go run xing_C32.go

@@ -53,10 +53,10 @@ var (
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
 var (
-	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한_TR코드별)
-	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한_TR코드별)
+	tr전송_코드별_10분당_제한 = make(map[string]l.I전송_권한_TR코드별)
+	tr전송_코드별_초당_제한   = make(map[string]l.I전송_권한_TR코드별)
 
-	설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/xing_C32/internal/config.ini`
+	설정화일_경로 = l.F_GOPATH() + `/src/github.com/ghts/xing_C32/internal/config.ini`
 
 	전일_금일_초기값            = time.Time{}
 	영업일_기준_전일, 영업일_기준_당일 time.Time
