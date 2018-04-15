@@ -41,7 +41,7 @@ import (
 )
 
 func f실시간_데이터_해석(rt *REALTIME_DATA) (값 interface{}, 에러 error) {
-	RT코드 := l.F2문자열(rt.TrCode)
+	RT코드 := lib.F2문자열(rt.TrCode)
 
 	switch RT코드 {
 	case xt.RT현물주문_접수:
@@ -77,30 +77,30 @@ func f실시간_데이터_해석(rt *REALTIME_DATA) (값 interface{}, 에러 err
 		xt.RT지수, xt.RT예상지수,
 		xt.RT실시간_뉴스_제목_패킷,
 		xt.RT업종별_투자자별_매매_현황:
-		return nil, l.New에러("미구현 RT코드 : '%v'", RT코드)
+		return nil, lib.New에러("미구현 RT코드 : '%v'", RT코드)
 	}
 
-	return nil, l.New에러("예상하지 못한 RT코드 : '%v'", RT코드)
+	return nil, lib.New에러("예상하지 못한 RT코드 : '%v'", RT코드)
 }
 
 // SC0
 func New현물주문_접수(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 error) {
 	g := (*SC0_OutBlock)(unsafe.Pointer(rt.Data))
 
-	시각_문자열 := l.F2문자열(g.Ordtm)
+	시각_문자열 := lib.F2문자열(g.Ordtm)
 	시각_문자열 = 시각_문자열[:6] + "." + 시각_문자열[7:]
-	시각 := l.F2금일_시각_단순형("150405.999", 시각_문자열)
+	시각 := lib.F2금일_시각_단순형("150405.999", 시각_문자열)
 
-	종목코드 := l.F2문자열_공백제거(g.Shtcode)
+	종목코드 := lib.F2문자열_공백제거(g.Shtcode)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
 	s := new(xt.S주문_응답)
-	s.M주문번호 = l.F2정수64_단순형(g.Ordno)
-	s.M원_주문번호 = l.F2정수64_단순형_공백은_0(g.Orgordno)
-	s.RT코드 = l.F2문자열(rt.TrCode)
+	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
+	s.M원_주문번호 = lib.F2정수64_단순형_공백은_0(g.Orgordno)
+	s.RT코드 = lib.F2문자열(rt.TrCode)
 	s.M종목코드 = 종목코드
-	s.M수량 = l.F2정수64_단순형(g.Ordqty)
-	s.M가격 = l.F2정수64_단순형(g.Ordprice)
+	s.M수량 = lib.F2정수64_단순형(g.Ordqty)
+	s.M가격 = lib.F2정수64_단순형(g.Ordprice)
 	s.M잔량 = 0
 	s.M시각 = 시각
 
@@ -111,21 +111,21 @@ func New현물주문_접수(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 e
 func New현물주문_체결(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 error) {
 	g := (*SC1_OutBlock)(unsafe.Pointer(rt.Data))
 
-	시각_문자열 := l.F2문자열(g.Exectime)
+	시각_문자열 := lib.F2문자열(g.Exectime)
 	시각_문자열 = 시각_문자열[:6] + "." + 시각_문자열[7:]
-	시각 := l.F2금일_시각_단순형("150405.999", 시각_문자열)
+	시각 := lib.F2금일_시각_단순형("150405.999", 시각_문자열)
 
-	종목코드 := l.F2문자열_공백제거(g.ShtnIsuno)
+	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
 	s := new(xt.S주문_응답)
-	s.M주문번호 = l.F2정수64_단순형(g.Ordno)
-	s.M원_주문번호 = l.F2정수64_단순형_공백은_0(g.Orgordno)
-	s.RT코드 = l.F2문자열(rt.TrCode)
+	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
+	s.M원_주문번호 = lib.F2정수64_단순형_공백은_0(g.Orgordno)
+	s.RT코드 = lib.F2문자열(rt.TrCode)
 	s.M종목코드 = 종목코드
-	s.M수량 = l.F2정수64_단순형(g.Execqty)
-	s.M가격 = l.F2정수64_단순형(g.Execprc)
-	s.M잔량 = l.F2정수64_단순형(g.Unercqty)
+	s.M수량 = lib.F2정수64_단순형(g.Execqty)
+	s.M가격 = lib.F2정수64_단순형(g.Execprc)
+	s.M잔량 = lib.F2정수64_단순형(g.Unercqty)
 	s.M시각 = 시각
 
 	return s, nil
@@ -134,21 +134,21 @@ func New현물주문_체결(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 e
 func New현물주문_정정(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 error) {
 	g := (*SC2_OutBlock)(unsafe.Pointer(rt.Data))
 
-	시각_문자열 := l.F2문자열(g.Exectime)
+	시각_문자열 := lib.F2문자열(g.Exectime)
 	시각_문자열 = 시각_문자열[:6] + "." + 시각_문자열[7:]
-	시각 := l.F2금일_시각_단순형("150405.999", 시각_문자열)
+	시각 := lib.F2금일_시각_단순형("150405.999", 시각_문자열)
 
-	종목코드 := l.F2문자열_공백제거(g.ShtnIsuno)
+	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
 	s := new(xt.S주문_응답)
-	s.M주문번호 = l.F2정수64_단순형(g.Ordno)
-	s.M원_주문번호 = l.F2정수64_단순형(g.Orgordno)
-	s.RT코드 = l.F2문자열(rt.TrCode)
+	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
+	s.M원_주문번호 = lib.F2정수64_단순형(g.Orgordno)
+	s.RT코드 = lib.F2문자열(rt.TrCode)
 	s.M종목코드 = 종목코드
-	s.M수량 = l.F2정수64_단순형(g.Mdfycnfqty)
-	s.M가격 = l.F2정수64_단순형(g.Mdfycnfprc)
-	s.M잔량 = l.F2정수64_단순형(g.Unercqty)
+	s.M수량 = lib.F2정수64_단순형(g.Mdfycnfqty)
+	s.M가격 = lib.F2정수64_단순형(g.Mdfycnfprc)
+	s.M잔량 = lib.F2정수64_단순형(g.Unercqty)
 	s.M시각 = 시각
 
 	return s, nil
@@ -157,20 +157,20 @@ func New현물주문_정정(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 e
 func New현물주문_취소(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 error) {
 	g := (*SC3_OutBlock)(unsafe.Pointer(rt.Data))
 
-	시각_문자열 := l.F2문자열(g.Exectime)
+	시각_문자열 := lib.F2문자열(g.Exectime)
 	시각_문자열 = 시각_문자열[:6] + "." + 시각_문자열[7:]
-	시각 := l.F2금일_시각_단순형("150405.999", 시각_문자열)
+	시각 := lib.F2금일_시각_단순형("150405.999", 시각_문자열)
 
-	종목코드 := l.F2문자열_공백제거(g.ShtnIsuno)
+	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
 	s := new(xt.S주문_응답)
-	s.M주문번호 = l.F2정수64_단순형(g.Ordno)
-	s.M원_주문번호 = l.F2정수64_단순형(g.Orgordno)
-	s.RT코드 = l.F2문자열(rt.TrCode)
+	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
+	s.M원_주문번호 = lib.F2정수64_단순형(g.Orgordno)
+	s.RT코드 = lib.F2문자열(rt.TrCode)
 	s.M종목코드 = 종목코드
-	s.M수량 = l.F2정수64_단순형(g.Canccnfqty)
-	s.M잔량 = l.F2정수64_단순형(g.Orgordunercqty)
+	s.M수량 = lib.F2정수64_단순형(g.Canccnfqty)
+	s.M잔량 = lib.F2정수64_단순형(g.Orgordunercqty)
 	s.M시각 = 시각
 
 	return s, nil
@@ -179,21 +179,21 @@ func New현물주문_취소(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 e
 func New현물주문_거부(rt *REALTIME_DATA) (값 *xt.S주문_응답, 에러 error) {
 	g := (*SC4_OutBlock)(unsafe.Pointer(rt.Data))
 
-	시각_문자열 := l.F2문자열(g.Exectime)
+	시각_문자열 := lib.F2문자열(g.Exectime)
 	시각_문자열 = 시각_문자열[:6] + "." + 시각_문자열[7:]
-	시각 := l.F2금일_시각_단순형("150405.999", 시각_문자열)
+	시각 := lib.F2금일_시각_단순형("150405.999", 시각_문자열)
 
-	종목코드 := l.F2문자열_공백제거(g.ShtnIsuno)
+	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
 	s := new(xt.S주문_응답)
-	s.M주문번호 = l.F2정수64_단순형(g.Ordno)
-	s.M원_주문번호 = l.F2정수64_단순형(g.Orgordno)
-	s.RT코드 = l.F2문자열(rt.TrCode)
+	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
+	s.M원_주문번호 = lib.F2정수64_단순형(g.Orgordno)
+	s.RT코드 = lib.F2문자열(rt.TrCode)
 	s.M종목코드 = 종목코드
-	s.M수량 = l.F2정수64_단순형(g.Rjtqty)
-	s.M잔량 = l.F2정수64_단순형(g.Unercqty)
-	l.F문자열_출력("%v", l.F2문자열(g.Exectime))
+	s.M수량 = lib.F2정수64_단순형(g.Rjtqty)
+	s.M잔량 = lib.F2정수64_단순형(g.Unercqty)
+	lib.F문자열_출력("%v", lib.F2문자열(g.Exectime))
 	s.M시각 = 시각
 
 	return s, nil
@@ -203,42 +203,42 @@ func New코스피_호가_잔량(rt *REALTIME_DATA) (값 *xt.S코스피_호가_�
 	g := (*H1_OutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S코스피_호가_잔량_실시간_정보)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M시각 = l.F2금일_시각_단순형("150405", g.Hotime)
-	s.M동시호가_구분 = xt.T동시호가_구분(l.F2정수64_단순형(g.Donsigubun))
-	s.M배분적용_구분 = l.F2참거짓(g.Gubun, " ", false)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M시각 = lib.F2금일_시각_단순형("150405", g.Hotime)
+	s.M동시호가_구분 = xt.T동시호가_구분(lib.F2정수64_단순형(g.Donsigubun))
+	s.M배분적용_구분 = lib.F2참거짓(g.Gubun, " ", false)
 
 	매도호가_모음 := []int64{
-		l.F2정수64_단순형(g.Offerho1), l.F2정수64_단순형(g.Offerho2), l.F2정수64_단순형(g.Offerho3),
-		l.F2정수64_단순형(g.Offerho4), l.F2정수64_단순형(g.Offerho5), l.F2정수64_단순형(g.Offerho6),
-		l.F2정수64_단순형(g.Offerho7), l.F2정수64_단순형(g.Offerho8), l.F2정수64_단순형(g.Offerho9),
-		l.F2정수64_단순형(g.Offerho10)}
+		lib.F2정수64_단순형(g.Offerho1), lib.F2정수64_단순형(g.Offerho2), lib.F2정수64_단순형(g.Offerho3),
+		lib.F2정수64_단순형(g.Offerho4), lib.F2정수64_단순형(g.Offerho5), lib.F2정수64_단순형(g.Offerho6),
+		lib.F2정수64_단순형(g.Offerho7), lib.F2정수64_단순형(g.Offerho8), lib.F2정수64_단순형(g.Offerho9),
+		lib.F2정수64_단순형(g.Offerho10)}
 
 	매도잔량_모음 := []int64{
-		l.F2정수64_단순형(g.Offerrem1), l.F2정수64_단순형(g.Offerrem2), l.F2정수64_단순형(g.Offerrem3),
-		l.F2정수64_단순형(g.Offerrem4), l.F2정수64_단순형(g.Offerrem5), l.F2정수64_단순형(g.Offerrem6),
-		l.F2정수64_단순형(g.Offerrem7), l.F2정수64_단순형(g.Offerrem8), l.F2정수64_단순형(g.Offerrem9),
-		l.F2정수64_단순형(g.Offerrem10)}
+		lib.F2정수64_단순형(g.Offerrem1), lib.F2정수64_단순형(g.Offerrem2), lib.F2정수64_단순형(g.Offerrem3),
+		lib.F2정수64_단순형(g.Offerrem4), lib.F2정수64_단순형(g.Offerrem5), lib.F2정수64_단순형(g.Offerrem6),
+		lib.F2정수64_단순형(g.Offerrem7), lib.F2정수64_단순형(g.Offerrem8), lib.F2정수64_단순형(g.Offerrem9),
+		lib.F2정수64_단순형(g.Offerrem10)}
 
 	매수호가_모음 := []int64{
-		l.F2정수64_단순형(g.Bidho1), l.F2정수64_단순형(g.Bidho2), l.F2정수64_단순형(g.Bidho3),
-		l.F2정수64_단순형(g.Bidho4), l.F2정수64_단순형(g.Bidho5), l.F2정수64_단순형(g.Bidho6),
-		l.F2정수64_단순형(g.Bidho7), l.F2정수64_단순형(g.Bidho8), l.F2정수64_단순형(g.Bidho9),
-		l.F2정수64_단순형(g.Bidho10)}
+		lib.F2정수64_단순형(g.Bidho1), lib.F2정수64_단순형(g.Bidho2), lib.F2정수64_단순형(g.Bidho3),
+		lib.F2정수64_단순형(g.Bidho4), lib.F2정수64_단순형(g.Bidho5), lib.F2정수64_단순형(g.Bidho6),
+		lib.F2정수64_단순형(g.Bidho7), lib.F2정수64_단순형(g.Bidho8), lib.F2정수64_단순형(g.Bidho9),
+		lib.F2정수64_단순형(g.Bidho10)}
 
 	매수잔량_모음 := []int64{
-		l.F2정수64_단순형(g.Bidrem1), l.F2정수64_단순형(g.Bidrem2), l.F2정수64_단순형(g.Bidrem3),
-		l.F2정수64_단순형(g.Bidrem4), l.F2정수64_단순형(g.Bidrem5), l.F2정수64_단순형(g.Bidrem6),
-		l.F2정수64_단순형(g.Bidrem7), l.F2정수64_단순형(g.Bidrem8), l.F2정수64_단순형(g.Bidrem9),
-		l.F2정수64_단순형(g.Bidrem10)}
+		lib.F2정수64_단순형(g.Bidrem1), lib.F2정수64_단순형(g.Bidrem2), lib.F2정수64_단순형(g.Bidrem3),
+		lib.F2정수64_단순형(g.Bidrem4), lib.F2정수64_단순형(g.Bidrem5), lib.F2정수64_단순형(g.Bidrem6),
+		lib.F2정수64_단순형(g.Bidrem7), lib.F2정수64_단순형(g.Bidrem8), lib.F2정수64_단순형(g.Bidrem9),
+		lib.F2정수64_단순형(g.Bidrem10)}
 
 	if len(매도호가_모음) != len(매도잔량_모음) {
-		return nil, l.New에러("매도호가, 매도잔량 수량이 서로 다름. %v %v",
+		return nil, lib.New에러("매도호가, 매도잔량 수량이 서로 다름. %v %v",
 			len(매도호가_모음), len(매도잔량_모음))
 	}
 
 	if len(매수호가_모음) != len(매수잔량_모음) {
-		return nil, l.New에러("매수호가, 매수잔량 수량이 서로 다름. %v %v",
+		return nil, lib.New에러("매수호가, 매수잔량 수량이 서로 다름. %v %v",
 			len(매수호가_모음), len(매수잔량_모음))
 	}
 
@@ -264,8 +264,8 @@ func New코스피_호가_잔량(rt *REALTIME_DATA) (값 *xt.S코스피_호가_�
 		s.M매수잔량_모음 = append(s.M매수잔량_모음, 매수잔량_모음[i])
 	}
 
-	s.M매도_총잔량 = l.F2정수64_단순형(g.Totofferrem)
-	s.M매수_총잔량 = l.F2정수64_단순형(g.Totbidrem)
+	s.M매도_총잔량 = lib.F2정수64_단순형(g.Totofferrem)
+	s.M매수_총잔량 = lib.F2정수64_단순형(g.Totbidrem)
 
 	return s, nil
 }
@@ -274,12 +274,12 @@ func New코스피_시간외_호가_잔량(rt *REALTIME_DATA) (값 *xt.S코스피
 	g := (*H2_OutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S코스피_시간외_호가_잔량_실시간_정보)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M시각 = l.F2금일_시각_단순형("150405", g.Hotime)
-	s.M매도잔량 = l.F2정수64_단순형(g.Tmofferrem)
-	s.M매수잔량 = l.F2정수64_단순형(g.Tmbidrem)
-	s.M매도수량_직전대비 = l.F2정수64_단순형(g.Pretmoffercha)
-	s.M매수수량_직전대비 = l.F2정수64_단순형(g.Pretmbidcha)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M시각 = lib.F2금일_시각_단순형("150405", g.Hotime)
+	s.M매도잔량 = lib.F2정수64_단순형(g.Tmofferrem)
+	s.M매수잔량 = lib.F2정수64_단순형(g.Tmbidrem)
+	s.M매도수량_직전대비 = lib.F2정수64_단순형(g.Pretmoffercha)
+	s.M매수수량_직전대비 = lib.F2정수64_단순형(g.Pretmbidcha)
 
 	return s, nil
 }
@@ -288,52 +288,52 @@ func New코스피_체결(rt *REALTIME_DATA) (값 *xt.S코스피_체결, 에러 e
 	g := (*S3_OutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S코스피_체결)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M시각 = l.F2금일_시각_단순형("150405", g.Chetime)
-	s.M전일대비구분 = xt.T전일대비_구분(l.F2정수64_단순형(g.Sign))
-	s.M전일대비등락폭 = l.F2정수64_단순형(g.Change)
-	s.M전일대비등락율 = l.F2실수_단순형(g.Drate)
-	s.M현재가 = l.F2정수64_단순형(g.Price)
-	s.M시가시각 = l.F2금일_시각_단순형("150405", g.Opentime)
-	s.M시가 = l.F2정수64_단순형(g.Open)
-	s.M고가시각 = l.F2금일_시각_단순형("150405", g.Hightime)
-	s.M고가 = l.F2정수64_단순형(g.High)
-	s.M저가시각 = l.F2금일_시각_단순형("150405", g.Lowtime)
-	s.M저가 = l.F2정수64_단순형(g.Low)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M시각 = lib.F2금일_시각_단순형("150405", g.Chetime)
+	s.M전일대비구분 = xt.T전일대비_구분(lib.F2정수64_단순형(g.Sign))
+	s.M전일대비등락폭 = lib.F2정수64_단순형(g.Change)
+	s.M전일대비등락율 = lib.F2실수_단순형(g.Drate)
+	s.M현재가 = lib.F2정수64_단순형(g.Price)
+	s.M시가시각 = lib.F2금일_시각_단순형("150405", g.Opentime)
+	s.M시가 = lib.F2정수64_단순형(g.Open)
+	s.M고가시각 = lib.F2금일_시각_단순형("150405", g.Hightime)
+	s.M고가 = lib.F2정수64_단순형(g.High)
+	s.M저가시각 = lib.F2금일_시각_단순형("150405", g.Lowtime)
+	s.M저가 = lib.F2정수64_단순형(g.Low)
 
-	switch l.F2문자열(g.Cgubun) {
+	switch lib.F2문자열(g.Cgubun) {
 	case "+":
-		s.M체결구분 = l.P매수
+		s.M체결구분 = lib.P매수
 	case "-":
-		s.M체결구분 = l.P매도
+		s.M체결구분 = lib.P매도
 	default:
-		panic(l.F2문자열("예상하지 못한 체결구분 값 : '%v'", l.F2문자열(g.Cgubun)))
+		panic(lib.F2문자열("예상하지 못한 체결구분 값 : '%v'", lib.F2문자열(g.Cgubun)))
 	}
 
-	s.M체결량 = l.F2정수64_단순형(g.Cvolume)
-	s.M누적거래량 = l.F2정수64_단순형(g.Volume)
-	s.M누적거래대금 = l.F2정수64_단순형(g.Value)
-	s.M매도누적체결량 = l.F2정수64_단순형(g.Mdvolume)
-	s.M매도누적체결건수 = l.F2정수64_단순형(g.Mdchecnt)
-	s.M매수누적체결량 = l.F2정수64_단순형(g.Msvolume)
-	s.M매수누적체결건수 = l.F2정수64_단순형(g.Mschecnt)
-	s.M체결강도 = l.F2실수_단순형(g.Cpower)
-	s.M가중평균가 = l.F2정수64_단순형(g.WAvrg)
-	s.M매도호가 = l.F2정수64_단순형(g.Offerho)
-	s.M매수호가 = l.F2정수64_단순형(g.Bidho)
+	s.M체결량 = lib.F2정수64_단순형(g.Cvolume)
+	s.M누적거래량 = lib.F2정수64_단순형(g.Volume)
+	s.M누적거래대금 = lib.F2정수64_단순형(g.Value)
+	s.M매도누적체결량 = lib.F2정수64_단순형(g.Mdvolume)
+	s.M매도누적체결건수 = lib.F2정수64_단순형(g.Mdchecnt)
+	s.M매수누적체결량 = lib.F2정수64_단순형(g.Msvolume)
+	s.M매수누적체결건수 = lib.F2정수64_단순형(g.Mschecnt)
+	s.M체결강도 = lib.F2실수_단순형(g.Cpower)
+	s.M가중평균가 = lib.F2정수64_단순형(g.WAvrg)
+	s.M매도호가 = lib.F2정수64_단순형(g.Offerho)
+	s.M매수호가 = lib.F2정수64_단순형(g.Bidho)
 
-	switch l.F2문자열_공백제거(g.Status) {
+	switch lib.F2문자열_공백제거(g.Status) {
 	case "0", "00":
-		s.M장_정보 = l.P장_중
+		s.M장_정보 = lib.P장_중
 	case "4", "04":
-		s.M장_정보 = l.P장_후_시간외
+		s.M장_정보 = lib.P장_후_시간외
 	case "10":
-		s.M장_정보 = l.P장_전_시간외
+		s.M장_정보 = lib.P장_전_시간외
 	default:
-		panic(l.F2문자열("예상하지 못한 장 정보 값 : '%v'", l.F2문자열_공백제거(g.Status)))
+		panic(lib.F2문자열("예상하지 못한 장 정보 값 : '%v'", lib.F2문자열_공백제거(g.Status)))
 	}
 
-	s.M전일동시간대거래량 = l.F2정수64_단순형(g.Jnilvolume)
+	s.M전일동시간대거래량 = lib.F2정수64_단순형(g.Jnilvolume)
 
 	return s, nil
 }
@@ -342,17 +342,17 @@ func New코스피_예상_체결(rt *REALTIME_DATA) (값 *xt.S코스피_예상_�
 	g := (*YS3OutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S코스피_예상_체결)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M시각 = l.F2금일_시각_단순형("150405", g.Hotime)
-	s.M예상체결가격 = l.F2정수64_단순형(g.Yeprice)
-	s.M예상체결수량 = l.F2정수64_단순형(g.Yevolume)
-	s.M예상체결가전일종가대비구분 = xt.T전일대비_구분(l.F2정수64_단순형(g.Jnilysign))
-	s.M예상체결가전일종가대비등락폭 = l.F2정수64_단순형(g.Preychange)
-	s.M예상체결가전일종가대비등락율 = l.F2실수_단순형(g.Jnilydrate)
-	s.M예상매도호가 = l.F2정수64_단순형(g.Yofferho0)
-	s.M예상매수호가 = l.F2정수64_단순형(g.Ybidho0)
-	s.M예상매도호가수량 = l.F2정수64_단순형(g.Yofferrem0)
-	s.M예상매수호가수량 = l.F2정수64_단순형(g.Ybidrem0)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M시각 = lib.F2금일_시각_단순형("150405", g.Hotime)
+	s.M예상체결가격 = lib.F2정수64_단순형(g.Yeprice)
+	s.M예상체결수량 = lib.F2정수64_단순형(g.Yevolume)
+	s.M예상체결가전일종가대비구분 = xt.T전일대비_구분(lib.F2정수64_단순형(g.Jnilysign))
+	s.M예상체결가전일종가대비등락폭 = lib.F2정수64_단순형(g.Preychange)
+	s.M예상체결가전일종가대비등락율 = lib.F2실수_단순형(g.Jnilydrate)
+	s.M예상매도호가 = lib.F2정수64_단순형(g.Yofferho0)
+	s.M예상매수호가 = lib.F2정수64_단순형(g.Ybidho0)
+	s.M예상매도호가수량 = lib.F2정수64_단순형(g.Yofferrem0)
+	s.M예상매수호가수량 = lib.F2정수64_단순형(g.Ybidrem0)
 
 	return s, nil
 }
@@ -361,20 +361,20 @@ func New코스피_ETF_NAV(rt *REALTIME_DATA) (값 *xt.S코스피_ETF_NAV, 에러
 	g := (*I5_OutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S코스피_ETF_NAV)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M시각 = l.F2금일_시각_단순형("15:04:05", g.Time)
-	s.M현재가 = l.F2정수64_단순형(g.Price)
-	s.M전일대비구분 = xt.T전일대비_구분(l.F2정수64_단순형(g.Sign))
-	s.M전일대비등락폭 = l.F2정수64_단순형(g.Change)
-	s.M누적거래량 = l.F2실수_단순형(g.Volume)
-	s.M현재가NAV차이 = l.F2실수_단순형(g.Navdiff)
-	s.NAV = l.F2실수_단순형(g.Nav)
-	s.NAV전일대비 = l.F2실수_단순형(g.Navdiff)
-	s.M추적오차 = l.F2실수_단순형_공백은_0(g.Crate)
-	s.M괴리 = l.F2실수_단순형_공백은_0(g.Grate)
-	s.M지수 = l.F2실수_단순형_공백은_0(g.Jisu)
-	s.M지수전일대비등락폭 = l.F2실수_단순형_공백은_0(g.Jichange)
-	s.M지수전일대비등락율 = l.F2실수_단순형_공백은_0(g.Jirate)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M시각 = lib.F2금일_시각_단순형("15:04:05", g.Time)
+	s.M현재가 = lib.F2정수64_단순형(g.Price)
+	s.M전일대비구분 = xt.T전일대비_구분(lib.F2정수64_단순형(g.Sign))
+	s.M전일대비등락폭 = lib.F2정수64_단순형(g.Change)
+	s.M누적거래량 = lib.F2실수_단순형(g.Volume)
+	s.M현재가NAV차이 = lib.F2실수_단순형(g.Navdiff)
+	s.NAV = lib.F2실수_단순형(g.Nav)
+	s.NAV전일대비 = lib.F2실수_단순형(g.Navdiff)
+	s.M추적오차 = lib.F2실수_단순형_공백은_0(g.Crate)
+	s.M괴리 = lib.F2실수_단순형_공백은_0(g.Grate)
+	s.M지수 = lib.F2실수_단순형_공백은_0(g.Jisu)
+	s.M지수전일대비등락폭 = lib.F2실수_단순형_공백은_0(g.Jichange)
+	s.M지수전일대비등락율 = lib.F2실수_단순형_공백은_0(g.Jirate)
 
 	return s, nil
 }
@@ -383,13 +383,13 @@ func New주식_VI발동해제(rt *REALTIME_DATA) (값 *xt.S주식_VI발동해제
 	g := (*VI_OutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S주식_VI발동해제)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M참조코드 = l.F2문자열(g.Ref_shcode)
-	s.M시각 = l.F2금일_시각_단순형("150405", g.Time)
-	s.M구분 = xt.VI발동해제(l.F2정수64_단순형(g.Vi_gubun))
-	s.M정적VI발동_기준가격 = l.F2정수64_단순형(g.Svi_recprice)
-	s.M동적VI발동_기준가격 = l.F2정수64_단순형(g.Dvi_recprice)
-	s.VI발동가격 = l.F2정수64_단순형(g.Vi_trgprice)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M참조코드 = lib.F2문자열(g.Ref_shcode)
+	s.M시각 = lib.F2금일_시각_단순형("150405", g.Time)
+	s.M구분 = xt.VI발동해제(lib.F2정수64_단순형(g.Vi_gubun))
+	s.M정적VI발동_기준가격 = lib.F2정수64_단순형(g.Svi_recprice)
+	s.M동적VI발동_기준가격 = lib.F2정수64_단순형(g.Dvi_recprice)
+	s.VI발동가격 = lib.F2정수64_단순형(g.Vi_trgprice)
 
 	return s, nil
 }
@@ -398,13 +398,13 @@ func New시간외_단일가VI발동해제(rt *REALTIME_DATA) (값 *xt.S시간외
 	g := (*DVIOutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S시간외_단일가VI발동해제)
-	s.M종목코드 = l.F2문자열(g.Shcode)
-	s.M참조코드 = l.F2문자열(g.Ref_shcode)
-	s.M시각 = l.F2금일_시각_단순형("150405", g.Time)
-	s.M구분 = xt.VI발동해제(l.F2정수64_단순형(g.Vi_gubun))
-	s.M정적VI발동_기준가격 = l.F2정수64_단순형(g.Svi_recprice)
-	s.M동적VI발동_기준가격 = l.F2정수64_단순형(g.Dvi_recprice)
-	s.VI발동가격 = l.F2정수64_단순형(g.Vi_trgprice)
+	s.M종목코드 = lib.F2문자열(g.Shcode)
+	s.M참조코드 = lib.F2문자열(g.Ref_shcode)
+	s.M시각 = lib.F2금일_시각_단순형("150405", g.Time)
+	s.M구분 = xt.VI발동해제(lib.F2정수64_단순형(g.Vi_gubun))
+	s.M정적VI발동_기준가격 = lib.F2정수64_단순형(g.Svi_recprice)
+	s.M동적VI발동_기준가격 = lib.F2정수64_단순형(g.Dvi_recprice)
+	s.VI발동가격 = lib.F2정수64_단순형(g.Vi_trgprice)
 
 	return s, nil
 }
@@ -413,8 +413,8 @@ func New장_운영정보(rt *REALTIME_DATA) (값 *xt.S장_운영정보, 에러 e
 	g := (*JIFOutBlock)(unsafe.Pointer(rt.Data))
 
 	s := new(xt.S장_운영정보)
-	s.M장_구분 = xt.T시장구분(l.F2문자열(g.Jangubun))
-	s.M장_상태 = xt.T시장상태(l.F2정수_단순형(g.Jstatus))
+	s.M장_구분 = xt.T시장구분(lib.F2문자열(g.Jangubun))
+	s.M장_상태 = xt.T시장상태(lib.F2정수_단순형(g.Jstatus))
 
 	return s, nil
 }

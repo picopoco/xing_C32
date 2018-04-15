@@ -37,27 +37,39 @@ import (
 	"github.com/ghts/lib"
 
 	"testing"
+	"github.com/go-mangos/mangos"
 )
 
 func TestMain(m *testing.M) {
-	defer func() {
-		f테스트_정리()
-		l.F테스트_모드_종료()
-	}()
+	f테스트_준비()
+	defer f테스트_정리()
 
-	l.F테스트_모드_시작()
-	l.F에러체크(F초기화())
 	m.Run()
+}
+
+func f테스트_준비() (에러 error){
+	defer lib.S에러패닉_처리기{M에러_포인터:&에러}.S실행()
+
+	lib.F테스트_모드_시작()
+	확인(F초기화())
+
+	소켓REP_테스트용_TR수신 = 확인(lib.New소켓REP(lib.P주소_Xing_TR)).(mangos.Socket)
+	소켓SUB_테스트용_콜백 = 확인(lib.New소켓SUB(lib.P주소_Xing_C함수_콜백)).(mangos.Socket)
+	소켓SUB_테스트용_실시간정보 = 확인(lib.New소켓SUB(lib.P주소_Xing_C함수_실시간)).(mangos.Socket)
+
+	return nil
 }
 
 func f테스트_정리() {
 	F실시간_정보_모두_해지()
 	F로그아웃_및_접속해제()
 	F자원_해제()
-	l.F공통_종료_채널_닫기()
-	l.F테스트_모드_종료()
+	lib.F공통_종료_채널_닫기()
+	lib.F테스트_모드_종료()
 
 	if 소켓PUB_콜백 != nil {
 		소켓PUB_콜백.Close()
 	}
+
+	lib.F테스트_모드_종료()
 }

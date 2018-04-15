@@ -45,18 +45,9 @@ import (
 )
 
 func f콜백(콜백값 interface{}) (에러 error) {
-	defer l.F에러패닉_처리(l.S에러패닉_처리{M함수with패닉내역: func(r interface{}) {
-		l.F문자열_출력("PUB소켓 전송 에러 : %T %v", 콜백값, 콜백값)
-		l.F에러_출력(r)
-	}})
+	defer lib.S에러패닉_처리기{ M에러_포인터:&에러 }.S실행()
 
-	소켓_메시지, 에러 := l.New소켓_메시지(l.P변환형식_기본값, 콜백값)
-	l.F에러체크(에러)
-
-	에러 = 소켓_메시지.S소켓_송신_기본형(소켓PUB_콜백)
-	l.F에러체크(에러)
-
-	return nil
+	return lib.New소켓_메시지_단순형(lib.P변환형식_기본값, 콜백값).S소켓_송신_기본형(소켓PUB_콜백)
 }
 
 //export OnDisconnected_Go
@@ -70,23 +61,13 @@ func OnDisconnected_Go() {
 //export OnTrData_Go
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	defer func() {
-		if c != nil {
-			F메모리_해제(unsafe.Pointer(c))
-		}
-
-		l.F에러패닉_처리(l.S에러패닉_처리{M함수with패닉내역: func(r interface{}) {
-			l.F에러_출력(r)
-		}})
-	}()
+		F메모리_해제(unsafe.Pointer(c))
+		lib.S에러패닉_처리기{}.S실행() }()
 
 	g := (*TR_DATA)(unsafe.Pointer(c))
 
-	데이터, 에러 := tr데이터_해석(g)
-	l.F에러체크(에러)
-
-	바이트_변환값, 에러 := l.New바이트_변환_매개체(l.P변환형식_기본값, 데이터)
-	l.F에러체크(에러)
-
+	데이터 := 확인(tr데이터_해석(g))
+	바이트_변환값 := 확인(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
 	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
 
 	f콜백(콜백값)
@@ -109,13 +90,13 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 	case 1: // 에러 메시지
 		에러여부 = true
 	default:
-		panic(l.F2문자열("예상하지 못한 구분값. '%v'", g.SystemError))
+		panic(lib.F2문자열("예상하지 못한 구분값. '%v'", g.SystemError))
 	}
 
 	콜백값 := xt.New콜백_메시지_및_에러()
 	콜백값.M식별번호 = int(g.RequestID)
-	콜백값.M코드 = l.F2문자열_공백제거(g.MsgCode)
-	콜백값.M내용 = l.F2문자열_공백제거(g.MsgData)
+	콜백값.M코드 = lib.F2문자열_공백제거(g.MsgCode)
+	콜백값.M내용 = lib.F2문자열_공백제거(g.MsgData)
 	콜백값.M에러여부 = 에러여부
 
 	// f메시지_해제() 에서 포인터가 필요함.
@@ -145,25 +126,15 @@ func OnReleaseData_Go(c C.int) {
 func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
 	defer func() {
 		F메모리_해제(unsafe.Pointer(c))
-
-		l.F에러패닉_처리(l.S에러패닉_처리{M함수with패닉내역: func(r interface{}) {
-			l.F에러_출력(r)
-		}})
-	}()
+		lib.S에러패닉_처리기{}.S실행() }()
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 
-	데이터, 에러 := f실시간_데이터_해석(g)
-	l.F에러체크(에러)
-
-	바이트_변환값, 에러 := l.New바이트_변환_매개체(l.P변환형식_기본값, 데이터)
-	l.F에러체크(에러)
-
+	데이터 := 확인(f실시간_데이터_해석(g))
+	바이트_변환값 := 확인(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
 	값 := xt.New콜백_실시간_데이터(바이트_변환값)
-
-	소켓_메시지, 에러 := l.New소켓_메시지(l.MsgPack, 값)
-	l.F에러체크(에러)
-	l.F에러체크(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
+	소켓_메시지 := 확인(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
+	확인(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
 }
 
 //export OnLogin_Go
@@ -172,12 +143,12 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	//메시지 := C.GoString(lParam)
 
 	// '접속_처리_잠금'에 의해서 접속 처리는 1개씩만 처리되므로, 'ch접속_처리'는 비어있어야 함.
-	l.F조건부_패닉(len(ch접속_처리) > 0, "'ch접속_처리'는 비어있어야 함.")
+	lib.F조건부_패닉(len(ch접속_처리) > 0, "'ch접속_처리'는 비어있어야 함.")
 
-	if 정수, 에러 := l.F2정수(코드); 에러 == nil && 정수 == 0 {
+	if 정수, 에러 := lib.F2정수(코드); 에러 == nil && 정수 == 0 {
 		ch접속_처리 <- true
 	} else {
-		l.F체크포인트()
+		lib.F체크포인트()
 		ch접속_처리 <- false
 	}
 }

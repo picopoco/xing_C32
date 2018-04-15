@@ -59,21 +59,21 @@ func F접속(서버_구분 xt.T서버_구분) bool {
 
 	switch 서버_구분 {
 	case xt.P서버_실거래:
-		if l.F테스트_모드_실행_중() {
+		if lib.F테스트_모드_실행_중() {
 			panic("테스트 모드에서 실서버 접속 시도.")
 		}
 
 		c서버_이름 = C.CString("hts.ebestsec.co.kr")
 		c포트_번호 = C.int(20001)
 	case xt.P서버_모의투자:
-		if !l.F테스트_모드_실행_중() {
+		if !lib.F테스트_모드_실행_중() {
 			panic("실제 운용 모드에서 모의투자서버 접속 시도.")
 		}
 
 		c서버_이름 = C.CString("demo.ebestsec.co.kr")
 		c포트_번호 = C.int(20001)
 	case xt.P서버_XingACE:
-		if !l.F테스트_모드_실행_중() {
+		if !lib.F테스트_모드_실행_중() {
 			panic("실제 운용 모드에서 XingACE 가상거래소 접속 시도.")
 		}
 
@@ -92,50 +92,38 @@ func F접속됨() bool {
 
 func F로그아웃_및_접속해제() error {
 	if !bool(C.etkLogout()) {
-		return l.New에러("로그아웃 실패.")
+		return lib.New에러("로그아웃 실패.")
 	}
 
 	if !bool(C.etkDisconnect()) {
-		return l.New에러("접속 해제 실패.")
+		return lib.New에러("접속 해제 실패.")
 	}
 
 	return nil
 }
 
 func F로그인() bool {
-	if l.F파일_없음(설정화일_경로) {
+	if lib.F파일_없음(설정화일_경로) {
 		버퍼 := new(bytes.Buffer)
 		버퍼.WriteString("Xing 설정화일 없음\n")
 		버퍼.WriteString("%v가 존재하지 않습니다.\n")
 		버퍼.WriteString("sample_config.ini를 참조하여 새로 생성하십시오.")
-		panic(l.F2문자열(버퍼.String(), 설정화일_경로))
+		panic(lib.F2문자열(버퍼.String(), 설정화일_경로))
 	}
 
-	cfg파일, 에러 := ini.Load(설정화일_경로)
-	l.F에러체크(에러)
+	cfg파일 := 확인(ini.Load(설정화일_경로)).(*ini.File)
+	섹션 := 확인(cfg파일.GetSection("XingAPI_LogIn_Info")).(*ini.Section)
 
-	섹션, 에러 := cfg파일.GetSection("XingAPI_LogIn_Info")
-	l.F에러체크(에러)
-
-	키_ID, 에러 := 섹션.GetKey("ID")
-	l.F에러체크(에러)
+	키_ID := 확인(섹션.GetKey("ID")).(*ini.Key)
 	c아이디 := C.CString(키_ID.String())
 	defer C.free(unsafe.Pointer(c아이디))
 
-	키_PWD, 에러 := 섹션.GetKey("PWD")
-	l.F에러체크(에러)
+	키_PWD := 확인(섹션.GetKey("PWD")).(*ini.Key)
 	c암호 := C.CString(키_PWD.String())
 	defer C.free(unsafe.Pointer(c암호))
 
-	var 공인인증서_암호 string
-	if l.F테스트_모드_실행_중() {
-		공인인증서_암호 = ""
-	} else {
-		키_CertPWD, 에러 := 섹션.GetKey("CertPWD")
-		l.F에러체크(에러)
-		공인인증서_암호 = 키_CertPWD.String()
-	}
-
+	키_CertPWD := 확인(섹션.GetKey("CertPWD")).(*ini.Key)
+	공인인증서_암호 := lib.F조건부_값(lib.F테스트_모드_실행_중(), "", 키_CertPWD.String()).(string)
 	c공인인증서_암호 := C.CString(공인인증서_암호)
 	defer C.free(unsafe.Pointer(c공인인증서_암호))
 
@@ -170,7 +158,7 @@ func F실시간_정보_구독(TR코드 string, 전체_종목코드 string, 단�
 	}()
 
 	if !bool(C.etkAdviseRealData(cTR코드, c전체_종목코드, c단위_길이)) {
-		return l.New에러("실시간 정보 신청 실패. %v", 전체_종목코드)
+		return lib.New에러("실시간 정보 신청 실패. %v", 전체_종목코드)
 	}
 
 	return nil
@@ -187,7 +175,7 @@ func F실시간_정보_해지(TR코드 string, 전체_종목코드 string, 단�
 	}()
 
 	if !bool(C.etkUnadviseRealData(cTR코드, c전체_종목코드, c단위_길이)) {
-		return l.New에러("실시간 정보 해지 실패. %v", 전체_종목코드)
+		return lib.New에러("실시간 정보 해지 실패. %v", 전체_종목코드)
 	}
 
 	return nil
@@ -195,7 +183,7 @@ func F실시간_정보_해지(TR코드 string, 전체_종목코드 string, 단�
 
 func F실시간_정보_모두_해지() error {
 	if !bool(C.etkUnadviseWindow()) {
-		return l.New에러("실시간 정보 모두 해지 실패. %v")
+		return lib.New에러("실시간 정보 모두 해지 실패. %v")
 	}
 
 	return nil
@@ -212,7 +200,7 @@ func F계좌_번호(인덱스 int) string {
 	C.etkGetAccountNo(C.int(인덱스), c버퍼, 버퍼_크기)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return l.F2문자열_공백제거(바이트_모음)
+	return lib.F2문자열_공백제거(바이트_모음)
 }
 
 func F계좌_이름(계좌_번호 string) string {
@@ -229,7 +217,7 @@ func F계좌_이름(계좌_번호 string) string {
 	C.etkGetAccountName(c계좌번호, c버퍼, 버퍼_크기)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return l.F2문자열_CP949(바이트_모음)
+	return lib.F2문자열_CP949(바이트_모음)
 
 	//return C.GoString(c버퍼)
 }
@@ -248,7 +236,7 @@ func F계좌_상세명(계좌_번호 string) string {
 	C.etkGetAccountDetailName(c계좌번호, c버퍼, 버퍼_크기)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return l.F2문자열_CP949(바이트_모음)
+	return lib.F2문자열_CP949(바이트_모음)
 
 	//return C.GoString(c버퍼)
 }
@@ -275,7 +263,7 @@ func F계좌_상세명(계좌_번호 string) string {
 //
 //	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), C.int(버퍼_크기))
 //
-//	return l.F2문자열_CP949(바이트_모음)
+//	return lib.F2문자열_CP949(바이트_모음)
 //}
 
 func F서버_이름() string {
@@ -287,7 +275,7 @@ func F서버_이름() string {
 	C.etkGetServerName(c버퍼, 버퍼_길이)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이)
-	return l.F2문자열_CP949_공백제거(바이트_모음)
+	return lib.F2문자열_CP949_공백제거(바이트_모음)
 }
 
 func F에러_코드() int { return int(C.etkGetLastError(0)) }
@@ -306,12 +294,12 @@ func F에러_메시지(에러_코드 int) string {
 	에러_메시지_길이 := C.etkGetErrorMessage(C.int(에러_코드), c버퍼, 버퍼_길이)
 
 	if 에러_메시지_길이 == 0 {
-		l.New에러("에러 메시지를 구할 수 없습니다.")
+		lib.New에러("에러 메시지를 구할 수 없습니다.")
 		return ""
 	}
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이)
-	return l.F2문자열_CP949_공백제거(바이트_모음)
+	return lib.F2문자열_CP949_공백제거(바이트_모음)
 }
 
 func F초당_TR쿼터(TR코드 string) int {

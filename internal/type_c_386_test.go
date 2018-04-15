@@ -41,5 +41,5 @@ import (
 func TestF초기화_Go_C_자료형_크기_비교(t *testing.T) {
 	t.Parallel()
 
-	l.F테스트_에러없음(t, 자료형_크기_비교_확인())
+	lib.F테스트_에러없음(t, 자료형_크기_비교_확인())
 }
