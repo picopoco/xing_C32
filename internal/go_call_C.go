@@ -133,7 +133,7 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 			return nil
 		default:
 			raw메시지 = 확인(소켓REP.RecvMsg()).(*mangos.Message)
-			수신_메시지 := lib.New소켓_메시지from바이트_모음(raw메시지.Body)
+			수신_메시지 := lib.New소켓_메시지by바이트_모음(raw메시지.Body)
 
 			lib.F조건부_패닉(수신_메시지.G길이() != 1,
 				"잘못된 메시지 길이. 예상값 1, 실제값 %v. %v",
@@ -190,7 +190,7 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 				회신_메시지, 에러 = lib.New소켓_메시지(변환_형식, F압축_해제(unsafe.Pointer(&s.M바이트_모음), len(s.M바이트_모음)))
 			case xt.P함수_종료:
 				에러 = F로그아웃_및_접속해제()
-				f소켓_질의_회신(lib.New소켓_메시지_내용없음(), raw메시지, ch종료)
+				f소켓_질의_회신(lib.New소켓_메시지_기본형(), raw메시지, ch종료)
 				lib.F공통_종료_채널_닫기()
 				return 에러
 			default:
