@@ -52,7 +52,7 @@ func f콜백(콜백값 interface{}) (에러 error) {
 
 //export OnDisconnected_Go
 func OnDisconnected_Go() {
-	응답값 := new(xt.S콜백_단순형)
+	응답값 := new(xt.S콜백_기본형)
 	응답값.M콜백 = xt.P콜백_접속해제
 
 	f콜백(응답값)
@@ -66,8 +66,8 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 
 	g := (*TR_DATA)(unsafe.Pointer(c))
 
-	데이터 := 확인(tr데이터_해석(g))
-	바이트_변환값 := 확인(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
+	데이터 := 에러체크(tr데이터_해석(g))
+	바이트_변환값 := 에러체크(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
 	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
 
 	f콜백(콜백값)
@@ -109,6 +109,9 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 func OnReleaseData_Go(c C.int) {
 	식별번호 := int(c)
 
+	콜백값 := xt.New콜백_메시지_및_에러()
+	콜백값.M식별번호 = int(g.RequestID)
+
 	f데이터_해제(식별번호)
 
 	메시지_모음 := 메시지_저장소.G값(식별번호)
@@ -130,11 +133,12 @@ func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 
-	데이터 := 확인(f실시간_데이터_해석(g))
-	바이트_변환값 := 확인(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
+	RT코드 := lib.F2문자열(rt.TrCode)
+	데이터 := 에러체크(f실시간_데이터_해석(g))
+	바이트_변환값 := 에러체크(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
 	값 := xt.New콜백_실시간_데이터(바이트_변환값)
-	소켓_메시지 := 확인(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
-	확인(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
+	소켓_메시지 := 에러체크(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
+	에러체크(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
 }
 
 //export OnLogin_Go
@@ -155,7 +159,7 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 
 //export OnLogout_Go
 func OnLogout_Go() {
-	응답값 := new(xt.S콜백_단순형)
+	응답값 := new(xt.S콜백_기본형)
 	응답값.M콜백 = xt.P콜백_로그아웃
 
 	f콜백(응답값)
@@ -172,7 +176,7 @@ func OnTimeout_Go(c C.int) {
 
 //export OnLinkData_Go
 func OnLinkData_Go() { // TODO
-	응답값 := new(xt.S콜백_단순형)
+	응답값 := new(xt.S콜백_기본형)
 	응답값.M콜백 = xt.P콜백_링크_데이터
 
 	f콜백(응답값)
@@ -180,7 +184,7 @@ func OnLinkData_Go() { // TODO
 
 //export OnRealtimeDataChart_Go
 func OnRealtimeDataChart_Go() { // TODO
-	응답값 := new(xt.S콜백_단순형)
+	응답값 := new(xt.S콜백_기본형)
 	응답값.M콜백 = xt.P콜백_실시간_차트_데이터
 
 	f콜백(응답값)

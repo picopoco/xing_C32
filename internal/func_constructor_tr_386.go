@@ -77,8 +77,8 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 			return New현물_정상주문_응답2(tr)
 		default:
 			s := new(xt.S현물_정상주문_응답)
-			s.M응답1 = 확인(New현물_정상주문_응답1(tr)).(*xt.S현물_정상주문_응답1)
-			s.M응답2 = 확인(New현물_정상주문_응답2(tr)).(*xt.S현물_정상주문_응답2)
+			s.M응답1 = 에러체크(New현물_정상주문_응답1(tr)).(*xt.S현물_정상주문_응답1)
+			s.M응답2 = 에러체크(New현물_정상주문_응답2(tr)).(*xt.S현물_정상주문_응답2)
 
 			return s, nil
 		}
@@ -90,8 +90,8 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 			return New현물_정정주문_응답2(tr)
 		default:
 			s := new(xt.S현물_정정주문_응답)
-			s.M응답1 = 확인(New현물_정정주문_응답1(tr)).(*xt.S현물_정정주문_응답1)
-			s.M응답2 = 확인(New현물_정정주문_응답2(tr)).(*xt.S현물_정정주문_응답2)
+			s.M응답1 = 에러체크(New현물_정정주문_응답1(tr)).(*xt.S현물_정정주문_응답1)
+			s.M응답2 = 에러체크(New현물_정정주문_응답2(tr)).(*xt.S현물_정정주문_응답2)
 
 			return s, nil
 		}
@@ -103,8 +103,8 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 			return New현물_취소주문_응답2(tr)
 		default:
 			s := new(xt.S현물_취소주문_응답)
-			s.M응답1 = 확인(New현물_취소주문_응답1(tr)).(*xt.S현물_취소주문_응답1)
-			s.M응답2 = 확인(New현물_취소주문_응답2(tr)).(*xt.S현물_취소주문_응답2)
+			s.M응답1 = 에러체크(New현물_취소주문_응답1(tr)).(*xt.S현물_취소주문_응답1)
+			s.M응답2 = 에러체크(New현물_취소주문_응답2(tr)).(*xt.S현물_취소주문_응답2)
 
 			return s, nil
 		}

@@ -51,11 +51,11 @@ func f테스트_준비() (에러 error){
 	defer lib.S에러패닉_처리기{M에러_포인터:&에러}.S실행()
 
 	lib.F테스트_모드_시작()
-	확인(F초기화())
+	에러체크(F초기화())
 
-	소켓REP_테스트용_TR수신 = 확인(lib.New소켓REP(lib.P주소_Xing_TR)).(mangos.Socket)
-	소켓SUB_테스트용_콜백 = 확인(lib.New소켓SUB(lib.P주소_Xing_C함수_콜백)).(mangos.Socket)
-	소켓SUB_테스트용_실시간정보 = 확인(lib.New소켓SUB(lib.P주소_Xing_C함수_실시간)).(mangos.Socket)
+	소켓REP_테스트용_TR수신 = 에러체크(lib.New소켓REP(lib.P주소_Xing_TR)).(mangos.Socket)
+	소켓SUB_테스트용_콜백 = 에러체크(lib.New소켓SUB(lib.P주소_Xing_C함수_콜백)).(mangos.Socket)
+	소켓SUB_테스트용_실시간정보 = 에러체크(lib.New소켓SUB(lib.P주소_Xing_C함수_실시간)).(mangos.Socket)
 
 	return nil
 }
