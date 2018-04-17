@@ -45,7 +45,7 @@ import (
 )
 
 func f콜백(콜백값 interface{}) (에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터:&에러 }.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
 
 	return lib.New소켓_메시지_단순형(lib.P변환형식_기본값, 콜백값).S소켓_송신_기본형(소켓PUB_콜백)
 }
@@ -62,7 +62,8 @@ func OnDisconnected_Go() {
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	defer func() {
 		F메모리_해제(unsafe.Pointer(c))
-		lib.S에러패닉_처리기{}.S실행() }()
+		lib.S에러패닉_처리기{}.S실행()
+	}()
 
 	g := (*TR_DATA)(unsafe.Pointer(c))
 
@@ -129,7 +130,8 @@ func OnReleaseData_Go(c C.int) {
 func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
 	defer func() {
 		F메모리_해제(unsafe.Pointer(c))
-		lib.S에러패닉_처리기{}.S실행() }()
+		lib.S에러패닉_처리기{}.S실행()
+	}()
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 

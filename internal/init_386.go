@@ -114,9 +114,8 @@ func f초기화_완료_통보() {
 	질의값.TR구분 = lib.TR초기화
 	질의값.TR코드 = "C함수 모듈"
 
-	lib.New소켓_질의_단순형(lib.P주소_Xing_TR,lib.P변환형식_기본값, lib.P30초).S질의(질의값).G응답_검사()
+	lib.New소켓_질의_단순형(lib.P주소_Xing_TR, lib.P변환형식_기본값, lib.P30초).S질의(질의값).G응답_검사()
 }
-
 
 func f초기화_TR전송_제한() {
 	코드별_10분당_TR전송_제한 := make(map[string]int)

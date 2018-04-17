@@ -164,7 +164,7 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 }
 
 func New현물호가조회(tr *TR_DATA) (s *xt.S현물호가조회_응답, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*T1101OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -490,7 +490,7 @@ func NewCSPAT00600InBlock(질의값 *xt.S질의값_정상주문) (g *CSPAT00600I
 }
 
 func New현물_정상주문_응답1(tr *TR_DATA) (s *xt.S현물_정상주문_응답1, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
@@ -529,7 +529,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xt.S현물_정상주문_응
 }
 
 func New현물_정상주문_응답2(tr *TR_DATA) (s *xt.S현물_정상주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터:   &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
@@ -606,7 +606,7 @@ func New현물_정정주문_응답1(tr *TR_DATA) (s *xt.S현물_정정주문_응
 }
 
 func New현물_정정주문_응답2(tr *TR_DATA) (s *xt.S현물_정정주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터:   &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
@@ -663,7 +663,7 @@ func NewCSPAT00800InBlock(질의값 *xt.S질의값_취소주문) (g *CSPAT00800I
 }
 
 func New현물_취소주문_응답1(tr *TR_DATA) (s *xt.S현물_취소주문_응답1, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
@@ -687,7 +687,7 @@ func New현물_취소주문_응답1(tr *TR_DATA) (s *xt.S현물_취소주문_응
 }
 
 func New현물_취소주문_응답2(tr *TR_DATA) (s *xt.S현물_취소주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
@@ -742,7 +742,7 @@ func NewT1902InBlock(질의값 *xt.S질의값_단일종목_연속키) (g *T1902I
 }
 
 func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xt.S_ETF시간별_추이_응답_헤더, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*T1902OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -755,7 +755,7 @@ func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xt.S_ETF시간별_추
 }
 
 func NewETF시간별_추이_응답_반복값_모음(tr *TR_DATA) (반복값_모음 []*xt.S_ETF시간별_추이_응답_반복값, 에러 error) {
-	defer lib.S에러패닉_처리기{ M에러_포인터: &에러, M함수: func() { 반복값_모음 = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 반복값_모음 = nil }}.S실행()
 
 	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
 	배열_길이 := int(tr.DataLength) / 크기T1902OutBlock1

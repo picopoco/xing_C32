@@ -36,11 +36,10 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing_types"
+	"github.com/go-mangos/mangos"
 
 	"testing"
-	"github.com/go-mangos/mangos"
 )
-
 
 var 소켓REP_테스트용_TR수신, 소켓SUB_테스트용_콜백, 소켓SUB_테스트용_실시간정보 mangos.Socket
 

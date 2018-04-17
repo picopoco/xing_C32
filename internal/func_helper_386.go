@@ -46,7 +46,6 @@ import (
 	"unsafe"
 )
 
-
 func fTR전송권한획득(TR코드 string) {
 	fTR전송_코드별_10분당_제한_확인(TR코드)
 	fTR전송_코드별_초당_제한_확인(TR코드)
