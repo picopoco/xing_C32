@@ -111,7 +111,7 @@ func OnReleaseData_Go(c C.int) {
 	식별번호 := int(c)
 
 	콜백값 := xt.New콜백_메시지_및_에러()
-	콜백값.M식별번호 = int(g.RequestID)
+	콜백값.M식별번호 = 식별번호
 
 	f데이터_해제(식별번호)
 
@@ -135,10 +135,10 @@ func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 
-	RT코드 := lib.F2문자열(rt.TrCode)
+	RT코드 := lib.F2문자열(g.TrCode)
 	데이터 := 에러체크(f실시간_데이터_해석(g))
 	바이트_변환값 := 에러체크(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
-	값 := xt.New콜백_실시간_데이터(바이트_변환값)
+	값 := xt.New콜백_실시간_데이터(RT코드, 바이트_변환값)
 	소켓_메시지 := 에러체크(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
 	에러체크(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
 }

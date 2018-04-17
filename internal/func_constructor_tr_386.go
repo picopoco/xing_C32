@@ -1063,17 +1063,17 @@ func NewT8436InBlock(질의값 *lib.S질의값_문자열) (g *T8436InBlock) {
 	return g
 }
 
-func New현물_주식종목조회_모음(g_모음 []T8436OutBlock) (값_모음 []*xt.S주식종목조회_응답, 에러 error) {
+func New현물_주식종목조회_모음(g_모음 []T8436OutBlock) (값_모음 []*xt.S주식종목조회_응답_반복값, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값_모음 = nil }}.S실행()
 
-	값_모음 = make([]*xt.S주식종목조회_응답, len(g_모음), len(g_모음))
+	값_모음 = make([]*xt.S주식종목조회_응답_반복값, len(g_모음), len(g_모음))
 
 	if len(g_모음) == 0 {
 		return 값_모음, nil
 	}
 
 	for i, g := range g_모음 {
-		s := new(xt.S주식종목조회_응답)
+		s := new(xt.S주식종목조회_응답_반복값)
 		s.M종목명 = lib.F2문자열_CP949_공백제거(g.HName)
 		s.M종목코드 = lib.F2문자열_공백제거(g.ShCode)
 		s.M주문수량단위 = lib.F2정수_단순형(g.MeMeDan)

@@ -58,13 +58,11 @@ var 소켓REP_테스트용_TR수신, 소켓SUB_테스트용_콜백, 소켓SUB_�
 
 func TestF자료형_크기_비교_확인(t *testing.T) {
 	t.Parallel()
-
 	lib.F테스트_에러없음(t, lib.F패닉2에러(자료형_크기_비교_확인))
 }
 
 func TestP접속됨(t *testing.T) {
 	t.Parallel()
-
 	if !lib.F인터넷에_접속됨() {
 		t.SkipNow()
 	}
@@ -79,17 +77,17 @@ func TestP접속됨(t *testing.T) {
 	var 접속됨 bool
 	lib.F테스트_에러없음(t, 응답.G값(0, &접속됨))
 	lib.F테스트_같음(t, 접속됨, F접속됨())
-	lib.F테스트_참임(t, 접속됨)
 }
 
 // 초기화 중 접속이 되므로,개발 과정에서만 사용됨.
 //func TestP접속(t *testing.T) {
-//	소켓_질의 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P30초)
-//	소켓_질의.S질의(xt.S호출_인수_단순형{M함수: xt.P함수_접속})
+//	소켓_질의, 에러 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P30초)
+//	lib.F테스트_에러없음(t, 에러)
 //
-//	응답 := 소켓_질의.G응답()
+//	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
+//	응답 := 소켓_질의.S질의(질의값).G응답()
 //	lib.F테스트_에러없음(t, 응답.G에러())
-//	lib.F테스트_같음(t, 응답.G길이(), 1)
+//	lib.F테스트_같음(t, 응답.G수량(), 1)
 //
 //	해석값, 에러 := 응답.G해석값(0)
 //	lib.F테스트_에러없음(t, 에러)

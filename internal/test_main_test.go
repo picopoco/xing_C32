@@ -36,7 +36,7 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"github.com/go-mangos/mangos"
-	
+
 	"testing"
 )
 

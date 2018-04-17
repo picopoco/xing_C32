@@ -244,7 +244,9 @@ func f접속_처리() bool {
 		return false
 	}
 
-	return <-ch접속_처리 // 로그인 콜백 함수가 실행될 때까지 기다림.
+	결과 := <-ch접속_처리
+
+	return 결과 // 로그인 콜백 함수가 실행될 때까지 기다림.
 }
 
 func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 int, 에러 error) {
