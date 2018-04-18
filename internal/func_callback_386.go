@@ -154,7 +154,6 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	if 정수, 에러 := lib.F2정수(코드); 에러 == nil && 정수 == 0 {
 		ch접속_처리 <- true
 	} else {
-		lib.F체크포인트()
 		ch접속_처리 <- false
 	}
 }

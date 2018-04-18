@@ -51,10 +51,8 @@ func F초기화() (에러 error) {
 	f초기화_Go루틴()
 	f초기화_서버_접속()
 	f초기화_TR전송_제한()
-
-	lib.F메모("초기화 일부 과정 임시 보류..")
 	f초기화_소켓()
-	//f초기화_완료_통보()
+	f초기화_완료_통보()
 
 	return nil
 }
@@ -87,24 +85,31 @@ func f초기화_Go루틴() {
 }
 
 func f초기화_서버_접속() (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터:&에러}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
 
 	lib.F조건부_패닉(!lib.F인터넷에_접속됨(), "서버 접속이 불가 : 인터넷 접속을 확인하십시오.")
 
 	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
 	소켓_질의 := lib.New소켓_질의_단순형(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P10초)
 
-	for i:=0 ; i<20 ; i++ {
-		lib.F체크포인트(i)
-
+	for i := 0; i < 20; i++ {
 		if F접속됨() {
 			lib.F문자열_출력("이미 접속되어 있음. %v", i)
 			return nil
 		}
 
-		응답 := 소켓_질의.S질의(질의값).G응답()
+		소켓_질의.S질의(질의값)
+		응답 := 소켓_질의.G응답()
+
 		if 응답.G에러() != nil {
-			if strings.Contains(응답.G에러().Error(),"receive time out") {
+			if strings.Contains(응답.G에러().Error(), "receive time out") {
+				if F접속됨() {
+					lib.F문자열_출력("접속 성공. %v", i)
+
+					lib.F메모("접속이 된 후에 로그인 콜백 수신에 문제가 있는 듯 함.")
+					return nil
+				}
+
 				lib.F문자열_출력("서버_접속 시도 회신 없음. %v", i)
 			} else {
 				lib.F에러_출력(응답.G에러())
@@ -116,7 +121,6 @@ func f초기화_서버_접속() (에러 error) {
 		if 값, 에러 := 응답.G해석값(0); 에러 != nil {
 			panic(에러)
 		} else if 접속_성공 := 값.(bool); !접속_성공 {
-			lib.F체크포인트(i)
 			lib.F문자열_출력("접속 시도 실패 후 재시도. %v", i)
 			lib.F대기(lib.P3초)
 			continue
@@ -146,7 +150,20 @@ func f초기화_완료_통보() {
 	질의값.TR구분 = lib.TR초기화
 	질의값.TR코드 = "C함수 모듈"
 
-	lib.New소켓_질의_단순형(lib.P주소_Xing_TR, lib.P변환형식_기본값, lib.P30초).S질의(질의값).G응답_검사()
+	lib.F체크포인트()
+
+	회신_메시지 := lib.New소켓_질의_단순형(lib.P주소_Xing_TR, lib.P변환형식_기본값, lib.P10초).S질의(질의값).G응답()
+
+	lib.F체크포인트()
+
+	if 에러 := 회신_메시지.G에러(); 에러 != nil {
+		lib.F체크포인트()
+		if strings.Contains(에러.Error(), "receive time out") {
+			lib.F문자열_출력("초기화 완료 통보 대상이 발견되지 않음.")
+		} else {
+			lib.F에러_출력(회신_메시지.G에러())
+		}
+	}
 }
 
 func f초기화_TR전송_제한() {

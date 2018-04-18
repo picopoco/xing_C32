@@ -86,7 +86,6 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 		select {
 		default:
 			lib.F윈도우_메시지_처리()
-			lib.F실행권한_양보()
 		case <-ch종료:
 			return nil
 		case 에러 = <-ch도우미_종료:
@@ -102,6 +101,8 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 				lib.F조건부_패닉(신호 != lib.P신호_초기화, "c함수_호출_도우미 초기화 실패.")
 			}
 		}
+
+		lib.F실행권한_양보()
 	}
 }
 
@@ -133,6 +134,10 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 		case <-ch종료:
 			return nil
 		default:
+			if raw메시지 != nil {
+				raw메시지.Free()
+			}
+
 			raw메시지 = 에러체크(소켓REP.RecvMsg()).(*mangos.Message)
 			수신_메시지 := lib.New소켓_메시지by바이트_모음(raw메시지.Body)
 
@@ -216,8 +221,6 @@ func f소켓_질의_회신(회신_메시지 lib.I소켓_메시지, raw메시지 
 	case <-ch종료: // f종료TR_처리()에서 회신 및 Free() 처리함.
 	default:
 		에러체크(회신_메시지.S소켓_회신(소켓REP, lib.P30초, raw메시지))
-
-		raw메시지.Free() // GC부담을 덜어서 성능 향상을 꾀함.				}
 	}
 }
 
