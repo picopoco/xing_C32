@@ -52,7 +52,6 @@ func F초기화() (에러 error) {
 	f초기화_서버_접속()
 	f초기화_TR전송_제한()
 	f초기화_소켓()
-	f초기화_완료_통보()
 
 	return nil
 }
@@ -143,27 +142,6 @@ func f초기화_소켓() {
 	에러체크(에러)
 
 	lib.F대기(lib.P1초)
-}
-
-func f초기화_완료_통보() {
-	질의값 := lib.New질의값_기본형()
-	질의값.TR구분 = lib.TR초기화
-	질의값.TR코드 = "C함수 모듈"
-
-	lib.F체크포인트()
-
-	회신_메시지 := lib.New소켓_질의_단순형(lib.P주소_Xing_TR, lib.P변환형식_기본값, lib.P10초).S질의(질의값).G응답()
-
-	lib.F체크포인트()
-
-	if 에러 := 회신_메시지.G에러(); 에러 != nil {
-		lib.F체크포인트()
-		if strings.Contains(에러.Error(), "receive time out") {
-			lib.F문자열_출력("초기화 완료 통보 대상이 발견되지 않음.")
-		} else {
-			lib.F에러_출력(회신_메시지.G에러())
-		}
-	}
 }
 
 func f초기화_TR전송_제한() {
