@@ -42,21 +42,18 @@ import (
 	"github.com/ghts/xing_types"
 
 	"os"
+	"strings"
 )
 
 func F초기화() (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
-
 	f초기화_설정화일()
 	f초기화_XingAPI()
 	f초기화_Go루틴()
-
-	lib.F메모("초기 접속에서 자주 에러가 발생함. 이유를 모르겠음.")
 	f초기화_서버_접속()
 	f초기화_TR전송_제한()
 
 	lib.F메모("초기화 일부 과정 임시 보류..")
-	//f초기화_소켓()
+	f초기화_소켓()
 	//f초기화_완료_통보()
 
 	return nil
@@ -89,30 +86,48 @@ func f초기화_Go루틴() {
 	<-ch초기화
 }
 
-func f초기화_서버_접속() {
+func f초기화_서버_접속() (에러 error) {
+	defer lib.S에러패닉_처리기{M에러_포인터:&에러}.S실행()
+
 	lib.F조건부_패닉(!lib.F인터넷에_접속됨(), "서버 접속이 불가 : 인터넷 접속을 확인하십시오.")
 
 	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
-	소켓_질의 := lib.New소켓_질의_단순형(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P30초)
-	응답 := 소켓_질의.S질의(질의값).G응답_검사()
-	값 := 에러체크(응답.G해석값(0))
+	소켓_질의 := lib.New소켓_질의_단순형(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P10초)
 
-	switch 변환값 := 값.(type) {
-	case bool:
-		로그인_성공 := 응답.G해석값_단순형(0).(bool)
+	for i:=0 ; i<20 ; i++ {
+		lib.F체크포인트(i)
 
-		if !로그인_성공 && lib.F테스트_모드_실행_중() {
-			lib.F문자열_출력("모의투자 기간이 종료되었는 지 확인하십시오.\n%v")
-		} else if !로그인_성공 {
-			panic("접속 실패.")
-		}
-	case error:
-		if lib.F테스트_모드_실행_중() {
-			lib.F문자열_출력("모의투자 기간이 종료되었는 지 확인하십시오.\n%v")
+		if F접속됨() {
+			lib.F문자열_출력("이미 접속되어 있음. %v", i)
+			return nil
 		}
 
-		panic(변환값)
+		응답 := 소켓_질의.S질의(질의값).G응답()
+		if 응답.G에러() != nil {
+			if strings.Contains(응답.G에러().Error(),"receive time out") {
+				lib.F문자열_출력("서버_접속 시도 회신 없음. %v", i)
+			} else {
+				lib.F에러_출력(응답.G에러())
+			}
+
+			continue
+		}
+
+		if 값, 에러 := 응답.G해석값(0); 에러 != nil {
+			panic(에러)
+		} else if 접속_성공 := 값.(bool); !접속_성공 {
+			lib.F체크포인트(i)
+			lib.F문자열_출력("접속 시도 실패 후 재시도. %v", i)
+			lib.F대기(lib.P3초)
+			continue
+		}
+
+		lib.F문자열_출력("접속 성공. %v", i)
+
+		return nil
 	}
+
+	panic("서버 접속 실패.")
 }
 
 func f초기화_소켓() {

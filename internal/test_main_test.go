@@ -41,15 +41,13 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	f테스트_준비()
+	에러체크(f테스트_준비())
 	defer f테스트_정리()
 
 	m.Run()
 }
 
 func f테스트_준비() (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
-
 	lib.F테스트_모드_시작()
 	에러체크(F초기화())
 
