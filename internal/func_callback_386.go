@@ -133,12 +133,10 @@ func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
 		lib.S에러패닉_처리기{}.S실행()
 	}()
 
-	g := (*REALTIME_DATA)(unsafe.Pointer(c))
+	lib.F체크포인트()
 
-	RT코드 := lib.F2문자열(g.TrCode)
-	데이터 := 에러체크(f실시간_데이터_해석(g))
-	바이트_변환값 := 에러체크(lib.New바이트_변환_매개체(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환_매개체)
-	값 := xt.New콜백_실시간_데이터(RT코드, 바이트_변환값)
+	g := (*REALTIME_DATA)(unsafe.Pointer(c))
+	값 := 에러체크(f실시간_데이터_해석(g))
 	소켓_메시지 := 에러체크(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
 	에러체크(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
 }
