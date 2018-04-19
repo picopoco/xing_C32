@@ -40,20 +40,28 @@ import "C"
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing_types"
+	"github.com/go-mangos/mangos"
 
 	"os"
 	"strings"
 )
 
 func F초기화() (에러 error) {
+	f초기화_소켓()
 	f초기화_설정화일()
 	f초기화_XingAPI()
+	f초기화_TR전송_제한()
 	f초기화_Go루틴()
 	f초기화_서버_접속()
-	f초기화_TR전송_제한()
-	f초기화_소켓()
+	에러체크(f정상_동작_확인())
 
 	return nil
+}
+
+func f초기화_소켓() {
+	소켓REP_TR수신 = 에러체크(lib.New소켓REP_raw(lib.P주소_Xing_C함수_호출)).(mangos.Socket)
+	소켓PUB_콜백 = 에러체크(lib.New소켓PUB(lib.P주소_Xing_C함수_콜백)).(mangos.Socket)
+	소켓PUB_실시간_정보 = 에러체크(lib.New소켓PUB(lib.P주소_Xing_실시간)).(mangos.Socket)
 }
 
 func f초기화_설정화일() {
@@ -133,15 +141,17 @@ func f초기화_서버_접속() (에러 error) {
 	panic("서버 접속 실패.")
 }
 
-func f초기화_소켓() {
-	var 에러 error
-	소켓PUB_콜백, 에러 = lib.New소켓PUB(lib.P주소_Xing_C함수_콜백)
-	에러체크(에러)
+func f정상_동작_확인() (에러 error) {
+	for i := 0; i < 1000; i++ {
+		소켓_질의 := lib.New소켓_질의_단순형(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P300밀리초)
+		응답 := 소켓_질의.S질의(xt.S호출_인수_기본형{M함수: xt.P함수_접속됨}).G응답()
 
-	소켓PUB_실시간_정보, 에러 = lib.New소켓PUB(lib.P주소_Xing_C함수_실시간)
-	에러체크(에러)
+		if 응답.G에러() == nil && 응답.G해석값_단순형(0).(bool) {
+			return nil
+		}
+	}
 
-	lib.F대기(lib.P1초)
+	return lib.New에러("정상 동작하지 않음.")
 }
 
 func f초기화_TR전송_제한() {

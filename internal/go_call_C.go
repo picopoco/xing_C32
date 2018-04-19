@@ -42,10 +42,6 @@ import (
 	"unsafe"
 )
 
-var TR소켓_중계_중 = lib.New안전한_bool(false)
-var ch도우미_종료 chan error
-var 소켓REP mangos.Socket = nil
-
 func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 	if TR소켓_중계_중.G값() {
 		ch초기화 <- lib.P신호_초기화
@@ -57,9 +53,6 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 
 	defer TR소켓_중계_중.S값(false)
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
-
-	// 병렬처리를 위해서 raw모드를 사용함. raw모드 사용법은 go-mangos 예제를 참고.
-	소켓REP = 에러체크(lib.New소켓REP_raw(lib.P주소_Xing_C함수_호출)).(mangos.Socket) // 종료할 때 닫음.
 
 	도우미_수량 := 10
 
@@ -84,8 +77,6 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 
 	for {
 		select {
-		default:
-			lib.F윈도우_메시지_처리()
 		case <-ch종료:
 			return nil
 		case 에러 = <-ch도우미_종료:
@@ -100,8 +91,10 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 				신호 := <-ch도우미_초기화
 				lib.F조건부_패닉(신호 != lib.P신호_초기화, "c함수_호출_도우미 초기화 실패.")
 			}
+		default:
 		}
 
+		lib.F윈도우_메시지_처리()
 		lib.F실행권한_양보()
 	}
 }
@@ -118,7 +111,7 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 		M함수with내역: func(r interface{}) {
 			if raw메시지 != nil {
 				메시지, _ := lib.New소켓_메시지_에러(r)
-				메시지.S소켓_회신(소켓REP, lib.P10초, raw메시지)
+				메시지.S소켓_회신(소켓REP_TR수신, lib.P10초, raw메시지)
 			}
 		}}.S실행()
 
@@ -138,7 +131,7 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 				raw메시지.Free()
 			}
 
-			raw메시지 = 에러체크(소켓REP.RecvMsg()).(*mangos.Message)
+			raw메시지 = 에러체크(소켓REP_TR수신.RecvMsg()).(*mangos.Message)
 			수신_메시지 := lib.New소켓_메시지by바이트_모음(raw메시지.Body)
 
 			lib.F조건부_패닉(수신_메시지.G수량() != 1,
@@ -214,14 +207,11 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 
 func f소켓_질의_회신(회신_메시지 lib.I소켓_메시지, raw메시지 *mangos.Message, ch종료 chan lib.T신호) {
 	if lib.F2문자열("%v", 회신_메시지) == "<nil>" {
+		lib.F체크포인트()
 		lib.F에러_출력("nil 회신 메시지")
 	}
 
-	select {
-	case <-ch종료: // f종료TR_처리()에서 회신 및 Free() 처리함.
-	default:
-		에러체크(회신_메시지.S소켓_회신(소켓REP, lib.P30초, raw메시지))
-	}
+	에러체크(회신_메시지.S소켓_회신(소켓REP_TR수신, lib.P30초, raw메시지))
 }
 
 var 접속_처리_잠금 sync.Mutex

@@ -43,12 +43,10 @@ import (
 
 // 다중 사용에 안전한 값들.
 var (
-	소켓REP_TR수신   mangos.Socket = nil
-	소켓PUB_콜백     mangos.Socket = nil // PUB소켓은 수신 기능이 없으며, 지연없는 'non-blocking'방식으로 동작.
-	소켓PUB_실시간_정보 mangos.Socket = nil
-
-	ch호출_도우미_종료 chan error
-	메시지_저장소     = New메시지_저장소()
+	소켓REP_TR수신, 소켓PUB_콜백, 소켓PUB_실시간_정보 mangos.Socket
+	ch도우미_종료, ch호출_도우미_종료              chan error
+	TR소켓_중계_중                          = lib.New안전한_bool(false)
+	메시지_저장소                            = New메시지_저장소()
 )
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
