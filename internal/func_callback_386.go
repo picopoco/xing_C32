@@ -91,10 +91,11 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 	case 1: // 에러 메시지
 		에러여부 = true
 	default:
-		panic(lib.F2문자열("예상하지 못한 구분값. '%v'", g.SystemError))
+		panic(lib.New에러("예상하지 못한 구분값. '%v'", g.SystemError))
 	}
 
-	콜백값 := xt.New콜백_메시지_및_에러()
+	콜백값 := new(xt.S콜백_메시지_및_에러)
+	콜백값.S콜백_기본형 = xt.New콜백_기본형(xt.P콜백_메시지_및_에러)
 	콜백값.M식별번호 = int(g.RequestID)
 	콜백값.M코드 = lib.F2문자열_공백제거(g.MsgCode)
 	콜백값.M내용 = lib.F2문자열_공백제거(g.MsgData)
@@ -110,20 +111,17 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 func OnReleaseData_Go(c C.int) {
 	식별번호 := int(c)
 
-	콜백값 := xt.New콜백_메시지_및_에러()
-	콜백값.M식별번호 = 식별번호
-
 	f데이터_해제(식별번호)
 
-	메시지_모음 := 메시지_저장소.G값(식별번호)
-
-	if 메시지_모음 != nil {
+	if 메시지_모음 := 메시지_저장소.G값(식별번호); 메시지_모음 != nil {
 		for _, 메시지 := range 메시지_모음 {
 			f메시지_해제(메시지)
 		}
 	}
 
 	메시지_저장소.S삭제(식별번호)
+
+	f콜백(xt.New콜백_정수값(xt.P콜백_TR완료, 식별번호))
 }
 
 //export OnRealtimeData_Go

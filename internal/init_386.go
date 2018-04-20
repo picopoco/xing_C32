@@ -111,9 +111,7 @@ func f초기화_서버_접속() (에러 error) {
 		if 응답.G에러() != nil {
 			if strings.Contains(응답.G에러().Error(), "receive time out") {
 				if F접속됨() {
-					lib.F문자열_출력("접속 성공. %v", i)
-
-					lib.F메모("접속이 된 후에 로그인 콜백 수신에 문제가 있는 듯 함.")
+					lib.F체크포인트("접속 성공.", i)
 					return nil
 				}
 
@@ -150,6 +148,8 @@ func f정상_동작_확인() (에러 error) {
 			return nil
 		}
 	}
+
+	lib.F메모("PUB소켓도 확인이 필요할 수 있음.")
 
 	return lib.New에러("정상 동작하지 않음.")
 }

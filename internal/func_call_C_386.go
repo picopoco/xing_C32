@@ -108,7 +108,7 @@ func F로그인() bool {
 		버퍼.WriteString("Xing 설정화일 없음\n")
 		버퍼.WriteString("%v가 존재하지 않습니다.\n")
 		버퍼.WriteString("sample_config.ini를 참조하여 새로 생성하십시오.")
-		panic(lib.F2문자열(버퍼.String(), 설정화일_경로))
+		panic(lib.New에러(버퍼.String(), 설정화일_경로))
 	}
 
 	cfg파일 := 에러체크(ini.Load(설정화일_경로)).(*ini.File)

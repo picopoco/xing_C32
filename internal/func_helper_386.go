@@ -69,7 +69,7 @@ func fTR전송_코드별_초당_제한_확인(TR코드 string) {
 
 	switch {
 	case !존재함:
-		panic(lib.F2문자열("전송제한을 찾을 수 없음 : '%v'", TR코드))
+		panic(lib.New에러("전송제한을 찾을 수 없음 : '%v'", TR코드))
 	case 전송_권한.G코드() != TR코드:
 		panic("예상하지 못한 경우.")
 	case 전송_권한.G남은_수량() > 100:
@@ -222,7 +222,7 @@ func f2시장구분(값 interface{}) lib.T시장구분 {
 	case "KOSDAQ":
 		return lib.P시장구분_코스닥
 	default:
-		panic(lib.F2문자열("예상하지 못한 값 : '%v'", 문자열))
+		panic(lib.New에러("예상하지 못한 값 : '%v'", 문자열))
 	}
 }
 
@@ -233,7 +233,7 @@ func f2Xing매수매도(매수_매도 lib.T매수_매도) xt.T매수_매도 {
 	case lib.P매수:
 		return xt.P매수
 	default:
-		panic(lib.F2문자열("예상하지 못한 매수 매도 구분값. %v", 매수_매도))
+		panic(lib.New에러("예상하지 못한 매수 매도 구분값. %v", 매수_매도))
 	}
 }
 
@@ -244,7 +244,7 @@ func f2매수매도(매수_매도 xt.T매수_매도) lib.T매수_매도 {
 	case xt.P매수:
 		return lib.P매수
 	default:
-		panic(lib.F2문자열("예상하지 못한 매수 매도 구분값. %v", 매수_매도))
+		panic(lib.New에러("예상하지 못한 매수 매도 구분값. %v", 매수_매도))
 	}
 }
 
@@ -257,7 +257,7 @@ func f2Xing주문조건(주문_조건 lib.T주문조건) xt.T주문조건 {
 	case lib.P주문조건_FOK:
 		return xt.P주문조건_FOK
 	default:
-		panic(lib.F2문자열("예상하지 못한 신용거래_구분 값. %v", 주문_조건))
+		panic(lib.New에러("예상하지 못한 신용거래_구분 값. %v", 주문_조건))
 	}
 }
 
@@ -270,7 +270,7 @@ func f2주문조건(주문_조건 xt.T주문조건) lib.T주문조건 {
 	case xt.P주문조건_FOK:
 		return lib.P주문조건_FOK
 	default:
-		panic(lib.F2문자열("예상하지 못한 신용거래_구분 값. %v", 주문_조건))
+		panic(lib.New에러("예상하지 못한 신용거래_구분 값. %v", 주문_조건))
 	}
 }
 
@@ -297,7 +297,7 @@ func f2Xing신용거래_구분(신용거래_구분 lib.T신용거래_구분) xt.
 	case lib.P신용거래_예탁담보대출상환:
 		return xt.P예탁담보대출상환
 	default:
-		panic(lib.F2문자열("예상하지 못한 신용거래_구분 값. %v", 신용거래_구분))
+		panic(lib.New에러("예상하지 못한 신용거래_구분 값. %v", 신용거래_구분))
 	}
 }
 
@@ -341,7 +341,7 @@ func f2Xing호가유형(호가_유형 lib.T호가유형) xt.T호가유형 {
 	case lib.P호가유형_시간외단일가:
 		return xt.P시간외단일가
 	default:
-		panic(lib.F2문자열("예상하지 못한 호가_유형 값. %v", 호가_유형))
+		panic(lib.New에러("예상하지 못한 호가_유형 값. %v", 호가_유형))
 	}
 }
 
@@ -364,6 +364,6 @@ func f2호가유형(호가_유형 xt.T호가유형) lib.T호가유형 {
 	case xt.P시간외단일가:
 		return lib.P호가유형_시간외단일가
 	default:
-		panic(lib.F2문자열("예상하지 못한 호가_유형 값. '%v'", 호가_유형))
+		panic(lib.New에러("예상하지 못한 호가_유형 값. '%v'", 호가_유형))
 	}
 }
