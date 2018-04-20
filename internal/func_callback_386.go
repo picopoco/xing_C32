@@ -60,11 +60,6 @@ func OnDisconnected_Go() {
 
 //export OnTrData_Go
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
-	defer func() {
-		F메모리_해제(unsafe.Pointer(c))
-		lib.S에러패닉_처리기{}.S실행()
-	}()
-
 	g := (*TR_DATA)(unsafe.Pointer(c))
 
 	데이터 := 에러체크(tr데이터_해석(g))
@@ -76,12 +71,6 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 
 //export OnMessageAndError_Go
 func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
-	defer func() {
-		if c != nil {
-			F메모리_해제(unsafe.Pointer(c))
-		}
-	}()
-
 	g := (*MSG_DATA)(unsafe.Pointer(c))
 
 	var 에러여부 bool
@@ -107,6 +96,21 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 	f콜백(콜백값)
 }
 
+//export OnRealtimeData_Go
+func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
+	defer func() {
+		F메모리_해제(unsafe.Pointer(c))
+		lib.S에러패닉_처리기{}.S실행()
+	}()
+
+	lib.F체크포인트()
+
+	g := (*REALTIME_DATA)(unsafe.Pointer(c))
+	값 := 에러체크(f실시간_데이터_해석(g))
+	소켓_메시지 := 에러체크(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
+	에러체크(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
+}
+
 //export OnReleaseData_Go
 func OnReleaseData_Go(c C.int) {
 	식별번호 := int(c)
@@ -124,20 +128,6 @@ func OnReleaseData_Go(c C.int) {
 	f콜백(xt.New콜백_정수값(xt.P콜백_TR완료, 식별번호))
 }
 
-//export OnRealtimeData_Go
-func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
-	defer func() {
-		F메모리_해제(unsafe.Pointer(c))
-		lib.S에러패닉_처리기{}.S실행()
-	}()
-
-	lib.F체크포인트()
-
-	g := (*REALTIME_DATA)(unsafe.Pointer(c))
-	값 := 에러체크(f실시간_데이터_해석(g))
-	소켓_메시지 := 에러체크(lib.New소켓_메시지(lib.MsgPack, 값)).(lib.I소켓_메시지)
-	에러체크(소켓_메시지.S소켓_송신_기본형(소켓PUB_실시간_정보))
-}
 
 //export OnLogin_Go
 func OnLogin_Go(wParam *C.char, lParam *C.char) {

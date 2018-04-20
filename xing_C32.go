@@ -37,6 +37,7 @@ func main() {
 
 	defer xing_C32.F자원_해제()
 
-	lib.F에러체크(xing_C32.F초기화())
+	xing_C32.F초기화(false) // 동작 확인 절차는 외부에서 수행 예정임.
+
 	<-lib.F공통_종료_채널()
 }

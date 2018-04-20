@@ -35,21 +35,23 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
+
+	"os"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	에러체크(f테스트_준비())
+	defer lib.S에러패닉_처리기{}.S실행_No출력()
+
+	f테스트_준비()
 	defer f테스트_정리()
 
-	m.Run()
+	os.Exit(0)
 }
 
-func f테스트_준비() (에러 error) {
+func f테스트_준비() {
 	lib.F테스트_모드_시작()
-	에러체크(F초기화())
-
-	return nil
+	F초기화(true)
 }
 
 func f테스트_정리() {

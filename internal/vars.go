@@ -36,6 +36,7 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"github.com/go-mangos/mangos"
+
 	"time"
 )
 
@@ -45,6 +46,7 @@ import (
 var (
 	소켓REP_TR수신, 소켓PUB_콜백, 소켓PUB_실시간_정보 mangos.Socket
 	ch도우미_종료, ch호출_도우미_종료              chan error
+	ch소켓PUB_콜백_확인                      = make(chan lib.T신호, 1)
 	TR소켓_중계_중                          = lib.New안전한_bool(false)
 	메시지_저장소                            = New메시지_저장소()
 )

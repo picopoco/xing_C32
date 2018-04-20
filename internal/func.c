@@ -63,6 +63,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             // XingAPI에서 수신한 구조체는 메모리 저장방식이 '#pragma pack(push, 1)'이어서 Go언어에서 읽을 수 없음.
             // Go언어에서 읽을 수 있도록 기본 메모리 저장방식으로 저장한 _UNPACKED 구조체로 복사.
             trData = (TR_DATA*)lParam;
+
             TR_DATA_UNPACKED unpackedTrData = {
                 .RequestID = trData->RequestID,
                 .DataLength = trData->DataLength,
@@ -81,6 +82,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             StrCopy(unpackedTrData._BlockName, trData->_BlockName);
 
             OnTrData_Go(&unpackedTrData);
+
             return TRUE;
         case RCV_MSG_DATA:
         case RCV_SYSTEM_ERROR:
@@ -100,6 +102,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
             // Go 콜백 함수 호출
             OnMessageAndError_Go(&unpackedMsgData, msgData);
+
             return TRUE;
         case RCV_RELEASE:
             //printf("XM_RECEIVE_RELEASE\n");
@@ -129,6 +132,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
         // Go 콜백 함수 호출
         OnRealtimeData_Go(&unpackedRealtimeData);
+
         return TRUE;
     case XM_LOGIN:
         //printf("XM_LOGIN\n");

@@ -109,6 +109,8 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 	defer lib.S에러패닉_처리기{
 		M에러_포인터: &에러,
 		M함수with내역: func(r interface{}) {
+			lib.F체크포인트(r)
+
 			if raw메시지 != nil {
 				메시지, _ := lib.New소켓_메시지_에러(r)
 				메시지.S소켓_회신(소켓REP_TR수신, lib.P10초, raw메시지)
@@ -199,10 +201,17 @@ func c함수_호출_도우미(ch초기화 chan<- lib.T신호) (에러 error) {
 				s := 호출_인수.(*xt.S호출_인수_압축_해제)
 				회신_메시지, 에러 = lib.New소켓_메시지(변환_형식, F압축_해제(unsafe.Pointer(&s.M바이트_모음), len(s.M바이트_모음)))
 			case xt.P함수_종료:
-				에러 = F로그아웃_및_접속해제()
-				f소켓_질의_회신(lib.New소켓_메시지_기본형(), raw메시지, ch종료)
+				회신_메시지, 에러 = lib.New소켓_메시지_에러(F로그아웃_및_접속해제())
+				f소켓_질의_회신(회신_메시지, raw메시지, ch종료)
 				lib.F공통_종료_채널_닫기()
 				return 에러
+			case xt.P함수_소켓PUB_확인:
+				select {
+				case ch소켓PUB_콜백_확인 <- lib.P신호_초기화:
+				default:
+				}
+
+				회신_메시지, 에러 = lib.New소켓_메시지_에러(nil)
 			default:
 				panic(lib.New에러("예상하지 못한 함수 : '%v'", 함수))
 			}
