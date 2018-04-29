@@ -34,9 +34,9 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 package xing_C32
 
 import (
-	"github.com/ghts/ghts_dependency"
+	"github.com/ghts/dep"
 )
 
 func c컴파일러_의존성_확인() {
-	ghts_dependency.F의존관계_설정용_내용없는_함수()
+	dep.F의존관계_설정용_내용없는_함수()
 }

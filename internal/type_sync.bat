@@ -4,7 +4,7 @@
 REM *********** 
 REM *  32Bit  *
 REM ***********
-call %GOPATH%\ghts_dependency\batch_scripts\32.bat
+call %GOPATH%\dep\batch_scripts\32.bat
 
 cls
 cd %PROJECT_ROOT%\xing_C32\internal

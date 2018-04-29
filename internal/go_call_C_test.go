@@ -67,13 +67,15 @@ func TestP접속됨(t *testing.T) {
 		t.SkipNow()
 	}
 
-	소켓_질의, 에러 := lib.New소켓_질의(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P10초)
+	소켓REQ, 에러 := lib.NewNano소켓REQ(lib.P주소_Xing_C함수_호출, lib.P10초)
 	lib.F테스트_에러없음(t, 에러)
 
-	응답 := 소켓_질의.S질의(xt.S호출_인수_기본형{M함수: xt.P함수_접속됨}).G응답()
+	defer 소켓REQ.Close()
+
+	질의값 := xt.New호출_인수_기본형(xt.P함수_접속됨)
+	응답 := 소켓REQ.G질의_응답(lib.P변환형식_기본값, 질의값)
 	lib.F테스트_에러없음(t, 응답.G에러())
 	lib.F테스트_같음(t, 응답.G수량(), 1)
-
 	lib.F테스트_같음(t, 응답.G해석값_단순형(0).(bool), F접속됨())
 }
 

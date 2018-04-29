@@ -12,7 +12,7 @@
 보다 자세한 사항에 대해서는 GNU LGPL 2.1판을 참고하시기 바랍니다.
 GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 만약, 이 문서가 누락되어 있다면 자유 소프트웨어 재단으로 문의하시기 바랍니다.
-(자유 소프트웨어 재단 : Free Software Foundation, Inc.,
+(자유 소프트웨어 재단 : Free Software Foundation, In,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
 Copyright (C) 2015-2018년 UnHa Kim (unha.kim@kuh.pe.kr)
@@ -33,18 +33,25 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 
 package xing_C32
 
-import (
-	"github.com/ghts/dep"
-	"github.com/ghts/lib"
+import "github.com/ghts/lib"
 
-	"testing"
-)
+func Go루틴_콜백(ch초기화 chan lib.T신호) {
 
-func TestC컴파일러_의존성_확인(t *testing.T) {
-	t.Parallel()
+	소켓REQ_저장소 := lib.New소켓_저장소(20, func() lib.I소켓 {
+		return lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P10초)
+	})
 
-	dep.F의존관계_설정용_내용없는_함수()
+	ch종료 := lib.F공통_종료_채널()
+	ch초기화 <- lib.P신호_초기화
 
-	gcc_파일경로 := lib.F_GOPATH() + `\src\github.com\ghts\dep\ruby_devkit_32\mingw\bin\gcc.exe`
-	lib.F테스트_참임(t, lib.F파일_존재함(gcc_파일경로))
+	for {
+		select {
+		case 콜백값 := <-ch콜백:
+			소켓REQ := 소켓REQ_저장소.G소켓()
+			소켓REQ.G질의_응답(lib.P변환형식_기본값, 콜백값)
+			소켓REQ_저장소.S회수(소켓REQ)
+		case <-ch종료:
+			return
+		}
+	}
 }

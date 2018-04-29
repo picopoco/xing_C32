@@ -41,8 +41,6 @@ import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
 	"github.com/ghts/xing_types"
-	"github.com/go-mangos/mangos"
-
 	"os"
 	"strings"
 	"time"
@@ -52,39 +50,9 @@ func F초기화(자체_테스트 bool) {
 	f초기화_설정화일()
 	f초기화_XingAPI()
 	f초기화_TR전송_제한()
-	f초기화_소켓()
 	f초기화_Go루틴()
 	f초기화_서버_접속()
 	f초기화_작동_확인(자체_테스트)
-}
-
-func f초기화_소켓() {
-	소켓REP_TR수신 = 에러체크(f초기화_소켓_도우미(lib.P주소_Xing_C함수_호출)).(mangos.Socket)
-	소켓PUB_콜백 = 에러체크(f초기화_소켓_도우미(lib.P주소_Xing_C함수_콜백)).(mangos.Socket)
-	소켓PUB_실시간_정보 = 에러체크(f초기화_소켓_도우미(lib.P주소_Xing_실시간)).(mangos.Socket)
-}
-
-func f초기화_소켓_도우미(주소 lib.T주소) (소켓 mangos.Socket, 에러 error) {
-	for i := 0; i < 1000; i++ {
-		switch 주소 {
-		default:
-			panic("예상하지 못한 주소. " + 주소.String())
-		case lib.P주소_Xing_C함수_호출:
-			소켓, 에러 = lib.New소켓REP_raw(lib.P주소_Xing_C함수_호출)
-		case lib.P주소_Xing_C함수_콜백:
-			소켓, 에러 = lib.New소켓PUB(lib.P주소_Xing_C함수_콜백)
-		case lib.P주소_Xing_실시간:
-			소켓, 에러 = lib.New소켓PUB(lib.P주소_Xing_실시간)
-		}
-
-		if 에러 == nil {
-			return 소켓, 에러
-		}
-
-		lib.F대기(lib.P1초)
-	}
-
-	return nil, lib.New에러("소켓 생성 실패 : '%v'", 주소)
 }
 
 func f초기화_설정화일() {
@@ -109,8 +77,12 @@ func f초기화_XingAPI() {
 }
 
 func f초기화_Go루틴() {
-	ch초기화 := make(chan lib.T신호)
+	ch초기화 := make(chan lib.T신호, 2)
+
 	go Go루틴_소켓_C함수_호출(ch초기화)
+	go Go루틴_콜백(ch초기화)
+
+	<-ch초기화
 	<-ch초기화
 }
 
@@ -120,7 +92,8 @@ func f초기화_서버_접속() (에러 error) {
 	lib.F조건부_패닉(!lib.F인터넷에_접속됨(), "서버 접속이 불가 : 인터넷 접속을 확인하십시오.")
 
 	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
-	소켓_질의 := lib.New소켓_질의_단순형(lib.P주소_Xing_C함수_호출, lib.F임의_변환_형식(), lib.P10초)
+	소켓 := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P5초)
+	defer 소켓.Close()
 
 	for i := 0; i < 20; i++ {
 		if F접속됨() {
@@ -128,8 +101,7 @@ func f초기화_서버_접속() (에러 error) {
 			return nil
 		}
 
-		소켓_질의.S질의(질의값)
-		응답 := 소켓_질의.G응답()
+		응답 := 소켓.G질의_응답(lib.P변환형식_기본값, 질의값)
 
 		if 응답.G에러() != nil {
 			if strings.Contains(응답.G에러().Error(), "receive time out") {
@@ -160,6 +132,30 @@ func f초기화_서버_접속() (에러 error) {
 	}
 
 	panic("서버 접속 실패.")
+}
+
+func f초기화_작동_확인(자체_테스트 bool) {
+	ch완료 := make(chan lib.T신호, 3)
+
+	if 자체_테스트 {
+		go xing.F접속됨_확인(ch완료)
+		<-ch완료
+		lib.F체크포인트("* 1 *")
+		lib.F체크포인트("xing_C32 확인 완료")
+		return
+	}
+
+	소켓 := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P5초)
+	defer 소켓.Close()
+
+	콜백값 := xt.New콜백_정수값(xt.P콜백_신호, xt.P신호_C32_대기_중)
+
+	for {
+		if 응답 := 소켓.G질의_응답(lib.P변환형식_기본값, 콜백값); 응답.G에러() == nil {
+			lib.F체크포인트("C32 : 소켓REP_TR콜백 동작 여부 확인 완료.")
+			return
+		}
+	}
 }
 
 func f초기화_TR전송_제한() {
@@ -211,96 +207,5 @@ func f초기화_TR전송_제한() {
 
 	for TR코드, 초당_제한_횟수 := range 코드별_초당_TR전송_제한 {
 		tr전송_코드별_초당_제한[TR코드] = lib.New전송_권한_TR코드별(TR코드, 초당_제한_횟수, lib.P1초)
-	}
-}
-
-func f초기화_작동_확인(자체_테스트 bool) {
-	ch완료 := make(chan lib.T신호, 3)
-
-	go f소켓PUB_콜백_확인_서버(ch완료)
-
-	if 자체_테스트 {
-		go f소켓PUB_콜백_확인_클라이언트(ch완료)
-		go xing.F소켓REP_TR_확인_클라이언트(ch완료)
-	}
-
-	<-ch완료
-	if 자체_테스트 {
-		lib.F체크포인트("* 1 *")
-
-		<-ch완료
-		lib.F체크포인트("* 2 *")
-		<-ch완료
-		lib.F체크포인트("* 3 *")
-
-		lib.F체크포인트("xing_C32 확인 완료")
-	}
-}
-
-func f소켓PUB_콜백_확인_서버(ch완료 chan lib.T신호) {
-	defer func() {
-		//lib.F체크포인트("f소켓PUB_콜백_확인_서버() 종료")
-		ch완료 <- lib.P신호_종료
-	}()
-
-	//lib.F체크포인트("f소켓PUB_콜백_확인_서버() 시작")
-
-	확인_신호_송신 := time.Tick(lib.P3초)
-	콜백값 := xt.New콜백_기본형(xt.P콜백_소켓PUB_확인)
-
-	for {
-		select {
-		case <-ch소켓PUB_콜백_확인:
-			return
-		case <-확인_신호_송신:
-			f콜백(콜백값)
-		}
-	}
-}
-
-func f소켓PUB_콜백_확인_클라이언트(ch완료 chan lib.T신호) {
-	defer func() {
-		lib.F체크포인트("f소켓PUB_콜백_확인_클라이언트() 종료")
-		ch완료 <- lib.P신호_종료
-	}()
-
-	var 소켓SUB mangos.Socket
-	var 에러 error
-
-	for {
-		if 소켓SUB, 에러 = lib.New소켓SUB(lib.P주소_Xing_C함수_콜백); 에러 == nil {
-			break
-		}
-
-		lib.F대기(lib.P1초)
-	}
-
-	lib.F체크포인트("f소켓PUB_콜백_확인_클라이언트() 시작")
-
-	for i := 0; i < 100; i++ {
-		바이트_모음 := 에러체크(소켓SUB.Recv()).([]byte)
-
-		if i > 0 && (i%20) == 0 {
-			lib.F체크포인트(i)
-		}
-
-		회신_메시지 := lib.New소켓_메시지by바이트_모음(바이트_모음)
-		회신_메시지.S해석기(xt.F바이트_변환값_해석)
-		값 := 회신_메시지.G해석값_단순형(0).(xt.I콜백)
-
-		if 값.G콜백() != xt.P콜백_소켓PUB_확인 {
-			continue
-		}
-
-		호출_인수 := xt.New호출_인수_기본형(xt.P함수_소켓PUB_확인)
-		소켓_질의 := lib.New소켓_질의_단순형(lib.P주소_Xing_C함수_호출, lib.P변환형식_기본값, lib.P500밀리초)
-		소켓_질의.S질의(호출_인수)
-
-		응답 := 소켓_질의.G응답()
-
-		if 응답.G에러() == nil {
-			lib.F체크포인트("소켓SUB : 소켓PUB 확인 메시지 회신 수신. 확인 완료.")
-			return
-		}
 	}
 }

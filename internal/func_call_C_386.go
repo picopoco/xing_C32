@@ -50,12 +50,18 @@ import (
 )
 
 func F접속(서버_구분 xt.T서버_구분) bool {
+	lib.F체크포인트()
+
 	if F접속됨() {
 		return true
 	}
 
+	lib.F체크포인트()
+
 	var c서버_이름 *C.char
 	var c포트_번호 C.int
+
+	lib.F체크포인트()
 
 	switch 서버_구분 {
 	case xt.P서버_실거래:
@@ -81,13 +87,27 @@ func F접속(서버_구분 xt.T서버_구분) bool {
 		c포트_번호 = C.int(0)
 	}
 
+	lib.F체크포인트()
+
 	defer C.free(unsafe.Pointer(c서버_이름))
 
-	return bool(C.etkConnect(c서버_이름, c포트_번호))
+	lib.F체크포인트()
+
+	접속_결과 := bool(C.etkConnect(c서버_이름, c포트_번호))
+
+	lib.F체크포인트()
+
+	return 접속_결과
 }
 
 func F접속됨() bool {
-	return bool(C.etkIsConnected())
+	lib.F체크포인트()
+
+	접속_결과 := bool(C.etkIsConnected())
+
+	lib.F체크포인트(접속_결과)
+
+	return 접속_결과
 }
 
 func F로그아웃_및_접속해제() error {
@@ -102,7 +122,11 @@ func F로그아웃_및_접속해제() error {
 	return nil
 }
 
-func F로그인() bool {
+func F로그인() (로그인_결과 bool) {
+	defer lib.S에러패닉_처리기{M함수: func() { 로그인_결과 = false }}.S실행_No출력()
+
+	lib.F체크포인트()
+
 	if lib.F파일_없음(설정화일_경로) {
 		버퍼 := new(bytes.Buffer)
 		버퍼.WriteString("Xing 설정화일 없음\n")
@@ -111,23 +135,37 @@ func F로그인() bool {
 		panic(lib.New에러(버퍼.String(), 설정화일_경로))
 	}
 
+	lib.F체크포인트()
+
 	cfg파일 := 에러체크(ini.Load(설정화일_경로)).(*ini.File)
 	섹션 := 에러체크(cfg파일.GetSection("XingAPI_LogIn_Info")).(*ini.Section)
+
+	lib.F체크포인트()
 
 	키_ID := 에러체크(섹션.GetKey("ID")).(*ini.Key)
 	c아이디 := C.CString(키_ID.String())
 	defer C.free(unsafe.Pointer(c아이디))
 
+	lib.F체크포인트()
+
 	키_PWD := 에러체크(섹션.GetKey("PWD")).(*ini.Key)
 	c암호 := C.CString(키_PWD.String())
 	defer C.free(unsafe.Pointer(c암호))
+
+	lib.F체크포인트()
 
 	키_CertPWD := 에러체크(섹션.GetKey("CertPWD")).(*ini.Key)
 	공인인증서_암호 := lib.F조건부_값(lib.F테스트_모드_실행_중(), "", 키_CertPWD.String()).(string)
 	c공인인증서_암호 := C.CString(공인인증서_암호)
 	defer C.free(unsafe.Pointer(c공인인증서_암호))
 
-	return bool(C.etkLogin(c아이디, c암호, c공인인증서_암호))
+	lib.F체크포인트()
+
+	로그인_결과 = bool(C.etkLogin(c아이디, c암호, c공인인증서_암호))
+
+	lib.F체크포인트()
+
+	return 로그인_결과
 }
 
 func F질의(TR코드 string, c데이터 unsafe.Pointer, 길이 int,
