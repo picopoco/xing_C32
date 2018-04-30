@@ -44,9 +44,10 @@ import (
 
 // 다중 사용에 안전한 값들.
 var (
-	소켓REP_TR수신   = 에러체크(lib.NewNano소켓REP_raw(lib.P주소_Xing_C함수_호출)).(lib.I소켓_Raw)
+	소켓REP_TR수신   = 에러체크(lib.NewNano소켓REP(lib.P주소_Xing_C함수_호출)).(lib.I소켓)
 	소켓PUB_실시간_정보 = 에러체크(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
 
+	ch접속 = make(chan bool, 1)
 	ch콜백 = make(chan xt.I콜백, 10000)
 
 	ch도우미_종료, ch호출_도우미_종료 chan error
@@ -54,7 +55,6 @@ var (
 	TR소켓_중계_중 = lib.New안전한_bool(false)
 	메시지_저장소   = New메시지_저장소()
 
-	ch접속_처리  = make(chan bool, 1)
 	접속_처리_잠금 sync.Mutex
 )
 

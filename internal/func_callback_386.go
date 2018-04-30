@@ -41,6 +41,7 @@ import "C"
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing_types"
+
 	"unsafe"
 )
 
@@ -119,7 +120,7 @@ func OnReleaseData_Go(c C.int) {
 
 	메시지_저장소.S삭제(식별번호)
 
-	콜백값 := xt.New콜백_정수값(xt.P콜백_TR완료, 식별번호)
+	콜백값 := xt.New콜백_TR완료(식별번호)
 
 	ch콜백 <- 콜백값
 }
@@ -127,16 +128,15 @@ func OnReleaseData_Go(c C.int) {
 //export OnLogin_Go
 func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	코드 := C.GoString(wParam)
-	//메시지 := C.GoString(lParam)
+	정수, 에러 := lib.F2정수(코드)
+	로그인_성공_여부 := (에러 == nil && 정수 == 0)
 
-	// '접속_처리_잠금'에 의해서 접속 처리는 1개씩만 처리되므로, 'ch접속_처리'는 비어있어야 함.
-	lib.F조건부_패닉(len(ch접속_처리) > 0, "'ch접속_처리'는 비어있어야 함.")
-
-	if 정수, 에러 := lib.F2정수(코드); 에러 == nil && 정수 == 0 {
-		ch접속_처리 <- true
-	} else {
-		ch접속_처리 <- false
+	select {
+	case ch접속 <- 로그인_성공_여부:
+	default:
 	}
+
+	ch콜백 <- xt.New콜백_접속(로그인_성공_여부)
 }
 
 //export OnLogout_Go

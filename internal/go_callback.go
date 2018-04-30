@@ -35,23 +35,17 @@ package xing_C32
 
 import "github.com/ghts/lib"
 
-func Go루틴_콜백(ch초기화 chan lib.T신호) {
-
-	소켓REQ_저장소 := lib.New소켓_저장소(20, func() lib.I소켓 {
-		return lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P10초)
-	})
-
+func Go루틴_TR콜백(ch초기화 chan lib.T신호) (에러 error) {
+	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P30초)
 	ch종료 := lib.F공통_종료_채널()
 	ch초기화 <- lib.P신호_초기화
 
 	for {
 		select {
 		case 콜백값 := <-ch콜백:
-			소켓REQ := 소켓REQ_저장소.G소켓()
 			소켓REQ.G질의_응답(lib.P변환형식_기본값, 콜백값)
-			소켓REQ_저장소.S회수(소켓REQ)
 		case <-ch종료:
-			return
+			return nil
 		}
 	}
 }

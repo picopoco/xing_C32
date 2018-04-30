@@ -347,14 +347,17 @@ bool etkDisconnect() {
 // 로그인 결과는 hWnd에 등록한 윈도우로 Message(XM_LOGIN)가 옵니다.
 // Login 이 성공한 후에 프로그램 종료할 경우엔 ETK_Logout() 을 호출하여야 합니다.
 bool etkLogin(const char* ID, const char* Password, const char* CertPwd) {
-
     ETK_Login func = (ETK_Login)etkFunc("ETK_Login");
     if (func == NULL) {
         printf("NULL func.");
         return false;
     }
 
+    printf("Login Before.\n");
+
     BOOL value = func(getHWND(), ID, Password, CertPwd, 0, 0);
+
+    printf("Login After.\n");
 
     return BOOL2bool(value);
 }

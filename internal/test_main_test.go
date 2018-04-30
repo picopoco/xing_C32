@@ -47,12 +47,16 @@ func TestMain(m *testing.M) {
 	defer f테스트_정리()
 
 	m.Run()
-
 	os.Exit(0)
 }
 
 func f테스트_준비() {
 	lib.F테스트_모드_시작()
+
+	ch초기화 := make(chan lib.T신호)
+	go Go루틴_테스트용_TR콜백_수신(ch초기화)
+	<-ch초기화
+
 	F초기화(true)
 }
 

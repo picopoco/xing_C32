@@ -42,7 +42,6 @@ import (
 	"github.com/ghts/xing"
 	"github.com/ghts/xing_types"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -53,6 +52,7 @@ func F초기화(자체_테스트 bool) {
 	f초기화_Go루틴()
 	f초기화_서버_접속()
 	f초기화_작동_확인(자체_테스트)
+	lib.F체크포인트("작동 확인 완료")
 }
 
 func f초기화_설정화일() {
@@ -77,10 +77,10 @@ func f초기화_XingAPI() {
 }
 
 func f초기화_Go루틴() {
-	ch초기화 := make(chan lib.T신호, 2)
+	ch초기화 := make(chan lib.T신호)
 
 	go Go루틴_소켓_C함수_호출(ch초기화)
-	go Go루틴_콜백(ch초기화)
+	go Go루틴_TR콜백(ch초기화)
 
 	<-ch초기화
 	<-ch초기화
@@ -91,47 +91,39 @@ func f초기화_서버_접속() (에러 error) {
 
 	lib.F조건부_패닉(!lib.F인터넷에_접속됨(), "서버 접속이 불가 : 인터넷 접속을 확인하십시오.")
 
+	const 타임아웃 = lib.P30초
+	ch타임아웃 := time.After(타임아웃)
+
 	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
-	소켓 := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P5초)
-	defer 소켓.Close()
+	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P10초, 타임아웃)
+	defer 소켓REQ.Close()
 
-	for i := 0; i < 20; i++ {
-		if F접속됨() {
-			lib.F문자열_출력("이미 접속되어 있음. %v", i)
-			return nil
-		}
+	if 응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 질의값); 응답.G에러() != nil {
+		return 응답.G에러()
+	} else if !응답.G해석값_단순형(0).(bool) {
+		lib.F문자열_출력("접속 처리 실행 실패 후 재시도.")
+		lib.F대기(lib.P3초)
 
-		응답 := 소켓.G질의_응답(lib.P변환형식_기본값, 질의값)
-
-		if 응답.G에러() != nil {
-			if strings.Contains(응답.G에러().Error(), "receive time out") {
-				if F접속됨() {
-					lib.F문자열_출력("접속 성공.%v %v", i, time.Now().Format("04:05"))
-					return nil
-				}
-
-				lib.F문자열_출력("서버_접속 시도 회신 없음. %v", i)
-			} else {
-				lib.F에러_출력(응답.G에러())
-			}
-
-			continue
-		}
-
-		if 값, 에러 := 응답.G해석값(0); 에러 != nil {
-			panic(에러)
-		} else if 접속_성공 := 값.(bool); !접속_성공 {
-			lib.F문자열_출력("접속 시도 실패 후 재시도. %v", i)
-			lib.F대기(lib.P3초)
-			continue
-		}
-
-		lib.F문자열_출력("접속 성공. %v", i)
-
-		return nil
+		return f초기화_서버_접속()
 	}
 
-	panic("서버 접속 실패.")
+	var 접속_성공_여부 = false
+
+	select {
+	case 접속_성공_여부 = <-ch접속:
+	case <-ch타임아웃:
+	}
+
+	if !접속_성공_여부 {
+		lib.F문자열_출력("접속 실패 후 재시도.")
+		lib.F대기(lib.P3초)
+
+		return f초기화_서버_접속()
+	}
+
+	lib.F문자열_출력("접속 성공")
+
+	return nil
 }
 
 func f초기화_작동_확인(자체_테스트 bool) {
@@ -151,7 +143,7 @@ func f초기화_작동_확인(자체_테스트 bool) {
 	콜백값 := xt.New콜백_정수값(xt.P콜백_신호, xt.P신호_C32_대기_중)
 
 	for {
-		if 응답 := 소켓.G질의_응답(lib.P변환형식_기본값, 콜백값); 응답.G에러() == nil {
+		if 응답 := 소켓.G질의_응답_검사(lib.P변환형식_기본값, 콜백값); 응답.G에러() == nil {
 			lib.F체크포인트("C32 : 소켓REP_TR콜백 동작 여부 확인 완료.")
 			return
 		}
@@ -207,5 +199,21 @@ func f초기화_TR전송_제한() {
 
 	for TR코드, 초당_제한_횟수 := range 코드별_초당_TR전송_제한 {
 		tr전송_코드별_초당_제한[TR코드] = lib.New전송_권한_TR코드별(TR코드, 초당_제한_횟수, lib.P1초)
+	}
+}
+
+func Go루틴_테스트용_TR콜백_수신(ch초기화 chan lib.T신호) {
+	소켓REP_TR콜백 := lib.NewNano소켓REP_단순형(lib.P주소_Xing_C함수_콜백)
+
+	ch초기화 <- lib.P신호_초기화
+
+	for {
+		값, 에러 := 소켓REP_TR콜백.G수신()
+		if 에러 != nil {
+			lib.F에러_출력(에러)
+			continue
+		}
+
+		소켓REP_TR콜백.S송신(값.G변환_형식(0), lib.P신호_OK)
 	}
 }

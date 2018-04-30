@@ -45,6 +45,6 @@ func TestC컴파일러_의존성_확인(t *testing.T) {
 
 	dep.F의존관계_설정용_내용없는_함수()
 
-	gcc_파일경로 := lib.F_GOPATH() + `\src\github.com\ghts\dep\ruby_devkit_32\mingw\bin\gcc.exe`
+	gcc_파일경로 := lib.F_GOPATH() + `\src\github.com\ghts\dep\gcc32\mingw\bin\gcc.exe`
 	lib.F테스트_참임(t, lib.F파일_존재함(gcc_파일경로))
 }
