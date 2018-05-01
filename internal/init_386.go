@@ -45,14 +45,18 @@ import (
 	"time"
 )
 
-func F초기화(자체_테스트 bool) {
+func F초기화(자체_테스트 bool) (에러 error) {
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러,
+		M함수: func() { lib.F체크포인트() }}.S실행()
+
 	f초기화_설정화일()
 	f초기화_XingAPI()
 	f초기화_TR전송_제한()
 	f초기화_Go루틴()
 	f초기화_서버_접속()
 	f초기화_작동_확인(자체_테스트)
-	lib.F체크포인트("작동 확인 완료")
+
+	return nil
 }
 
 func f초기화_설정화일() {
@@ -95,30 +99,34 @@ func f초기화_서버_접속() (에러 error) {
 	ch타임아웃 := time.After(타임아웃)
 
 	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
-	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P10초, 타임아웃)
+	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P30초, 타임아웃)
 	defer 소켓REQ.Close()
 
-	if 응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 질의값); 응답.G에러() != nil {
-		return 응답.G에러()
-	} else if !응답.G해석값_단순형(0).(bool) {
-		lib.F문자열_출력("접속 처리 실행 실패 후 재시도.")
-		lib.F대기(lib.P3초)
+	for i := 0; i < 100; i++ {
+		if 응답, 에러 := 소켓REQ.G질의_응답(lib.P변환형식_기본값, 질의값); 에러 != nil {
+			lib.F에러_출력(에러)
+			continue
+		} else if 응답.G에러() != nil {
+			lib.F에러_출력(응답.G에러())
+			continue
+		} else if !응답.G해석값_단순형(0).(bool) {
+			lib.F문자열_출력("접속 처리 실행 실패 후 재시도.")
+			continue
+		}
 
-		return f초기화_서버_접속()
-	}
+		var 접속_성공_여부 = false
 
-	var 접속_성공_여부 = false
+		select {
+		case 접속_성공_여부 = <-ch접속:
+		case <-ch타임아웃:
+		}
 
-	select {
-	case 접속_성공_여부 = <-ch접속:
-	case <-ch타임아웃:
-	}
+		if !접속_성공_여부 {
+			lib.F문자열_출력("접속 실패 후 재시도.")
+			continue
+		}
 
-	if !접속_성공_여부 {
-		lib.F문자열_출력("접속 실패 후 재시도.")
-		lib.F대기(lib.P3초)
-
-		return f초기화_서버_접속()
+		break
 	}
 
 	lib.F문자열_출력("접속 성공")
@@ -132,8 +140,8 @@ func f초기화_작동_확인(자체_테스트 bool) {
 	if 자체_테스트 {
 		go xing.F접속됨_확인(ch완료)
 		<-ch완료
-		lib.F체크포인트("* 1 *")
-		lib.F체크포인트("xing_C32 확인 완료")
+
+		lib.F체크포인트("xing_C32 : F접속됨() 확인 완료")
 		return
 	}
 

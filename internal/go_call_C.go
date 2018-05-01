@@ -91,10 +91,8 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 		case 회신값 := <-ch회신값:
 			소켓REP_TR수신.S송신(수신값.G변환_형식(0), 회신값)
 			lib.F대기(lib.P1초)
-			lib.F체크포인트("회신값 소켓 회신", 회신값)
 		case 에러 := <-ch에러:
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
-			lib.F체크포인트("에러 소켓 회신", 에러)
 		case <-ch도우미_종료:
 			go go루틴_소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
 			<-ch도우미_초기화
@@ -108,7 +106,7 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 
 func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch종료 chan lib.T신호,
 	ch호출_인수 chan xt.I호출_인수, ch회신값 chan interface{}, ch에러 chan error) {
-	defer lib.S에러패닉_처리기{M함수: func() { ch종료 <- lib.P신호_종료 }}.S실행_No출력()
+	defer lib.S에러패닉_처리기{M함수: func() { ch종료 <- lib.P신호_종료 }}.S실행()
 
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
@@ -121,11 +119,8 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 		case 호출_인수 := <-ch호출_인수:
 			switch 호출_인수.G함수() {
 			case xt.P함수_접속:
-				lib.F체크포인트("접속 호출 채널 수신")
 				접속_처리_결과 := f접속_처리()
-				lib.F체크포인트("접속 처리 결과", 접속_처리_결과)
 				ch회신값 <- 접속_처리_결과
-				lib.F체크포인트("접속 호출 채널 회신")
 			case xt.P함수_질의:
 				질의값 := 에러체크(호출_인수.(*xt.S호출_인수_질의).M질의값.G해석값()).(lib.I질의값)
 				식별번호, 에러 := f조회_및_주문_질의_처리(질의값)
@@ -192,7 +187,11 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 }
 
 func f리소스_정리() {
-	ch콜백 <- xt.New콜백_정수값(xt.P콜백_신호, xt.P신호_C32_종료)
+	select {
+	case ch콜백 <- xt.New콜백_정수값(xt.P콜백_신호, xt.P신호_C32_종료):
+	default:
+	}
+
 	F실시간_정보_모두_해지()
 	F로그아웃_및_접속해제()
 	lib.F공통_종료_채널_닫기()
