@@ -35,7 +35,6 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing_types"
 	"sync"
 	"time"
 )
@@ -48,9 +47,12 @@ var (
 	소켓PUB_실시간_정보 = 에러체크(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
 
 	ch접속 = make(chan bool, 1)
-	ch콜백 = make(chan xt.I콜백, 10000)
 
 	ch도우미_종료, ch호출_도우미_종료 chan error
+
+	소켓REQ_저장소 = lib.New소켓_저장소(20, func() lib.I소켓 {
+		return lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P30초)
+	})
 
 	TR소켓_중계_중 = lib.New안전한_bool(false)
 	메시지_저장소   = New메시지_저장소()

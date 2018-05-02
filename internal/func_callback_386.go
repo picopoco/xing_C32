@@ -47,10 +47,7 @@ import (
 
 //export OnDisconnected_Go
 func OnDisconnected_Go() {
-	콜백값 := new(xt.S콜백_기본형)
-	콜백값.M콜백 = xt.P콜백_접속해제
-
-	ch콜백 <- 콜백값
+	f콜백(xt.New콜백_기본형(xt.P콜백_접속해제))
 }
 
 //export OnTrData_Go
@@ -60,8 +57,7 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	데이터 := 에러체크(tr데이터_해석(g))
 	바이트_변환값 := 에러체크(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
 	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
-
-	ch콜백 <- 콜백값
+	f콜백(콜백값)
 }
 
 //export OnMessageAndError_Go
@@ -82,23 +78,18 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 	콜백값.S콜백_기본형 = xt.New콜백_기본형(xt.P콜백_메시지_및_에러)
 	콜백값.M식별번호 = int(g.RequestID)
 	콜백값.M코드 = lib.F2문자열_공백제거(g.MsgCode)
-	콜백값.M내용 = lib.F2문자열_공백제거(g.MsgData)
+	콜백값.M내용 = lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(g.MsgData), C.int(g.MsgLength)))
 	콜백값.M에러여부 = 에러여부
 
 	// f메시지_해제() 에서 포인터가 필요함.
 	메시지_저장소.S추가(콜백값.M식별번호, unsafe.Pointer(pointer))
 
-	ch콜백 <- 콜백값
+	f콜백(콜백값)
 }
 
 //export OnRealtimeData_Go
 func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
-	defer func() {
-		F메모리_해제(unsafe.Pointer(c))
-		lib.S에러패닉_처리기{}.S실행()
-	}()
-
-	lib.F체크포인트()
+	defer lib.S에러패닉_처리기{}.S실행()
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 	실시간_데이터 := 에러체크(f실시간_데이터_해석(g))
@@ -120,9 +111,7 @@ func OnReleaseData_Go(c C.int) {
 
 	메시지_저장소.S삭제(식별번호)
 
-	콜백값 := xt.New콜백_TR완료(식별번호)
-
-	ch콜백 <- 콜백값
+	f콜백(xt.New콜백_TR완료(식별번호))
 }
 
 //export OnLogin_Go
@@ -135,39 +124,24 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	case ch접속 <- 로그인_성공_여부:
 	default:
 	}
-
-	ch콜백 <- xt.New콜백_접속(로그인_성공_여부)
 }
 
 //export OnLogout_Go
 func OnLogout_Go() {
-	콜백값 := new(xt.S콜백_기본형)
-	콜백값.M콜백 = xt.P콜백_로그아웃
-
-	ch콜백 <- 콜백값
+	f콜백(xt.New콜백_기본형(xt.P콜백_로그아웃))
 }
 
 //export OnTimeout_Go
 func OnTimeout_Go(c C.int) {
-	콜백값 := new(xt.S콜백_정수값)
-	콜백값.M콜백 = xt.P콜백_타임아웃
-	콜백값.M정수값 = int(c)
-
-	ch콜백 <- 콜백값
+	f콜백(xt.New콜백_타임아웃(int(c)))
 }
 
 //export OnLinkData_Go
-func OnLinkData_Go() { // TODO
-	콜백값 := new(xt.S콜백_기본형)
-	콜백값.M콜백 = xt.P콜백_링크_데이터
-
-	ch콜백 <- 콜백값
+func OnLinkData_Go() {
+	f콜백(xt.New콜백_기본형(xt.P콜백_링크_데이터)) // TODO
 }
 
 //export OnRealtimeDataChart_Go
-func OnRealtimeDataChart_Go() { // TODO
-	콜백값 := new(xt.S콜백_기본형)
-	콜백값.M콜백 = xt.P콜백_실시간_차트_데이터
-
-	ch콜백 <- 콜백값
+func OnRealtimeDataChart_Go() {
+	f콜백(xt.New콜백_기본형(xt.P콜백_실시간_차트_데이터)) // TODO
 }

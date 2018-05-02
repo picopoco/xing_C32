@@ -41,6 +41,8 @@ import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
 	"github.com/ghts/xing_types"
+
+	"fmt"
 	"os"
 	"time"
 )
@@ -54,7 +56,12 @@ func F초기화(자체_테스트 bool) (에러 error) {
 	f초기화_TR전송_제한()
 	f초기화_Go루틴()
 	f초기화_서버_접속()
-	f초기화_작동_확인(자체_테스트)
+
+	if 자체_테스트 {
+		f초기화_작동_확인()
+	} else {
+		f콜백(xt.New콜백_신호(xt.P신호_C32_Ready))
+	}
 
 	return nil
 }
@@ -82,11 +89,7 @@ func f초기화_XingAPI() {
 
 func f초기화_Go루틴() {
 	ch초기화 := make(chan lib.T신호)
-
 	go Go루틴_소켓_C함수_호출(ch초기화)
-	go Go루틴_TR콜백(ch초기화)
-
-	<-ch초기화
 	<-ch초기화
 }
 
@@ -126,36 +129,22 @@ func f초기화_서버_접속() (에러 error) {
 			continue
 		}
 
-		break
+		fmt.Println("**************************")
+		fmt.Println("*   C32 서버 접속 성공   *")
+		fmt.Println("**************************")
+		return nil
 	}
-
-	lib.F문자열_출력("접속 성공")
 
 	return nil
 }
 
-func f초기화_작동_확인(자체_테스트 bool) {
+func f초기화_작동_확인() {
 	ch완료 := make(chan lib.T신호, 3)
 
-	if 자체_테스트 {
-		go xing.F접속됨_확인(ch완료)
-		<-ch완료
+	go xing.F접속됨_확인(ch완료)
+	<-ch완료
 
-		lib.F체크포인트("xing_C32 : F접속됨() 확인 완료")
-		return
-	}
-
-	소켓 := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P5초)
-	defer 소켓.Close()
-
-	콜백값 := xt.New콜백_정수값(xt.P콜백_신호, xt.P신호_C32_대기_중)
-
-	for {
-		if 응답 := 소켓.G질의_응답_검사(lib.P변환형식_기본값, 콜백값); 응답.G에러() == nil {
-			lib.F체크포인트("C32 : 소켓REP_TR콜백 동작 여부 확인 완료.")
-			return
-		}
-	}
+	lib.F체크포인트("xing_C32 : F접속됨() 확인 완료")
 }
 
 func f초기화_TR전송_제한() {

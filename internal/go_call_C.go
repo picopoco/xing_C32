@@ -89,8 +89,8 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 
 		select {
 		case 회신값 := <-ch회신값:
+			lib.F체크포인트(회신값, 호출_인수.G함수())
 			소켓REP_TR수신.S송신(수신값.G변환_형식(0), 회신값)
-			lib.F대기(lib.P1초)
 		case 에러 := <-ch에러:
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
 		case <-ch도우미_종료:
@@ -130,8 +130,6 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 				} else {
 					ch회신값 <- 식별번호
 				}
-
-				lib.F체크포인트(식별번호)
 			case xt.P함수_접속됨:
 				ch회신값 <- F접속됨()
 			case xt.P함수_실시간_정보_구독:
@@ -168,7 +166,6 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 					ch회신값 <- true
 					f리소스_정리()
 				case xt.P신호_Go_소켓REP_TR수신_테스트:
-					lib.F체크포인트("소켓REP_TR수신_테스트")
 					ch회신값 <- true
 				default:
 					panic(lib.New에러("예상하지 못한 신호값 : '%v'", 신호))
@@ -187,22 +184,15 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 }
 
 func f리소스_정리() {
-	select {
-	case ch콜백 <- xt.New콜백_정수값(xt.P콜백_신호, xt.P신호_C32_종료):
-	default:
-	}
+	f콜백(xt.New콜백_신호(xt.P신호_C32_종료))
 
 	F실시간_정보_모두_해지()
 	F로그아웃_및_접속해제()
-	lib.F공통_종료_채널_닫기()
 	F자원_해제()
-}
 
-func f소켓_닫기() {
-	defer recover()
-
-	소켓PUB_실시간_정보.Close()
-	소켓REP_TR수신.Close()
+	lib.F패닉억제_호출(소켓PUB_실시간_정보.Close)
+	lib.F패닉억제_호출(소켓REP_TR수신.Close)
+	lib.F공통_종료_채널_닫기()
 }
 
 func f접속_처리() bool {

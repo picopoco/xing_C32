@@ -224,7 +224,7 @@ func F계좌_이름(계좌_번호 string) string {
 	C.etkGetAccountName(c계좌번호, c버퍼, 버퍼_크기)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return lib.F2문자열_CP949(바이트_모음)
+	return lib.F2문자열_EUC_KR(바이트_모음)
 
 	//return C.GoString(c버퍼)
 }
@@ -243,7 +243,7 @@ func F계좌_상세명(계좌_번호 string) string {
 	C.etkGetAccountDetailName(c계좌번호, c버퍼, 버퍼_크기)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return lib.F2문자열_CP949(바이트_모음)
+	return lib.F2문자열_EUC_KR(바이트_모음)
 
 	//return C.GoString(c버퍼)
 }
@@ -270,7 +270,7 @@ func F계좌_상세명(계좌_번호 string) string {
 //
 //	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), C.int(버퍼_크기))
 //
-//	return lib.F2문자열_CP949(바이트_모음)
+//	return lib.F2문자열_EUC_KR(바이트_모음)
 //}
 
 func F서버_이름() string {
@@ -282,7 +282,7 @@ func F서버_이름() string {
 	C.etkGetServerName(c버퍼, 버퍼_길이)
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이)
-	return lib.F2문자열_CP949_공백제거(바이트_모음)
+	return lib.F2문자열_EUC_KR_공백제거(바이트_모음)
 }
 
 func F에러_코드() int { return int(C.etkGetLastError(0)) }
@@ -306,7 +306,7 @@ func F에러_메시지(에러_코드 int) string {
 	}
 
 	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이)
-	return lib.F2문자열_CP949_공백제거(바이트_모음)
+	return lib.F2문자열_EUC_KR_공백제거(바이트_모음)
 }
 
 func F초당_TR쿼터(TR코드 string) int {
