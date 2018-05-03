@@ -353,12 +353,7 @@ bool etkLogin(const char* ID, const char* Password, const char* CertPwd) {
         return false;
     }
 
-    printf("Login Before.\n");
-
     BOOL value = func(getHWND(), ID, Password, CertPwd, 0, 0);
-
-    printf("Login After.\n");
-
     return BOOL2bool(value);
 }
 

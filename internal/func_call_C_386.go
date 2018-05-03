@@ -134,6 +134,10 @@ func F로그아웃_및_접속해제() error {
 		return lib.New에러("접속 해제 실패.")
 	}
 
+	for F접속됨() {
+		lib.F대기(lib.P500밀리초)
+	}
+
 	return nil
 }
 

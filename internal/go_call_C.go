@@ -41,7 +41,7 @@ import (
 	"unsafe"
 )
 
-func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
+func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 	if TR소켓_중계_중.G값() {
 		ch초기화 <- lib.P신호_초기화
 		return nil
@@ -63,7 +63,7 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 	ch회신값 := make(chan interface{})
 	ch에러 := make(chan error)
 
-	go go루틴_소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
+	go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
 	<-ch도우미_초기화
 
 	ch종료 := lib.F공통_종료_채널()
@@ -71,7 +71,13 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 
 	for {
 		if 수신값, 에러 = 소켓REP_TR수신.G수신(); 에러 != nil {
-			lib.F에러_출력(에러)
+			select {
+			case <-ch종료:
+				return nil
+			default:
+				lib.F에러_출력(에러)
+			}
+
 			continue
 		}
 
@@ -94,7 +100,7 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 		case 에러 := <-ch에러:
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
 		case <-ch도우미_종료:
-			go go루틴_소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
+			go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
 			<-ch도우미_초기화
 		case <-ch종료:
 			return nil
@@ -104,7 +110,7 @@ func Go루틴_소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error)
 	}
 }
 
-func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch종료 chan lib.T신호,
+func go소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch종료 chan lib.T신호,
 	ch호출_인수 chan xt.I호출_인수, ch회신값 chan interface{}, ch에러 chan error) {
 	defer lib.S에러패닉_처리기{M함수: func() { ch종료 <- lib.P신호_종료 }}.S실행()
 
@@ -163,8 +169,12 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 
 				switch 신호 {
 				case xt.P신호_Go_종료:
+					select {
+					case Ch메인_종료 <- lib.P신호_종료:
+					default:
+					}
+
 					ch회신값 <- true
-					f리소스_정리()
 				case xt.P신호_Go_소켓REP_TR수신_테스트:
 					ch회신값 <- true
 				default:
@@ -181,18 +191,6 @@ func go루틴_소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch�
 		lib.F윈도우_메시지_처리()
 		lib.F실행권한_양보()
 	}
-}
-
-func f리소스_정리() {
-	f콜백(xt.New콜백_신호(xt.P신호_C32_종료))
-
-	F실시간_정보_모두_해지()
-	F로그아웃_및_접속해제()
-	F자원_해제()
-
-	lib.F패닉억제_호출(소켓PUB_실시간_정보.Close)
-	lib.F패닉억제_호출(소켓REP_TR수신.Close)
-	lib.F공통_종료_채널_닫기()
 }
 
 func f접속_처리() bool {

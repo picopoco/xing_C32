@@ -45,11 +45,6 @@ import (
 	"unsafe"
 )
 
-//export OnDisconnected_Go
-func OnDisconnected_Go() {
-	f콜백(xt.New콜백_기본형(xt.P콜백_접속해제))
-}
-
 //export OnTrData_Go
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	g := (*TR_DATA)(unsafe.Pointer(c))
@@ -57,7 +52,7 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	데이터 := 에러체크(tr데이터_해석(g))
 	바이트_변환값 := 에러체크(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
 	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
-	f콜백(콜백값)
+	F콜백(콜백값)
 }
 
 //export OnMessageAndError_Go
@@ -84,17 +79,7 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 	// f메시지_해제() 에서 포인터가 필요함.
 	메시지_저장소.S추가(콜백값.M식별번호, unsafe.Pointer(pointer))
 
-	f콜백(콜백값)
-}
-
-//export OnRealtimeData_Go
-func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
-	defer lib.S에러패닉_처리기{}.S실행()
-
-	g := (*REALTIME_DATA)(unsafe.Pointer(c))
-	실시간_데이터 := 에러체크(f실시간_데이터_해석(g))
-
-	소켓PUB_실시간_정보.S송신_검사(lib.P변환형식_기본값, 실시간_데이터)
+	F콜백(콜백값)
 }
 
 //export OnReleaseData_Go
@@ -111,7 +96,17 @@ func OnReleaseData_Go(c C.int) {
 
 	메시지_저장소.S삭제(식별번호)
 
-	f콜백(xt.New콜백_TR완료(식별번호))
+	F콜백(xt.New콜백_TR완료(식별번호))
+}
+
+//export OnRealtimeData_Go
+func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
+	defer lib.S에러패닉_처리기{}.S실행()
+
+	g := (*REALTIME_DATA)(unsafe.Pointer(c))
+	실시간_데이터 := 에러체크(f실시간_데이터_해석(g))
+
+	소켓PUB_실시간_정보.S송신_검사(lib.P변환형식_기본값, 실시간_데이터)
 }
 
 //export OnLogin_Go
@@ -121,27 +116,32 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	로그인_성공_여부 := (에러 == nil && 정수 == 0)
 
 	select {
-	case ch접속 <- 로그인_성공_여부:
+	case ch로그인 <- 로그인_성공_여부:
 	default:
 	}
 }
 
 //export OnLogout_Go
 func OnLogout_Go() {
-	f콜백(xt.New콜백_기본형(xt.P콜백_로그아웃))
+	// XingAPI가 신호를 보내오지 않음.  여기에 기능을 구현해 봤자 소용없음.
+}
+
+//export OnDisconnected_Go
+func OnDisconnected_Go() {
+	// XingAPI가 신호를 보내오지 않음.  여기에 기능을 구현해 봤자 소용없음.
 }
 
 //export OnTimeout_Go
 func OnTimeout_Go(c C.int) {
-	f콜백(xt.New콜백_타임아웃(int(c)))
+	F콜백(xt.New콜백_타임아웃(int(c)))
 }
 
 //export OnLinkData_Go
 func OnLinkData_Go() {
-	f콜백(xt.New콜백_기본형(xt.P콜백_링크_데이터)) // TODO
+	F콜백(xt.New콜백_기본형(xt.P콜백_링크_데이터)) // TODO
 }
 
 //export OnRealtimeDataChart_Go
 func OnRealtimeDataChart_Go() {
-	f콜백(xt.New콜백_기본형(xt.P콜백_실시간_차트_데이터)) // TODO
+	F콜백(xt.New콜백_기본형(xt.P콜백_실시간_차트_데이터)) // TODO
 }

@@ -54,13 +54,30 @@ func f테스트_준비() {
 	lib.F테스트_모드_시작()
 
 	ch초기화 := make(chan lib.T신호)
-	go Go루틴_테스트용_TR콜백_수신(ch초기화)
+	go go테스트용_TR콜백_수신(ch초기화)
 	<-ch초기화
 
-	F초기화(true)
+	F초기화()
+	f초기화_작동_확인()
 }
 
 func f테스트_정리() {
-	f리소스_정리()
+	F리소스_정리()
 	lib.F테스트_모드_종료()
+}
+
+func go테스트용_TR콜백_수신(ch초기화 chan lib.T신호) {
+	소켓REP_TR콜백 := lib.NewNano소켓REP_단순형(lib.P주소_Xing_C함수_콜백)
+
+	ch초기화 <- lib.P신호_초기화
+
+	for {
+		값, 에러 := 소켓REP_TR콜백.G수신()
+		if 에러 != nil {
+			lib.F에러_출력(에러)
+			continue
+		}
+
+		소켓REP_TR콜백.S송신(값.G변환_형식(0), lib.P신호_OK)
+	}
 }

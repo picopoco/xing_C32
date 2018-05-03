@@ -39,7 +39,6 @@ import "C"
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
 	"github.com/ghts/xing_types"
 
 	"fmt"
@@ -47,7 +46,11 @@ import (
 	"time"
 )
 
-func F초기화(자체_테스트 bool) (에러 error) {
+func init() {
+	lib.F메모("의도하지 않게 로그아웃된 경우 재접속 하는 기능 구현할 것.")
+}
+
+func F초기화() (에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러,
 		M함수: func() { lib.F체크포인트() }}.S실행()
 
@@ -56,12 +59,6 @@ func F초기화(자체_테스트 bool) (에러 error) {
 	f초기화_TR전송_제한()
 	f초기화_Go루틴()
 	f초기화_서버_접속()
-
-	if 자체_테스트 {
-		f초기화_작동_확인()
-	} else {
-		f콜백(xt.New콜백_신호(xt.P신호_C32_Ready))
-	}
 
 	return nil
 }
@@ -89,7 +86,7 @@ func f초기화_XingAPI() {
 
 func f초기화_Go루틴() {
 	ch초기화 := make(chan lib.T신호)
-	go Go루틴_소켓_C함수_호출(ch초기화)
+	go Go소켓_C함수_호출(ch초기화)
 	<-ch초기화
 }
 
@@ -120,7 +117,7 @@ func f초기화_서버_접속() (에러 error) {
 		var 접속_성공_여부 = false
 
 		select {
-		case 접속_성공_여부 = <-ch접속:
+		case 접속_성공_여부 = <-ch로그인:
 		case <-ch타임아웃:
 		}
 
@@ -129,22 +126,31 @@ func f초기화_서버_접속() (에러 error) {
 			continue
 		}
 
-		fmt.Println("**************************")
-		fmt.Println("*   C32 서버 접속 성공   *")
-		fmt.Println("**************************")
-		return nil
+		break
 	}
 
+	F콜백(xt.New콜백_신호(xt.P신호_C32_로그인))
+
+	fmt.Println("**************************")
+	fmt.Println("*   C32 서버 접속 성공   *")
+	fmt.Println("**************************")
 	return nil
 }
 
 func f초기화_작동_확인() {
-	ch완료 := make(chan lib.T신호, 3)
+	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P10초)
+	defer 소켓REQ.Close()
 
-	go xing.F접속됨_확인(ch완료)
-	<-ch완료
+	호출_인수 := xt.New호출_인수_기본형(xt.P함수_접속됨)
 
-	lib.F체크포인트("xing_C32 : F접속됨() 확인 완료")
+	if 응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 호출_인수); 응답.G에러() != nil {
+		lib.F에러_출력(응답.G에러())
+		f초기화_작동_확인() // 재귀 호출로 재시도
+	} else if 접속됨, ok := 응답.G해석값_단순형(0).(bool); !ok {
+		panic(lib.New에러("예상하지 못한 자료형 : '%T'", 응답.G해석값_단순형(0)))
+	} else if !접속됨 {
+		panic(lib.New에러("이 시점에 접속되어 있어야 함."))
+	}
 }
 
 func f초기화_TR전송_제한() {
@@ -199,18 +205,12 @@ func f초기화_TR전송_제한() {
 	}
 }
 
-func Go루틴_테스트용_TR콜백_수신(ch초기화 chan lib.T신호) {
-	소켓REP_TR콜백 := lib.NewNano소켓REP_단순형(lib.P주소_Xing_C함수_콜백)
+func F리소스_정리() {
+	F실시간_정보_모두_해지()
+	F로그아웃_및_접속해제()
+	F자원_해제()
 
-	ch초기화 <- lib.P신호_초기화
-
-	for {
-		값, 에러 := 소켓REP_TR콜백.G수신()
-		if 에러 != nil {
-			lib.F에러_출력(에러)
-			continue
-		}
-
-		소켓REP_TR콜백.S송신(값.G변환_형식(0), lib.P신호_OK)
-	}
+	lib.F공통_종료_채널_닫기()
+	lib.F패닉억제_호출(소켓REP_TR수신.Close)
+	lib.F패닉억제_호출(소켓PUB_실시간_정보.Close)
 }

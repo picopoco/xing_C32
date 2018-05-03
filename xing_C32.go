@@ -28,6 +28,7 @@ package main
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing_C32/internal"
+	"github.com/ghts/xing_types"
 )
 
 func main() {
@@ -35,9 +36,11 @@ func main() {
 	lib.F메모("코맨드 프롬프트에서 실행 인수로 테스트 모드 여부를 선택할 수 있도록 할 것.")
 	lib.F테스트_모드_시작()
 
-	defer xing_C32.F자원_해제()
+	defer func() {
+		xing_C32.F리소스_정리()
+		xing_C32.F콜백(xt.New콜백_신호(xt.P신호_C32_종료))
+	}()
 
-	xing_C32.F초기화(false) // 동작 확인 절차는 외부에서 수행 예정임.
-
-	<-lib.F공통_종료_채널()
+	xing_C32.F초기화()
+	<-xing_C32.Ch메인_종료
 }

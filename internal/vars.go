@@ -46,8 +46,7 @@ var (
 	소켓REP_TR수신   = 에러체크(lib.NewNano소켓REP(lib.P주소_Xing_C함수_호출)).(lib.I소켓)
 	소켓PUB_실시간_정보 = 에러체크(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
 
-	ch접속 = make(chan bool, 1)
-
+	ch로그인                 = make(chan bool, 1)
 	ch도우미_종료, ch호출_도우미_종료 chan error
 
 	소켓REQ_저장소 = lib.New소켓_저장소(20, func() lib.I소켓 {
@@ -58,6 +57,8 @@ var (
 	메시지_저장소   = New메시지_저장소()
 
 	접속_처리_잠금 sync.Mutex
+
+	Ch메인_종료 = make(chan lib.T신호, 1)
 )
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
@@ -74,4 +75,5 @@ var (
 // lib 패키지 재선언
 var (
 	에러체크 = lib.F에러체크
+	체크   = lib.F체크포인트
 )
