@@ -35,26 +35,12 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing_types"
 	"github.com/go-mangos/mangos"
 
 	"testing"
 )
 
 var 소켓REP_테스트용_TR수신, 소켓SUB_테스트용_콜백, 소켓SUB_테스트용_실시간정보 mangos.Socket
-
-//P함수_질의 T함수 = iota
-//P함수_실시간_정보_구독
-//P함수_실시간_정보_해지
-//P함수_실시간_정보_모두_해지
-//P함수_서버_이름
-//P함수_에러_코드
-//P함수_에러_메시지
-//P함수_TR쿼터
-//P함수_계좌_수량
-//P함수_계좌_이름
-//P함수_계좌_상세명
-//P함수_압축_해제
 
 func TestF자료형_크기_비교_확인(t *testing.T) {
 	t.Parallel()
@@ -72,7 +58,7 @@ func TestP접속됨(t *testing.T) {
 
 	defer 소켓REQ.Close()
 
-	질의값 := xt.New호출_인수_기본형(xt.P함수_접속됨)
+	질의값 := lib.New질의값_기본형(lib.TR접속됨, "")
 	응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 질의값)
 	lib.F테스트_에러없음(t, 응답.G에러())
 	lib.F테스트_같음(t, 응답.G수량(), 1)

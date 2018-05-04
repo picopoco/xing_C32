@@ -369,7 +369,7 @@ func f2호가유형(호가_유형 xt.T호가유형) lib.T호가유형 {
 }
 
 func F콜백(콜백값 xt.I콜백) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행_No출력()
 
 	소켓REQ := 소켓REQ_저장소.G소켓()
 	defer 소켓REQ_저장소.S회수(소켓REQ)

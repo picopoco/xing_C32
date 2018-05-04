@@ -48,12 +48,14 @@ import (
 
 func init() {
 	lib.F메모("의도하지 않게 로그아웃된 경우 재접속 하는 기능 구현할 것.")
+	lib.F메모("F계좌_별명(): 원인미상의 메모리 에러가 발생함.")
 }
 
 func F초기화() (에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러,
 		M함수: func() { lib.F체크포인트() }}.S실행()
 
+	f초기화_32비트_환경_확인()
 	f초기화_설정화일()
 	f초기화_XingAPI()
 	f초기화_TR전송_제한()
@@ -61,6 +63,10 @@ func F초기화() (에러 error) {
 	f초기화_서버_접속()
 
 	return nil
+}
+
+func f초기화_32비트_환경_확인() {
+	lib.F조건부_패닉(lib.F환경변수("GOARCH") != "386", "C32 모듈은 32비트 전용입니다.")
 }
 
 func f초기화_설정화일() {
@@ -98,7 +104,7 @@ func f초기화_서버_접속() (에러 error) {
 	const 타임아웃 = lib.P30초
 	ch타임아웃 := time.After(타임아웃)
 
-	질의값 := xt.New호출_인수_기본형(xt.P함수_접속)
+	질의값 := lib.New질의값_기본형(lib.TR접속, "")
 	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P30초, 타임아웃)
 	defer 소켓REQ.Close()
 
@@ -141,9 +147,9 @@ func f초기화_작동_확인() {
 	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P10초)
 	defer 소켓REQ.Close()
 
-	호출_인수 := xt.New호출_인수_기본형(xt.P함수_접속됨)
+	질의값 := lib.New질의값_기본형(lib.TR접속됨, "")
 
-	if 응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 호출_인수); 응답.G에러() != nil {
+	if 응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 질의값); 응답.G에러() != nil {
 		lib.F에러_출력(응답.G에러())
 		f초기화_작동_확인() // 재귀 호출로 재시도
 	} else if 접속됨, ok := 응답.G해석값_단순형(0).(bool); !ok {

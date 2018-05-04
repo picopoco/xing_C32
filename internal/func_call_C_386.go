@@ -252,7 +252,6 @@ func F계좌_상세명(계좌_번호 string) string {
 	//return C.GoString(c버퍼)
 }
 
-// 원인미상의 메모리 에러가 발생함.
 //func F계좌_별명(계좌_번호 string) string {
 //	버퍼_초기값 := "                                                     "
 //	버퍼_크기 := len(버퍼_초기값)

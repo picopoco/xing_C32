@@ -54,16 +54,16 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
 
 	var 수신값 *lib.S바이트_변환_모음
-	var 호출_인수 xt.I호출_인수
+	var 질의값 lib.I질의값
 	var ok bool
 
 	ch도우미_초기화 := make(chan lib.T신호)
 	ch도우미_종료 := make(chan lib.T신호)
-	ch호출_인수 := make(chan xt.I호출_인수, 1)
+	ch질의값 := make(chan lib.I질의값, 1)
 	ch회신값 := make(chan interface{})
 	ch에러 := make(chan error)
 
-	go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
+	go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch질의값, ch회신값, ch에러)
 	<-ch도우미_초기화
 
 	ch종료 := lib.F공통_종료_채널()
@@ -84,23 +84,23 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 		lib.F조건부_패닉(수신값.G수량() != 1,
 			"잘못된 메시지 길이 : 예상값 1, 실제값 %v.", 수신값.G수량())
 
-		i호출_인수 := 수신값.S해석기(xt.F바이트_변환값_해석).G해석값_단순형(0)
-		if 호출_인수, ok = i호출_인수.(xt.I호출_인수); !ok {
-			에러 := lib.New에러with출력("'I호출_인수'형이 아님 : '%T'", i호출_인수)
+		i질의값 := 수신값.G해석값_단순형(0)
+		if 질의값, ok = i질의값.(lib.I질의값); !ok {
+			에러 := lib.New에러with출력("'I질의값'형이 아님 : '%T'", i질의값)
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
 			continue
 		}
 
-		ch호출_인수 <- 호출_인수
+		ch질의값 <- 질의값
 
 		select {
 		case 회신값 := <-ch회신값:
-			lib.F체크포인트(회신값, 호출_인수.G함수())
+			//lib.F체크포인트(회신값, 호출_인수.G함수())
 			소켓REP_TR수신.S송신(수신값.G변환_형식(0), 회신값)
 		case 에러 := <-ch에러:
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
 		case <-ch도우미_종료:
-			go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch호출_인수, ch회신값, ch에러)
+			go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch질의값, ch회신값, ch에러)
 			<-ch도우미_초기화
 		case <-ch종료:
 			return nil
@@ -110,8 +110,9 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 	}
 }
 
-func go소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch종료 chan lib.T신호,
-	ch호출_인수 chan xt.I호출_인수, ch회신값 chan interface{}, ch에러 chan error) {
+// 단일 스레드에서 API처리와 윈도우 메시지 처리를 하기 위한 중간 매개 함수
+func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
+	ch질의값 chan lib.I질의값, ch회신값 chan interface{}, ch에러 chan error) {
 	defer lib.S에러패닉_처리기{M함수: func() { ch종료 <- lib.P신호_종료 }}.S실행()
 
 	runtime.LockOSThread()
@@ -122,67 +123,8 @@ func go소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch종료 ch
 
 	for {
 		select {
-		case 호출_인수 := <-ch호출_인수:
-			switch 호출_인수.G함수() {
-			case xt.P함수_접속:
-				접속_처리_결과 := f접속_처리()
-				ch회신값 <- 접속_처리_결과
-			case xt.P함수_질의:
-				질의값 := 에러체크(호출_인수.(*xt.S호출_인수_질의).M질의값.G해석값()).(lib.I질의값)
-				식별번호, 에러 := f조회_및_주문_질의_처리(질의값)
-
-				if 에러 != nil {
-					ch에러 <- 에러
-				} else {
-					ch회신값 <- 식별번호
-				}
-			case xt.P함수_접속됨:
-				ch회신값 <- F접속됨()
-			case xt.P함수_실시간_정보_구독:
-				s := 호출_인수.(*xt.S호출_인수_실시간_정보)
-				ch에러 <- F실시간_정보_구독(s.TR코드, s.M전체_종목코드, s.M단위_길이)
-			case xt.P함수_실시간_정보_해지:
-				s := 호출_인수.(*xt.S호출_인수_실시간_정보)
-				ch에러 <- F실시간_정보_해지(s.TR코드, s.M전체_종목코드, s.M단위_길이)
-			case xt.P함수_서버_이름:
-				ch회신값 <- F서버_이름()
-			case xt.P함수_에러_코드:
-				ch회신값 <- F에러_코드()
-			case xt.P함수_에러_메시지:
-				ch회신값 <- F에러_메시지(호출_인수.(*xt.S호출_인수_정수값).M정수값)
-			case xt.P함수_TR쿼터:
-				ch회신값 <- F초당_TR쿼터(호출_인수.(*xt.S호출_인수_문자열).M문자열)
-			case xt.P함수_계좌_수량:
-				ch회신값 <- F계좌_수량()
-			case xt.P함수_계좌_번호:
-				ch회신값 <- F계좌_번호(호출_인수.(*xt.S호출_인수_정수값).M정수값)
-			case xt.P함수_계좌_이름:
-				ch회신값 <- F계좌_이름(호출_인수.(*xt.S호출_인수_문자열).M문자열)
-			case xt.P함수_계좌_상세명:
-				ch회신값 <- F계좌_상세명(호출_인수.(*xt.S호출_인수_문자열).M문자열)
-			case xt.P함수_압축_해제:
-				s := 호출_인수.(*xt.S호출_인수_압축_해제)
-				ch회신값 <- F압축_해제(unsafe.Pointer(&s.M바이트_모음), len(s.M바이트_모음))
-			case xt.P함수_신호:
-				정수값 := 호출_인수.(*xt.S호출_인수_정수값).M정수값
-				신호 := xt.T신호_Go(정수값)
-
-				switch 신호 {
-				case xt.P신호_Go_종료:
-					select {
-					case Ch메인_종료 <- lib.P신호_종료:
-					default:
-					}
-
-					ch회신값 <- true
-				case xt.P신호_Go_소켓REP_TR수신_테스트:
-					ch회신값 <- true
-				default:
-					panic(lib.New에러("예상하지 못한 신호값 : '%v'", 신호))
-				}
-			default:
-				panic(lib.New에러("예상하지 못한 함수 : '%v'", 호출_인수.G함수()))
-			}
+		case 질의값 := <-ch질의값:
+			f질의값_처리(질의값, ch회신값, ch에러)
 		case <-ch공통_종료:
 			return
 		default: // PASS
@@ -193,24 +135,84 @@ func go소켓_C함수_호출_도우미(ch초기화 chan lib.T신호, ch종료 ch
 	}
 }
 
-func f접속_처리() bool {
-	defer lib.S에러패닉_처리기{}.S실행()
+func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, ch에러 chan error) {
+	defer lib.S에러패닉_처리기{M함수with내역: func(r interface{}) { ch에러 <- lib.New에러(r) }}.S실행()
 
-	접속_처리_잠금.Lock()
-	defer 접속_처리_잠금.Unlock()
+	switch 질의값.G_TR구분() {
+	case lib.TR조회, lib.TR주문:
+		식별번호 := 에러체크(f조회_및_주문_질의_처리(질의값)).(int)
+		ch회신값 <- 식별번호
+	case lib.TR실시간_정보_구독, lib.TR실시간_정보_해지:
+		에러체크(f실시간_정보_구독_해지_처리(질의값))
+		ch회신값 <- lib.P신호_OK
+	case lib.TR실시간_정보_일괄_해지:
+		에러체크(F실시간_정보_모두_해지())
+		ch회신값 <- lib.P신호_OK
+	case lib.TR접속:
+		접속_처리_결과 := f접속_처리()
+		ch회신값 <- 접속_처리_결과
+	case lib.TR접속됨:
+		ch회신값 <- F접속됨()
+	case lib.TR서버_이름:
+		ch회신값 <- F서버_이름()
+	case lib.TR에러_코드:
+		ch회신값 <- F에러_코드()
+	case lib.TR에러_메시지:
+		ch회신값 <- F에러_메시지(질의값.(*lib.S질의값_정수).M정수값)
+	case lib.TR코드별_쿼터:
+		ch회신값 <- F초당_TR쿼터(질의값.(*lib.S질의값_문자열).M문자열)
+	case lib.TR계좌_수량:
+		ch회신값 <- F계좌_수량()
+	case lib.TR계좌_번호:
+		ch회신값 <- F계좌_번호(질의값.(*lib.S질의값_정수).M정수값)
+	case lib.TR계좌_이름:
+		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
+	case lib.TR계좌_상세명:
+		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
+	case lib.TR압축_해제:
+		바이트_모음 := 질의값.(*lib.S질의값_바이트_변환).G바이트_모음_단순형()
+		ch회신값 <- F압축_해제(unsafe.Pointer(&바이트_모음), len(바이트_모음))
+	case lib.TR종료:
+		select {
+		case Ch메인_종료 <- lib.P신호_종료:
+		default:
+		}
 
-	서버_구분 := lib.F조건부_값(lib.F테스트_모드_실행_중(), xt.P서버_모의투자, xt.P서버_실거래).(xt.T서버_구분)
+		ch회신값 <- lib.P신호_종료
+	case lib.TR소켓_테스트:
+		ch회신값 <- lib.P신호_OK
+	default:
+		panic(lib.New에러("예상하지 못한 TR구분값 : '%v'", int(질의값.G_TR구분())))
+	}
+}
 
-	switch {
-	case !F접속(서버_구분):
-		lib.F체크포인트()
-		return false
-	case !F로그인():
-		lib.F체크포인트()
-		return false
+func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 error) {
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+
+	var 구독_해지_함수 func(string, string, int) error
+
+	switch 질의값.G_TR구분() {
+	case lib.TR실시간_정보_구독:
+		구독_해지_함수 = F실시간_정보_구독
+	case lib.TR실시간_정보_해지:
+		구독_해지_함수 = F실시간_정보_해지
 	}
 
-	return true // 로그인 콜백 함수가 실행될 때까지 기다림.
+	switch 질의값.G_TR코드() {
+	case xt.RT현물주문_접수, xt.RT현물주문_체결, xt.RT현물주문_정정,
+		xt.RT현물주문_거부, xt.RT현물주문_취소, xt.RT장_운영정보:
+		// 단순 TR. 종목코드 및 단위길이가 필요없음.
+		return 구독_해지_함수(질의값.G_TR코드(), "", 0)
+	case xt.RT코스피_호가_잔량, xt.RT코스피_시간외_호가_잔량,
+		xt.RT코스피_체결, xt.RT코스피_예상_체결,
+		xt.RT코스피_ETF_NAV, xt.RT업종별_투자자별_매매_현황,
+		xt.RT주식_VI발동해제, xt.RT시간외_단일가VI발동해제: // 복수 종목
+		전체_종목코드 := 질의값.(*lib.S질의값_복수종목).G전체_종목코드()
+		단위_길이 := len(질의값.(*lib.S질의값_복수종목).M종목코드_모음[0])
+		return 구독_해지_함수(질의값.G_TR코드(), 전체_종목코드, 단위_길이)
+	default:
+		return lib.New에러("예상하지 못한 RT코드 : '%v'", 질의값.G_TR코드())
+	}
 }
 
 func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 int, 에러 error) {
@@ -319,4 +321,24 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	}
 
 	return 식별번호, nil
+}
+
+func f접속_처리() bool {
+	defer lib.S에러패닉_처리기{}.S실행()
+
+	접속_처리_잠금.Lock()
+	defer 접속_처리_잠금.Unlock()
+
+	서버_구분 := lib.F조건부_값(lib.F테스트_모드_실행_중(), xt.P서버_모의투자, xt.P서버_실거래).(xt.T서버_구분)
+
+	switch {
+	case !F접속(서버_구분):
+		lib.F체크포인트()
+		return false
+	case !F로그인():
+		lib.F체크포인트()
+		return false
+	}
+
+	return true // 로그인 콜백 함수가 실행될 때까지 기다림.
 }
