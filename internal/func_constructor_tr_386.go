@@ -40,7 +40,6 @@ import (
 	"bytes"
 	"math"
 	"strings"
-	"time"
 	"unsafe"
 )
 
@@ -244,7 +243,7 @@ func New현물호가조회(tr *TR_DATA) (s *xt.S현물_호가조회_응답, 에�
 	s.M직전매수대비수량합 = lib.F2정수64_단순형(g.Prebidcha)
 
 	if 시각_문자열 := lib.F2문자열_공백제거(g.Hotime); 시각_문자열 != "" {
-		s.M수신시간 = lib.F2금일_시각_단순형("150405.999", 시각_문자열[:6]+"."+시각_문자열[6:])
+		s.M수신시간 = lib.F2일자별_시각_단순형(당일.G값(), "150405.999", 시각_문자열[:6]+"."+시각_문자열[6:])
 	}
 
 	s.M예상체결가격 = lib.F2정수64_단순형(g.Yeprice)
@@ -273,6 +272,8 @@ func New현물시세조회_응답(tr *TR_DATA) (s *xt.S현물_시세조회_응�
 			s = nil
 		}}.S실행()
 
+	당일값 := 당일.G값()
+
 	g := (*T1102OutBlock)(unsafe.Pointer(tr.Data))
 
 	s = new(xt.S현물_시세조회_응답)
@@ -290,11 +291,11 @@ func New현물시세조회_응답(tr *TR_DATA) (s *xt.S현물_시세조회_응�
 	s.M전일거래량 = lib.F2정수64_단순형(g.Jnilvolume)
 	s.M거래량차 = lib.F2정수64_단순형(g.Volumediff)
 	s.M시가 = lib.F2정수64_단순형(g.Open)
-	s.M시가시간 = lib.F2금일_시각_단순형_공백은_초기값("150405", g.Opentime)
+	s.M시가시간 = lib.F2일자별_시각_단순형_공백은_초기값(당일값, "150405", g.Opentime)
 	s.M고가 = lib.F2정수64_단순형(g.High)
-	s.M고가시간 = lib.F2금일_시각_단순형_공백은_초기값("150405", g.Hightime)
+	s.M고가시간 = lib.F2일자별_시각_단순형_공백은_초기값(당일값, "150405", g.Hightime)
 	s.M저가 = lib.F2정수64_단순형(g.Low)
-	s.M저가시간 = lib.F2금일_시각_단순형_공백은_초기값("150405", g.Lowtime)
+	s.M저가시간 = lib.F2일자별_시각_단순형_공백은_초기값(당일값, "150405", g.Lowtime)
 	s.M52주_최고가 = lib.F2정수64_단순형(g.High52w)
 	s.M52주_최고가일 = lib.F2포맷된_시각_단순형_공백은_초기값("20060102", g.High52wdate)
 	s.M52주_최저가 = lib.F2정수64_단순형(g.Low52w)
@@ -762,15 +763,15 @@ func NewETF시간별_추이_응답_반복값_모음(tr *TR_DATA) (값 *xt.S_ETF�
 	g_모음 := (*[1 << 20]T1902OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
 	배열 := make([]*xt.S_ETF시간별_추이_응답_반복값, len(g_모음), len(g_모음))
 
-	lib.F메모("수신하는 쪽에서 당일_시각 처리를 해야함. ")
+	당일값 := 당일.G값()
 
 	for i, g := range g_모음 {
 		s := new(xt.S_ETF시간별_추이_응답_반복값)
 
 		if lib.F2문자열_EUC_KR(g.Time) == "장:마:감" {
-			s.M시각 = lib.F2금일_시각_단순형("15:04:05", g_모음[i+1].Time).Add(lib.P10초)
+			s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", g_모음[i+1].Time).Add(lib.P10초)
 		} else {
-			s.M시각 = lib.F2금일_시각_단순형("15:04:05", g.Time)
+			s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", g.Time)
 		}
 
 		s.M현재가 = lib.F2정수64_단순형(g.Price)
@@ -931,10 +932,12 @@ func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (�
 	g_모음 := (*[1 << 20]T1310OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
 	배열 := make([]*xt.S현물_전일당일분틱조회_응답_반복값, len(g_모음), len(g_모음))
 
-	일자_문자열 := time.Now().Format("2006/01/02 ")
+	당일값 := 당일.G값() // 일단 당일값으로 변환. 전일 경우에는 추가 처리가 필요함.
+	체크(당일값)
 
 	for i, g := range g_모음 {
 		시각_문자열_원본 := lib.F2문자열(g.Chetime[:6])
+
 		버퍼 := new(bytes.Buffer)
 		버퍼.WriteString(시각_문자열_원본[0:2])
 		버퍼.WriteString(":")
@@ -944,7 +947,7 @@ func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (�
 		시각_문자열 := 버퍼.String()
 
 		s := new(xt.S현물_전일당일분틱조회_응답_반복값)
-		s.M시각 = lib.F2포맷된_시각_단순형("2006/01/02 15:04:05", 일자_문자열+시각_문자열)
+		s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", 시각_문자열)
 		s.M현재가 = lib.F2정수64_단순형(g.Price[:])
 		s.M전일대비구분 = xt.T전일대비_구분(lib.F2정수64_단순형(g.Sign))
 		s.M전일대비등락폭 = s.M전일대비구분.G부호보정_정수64(lib.F2정수64_단순형(g.Change))

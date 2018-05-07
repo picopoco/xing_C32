@@ -36,7 +36,6 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"sync"
-	"time"
 )
 
 // 전역 변수는 항상 동시 액세스로 인한 오류의 위험이 있어서 한 군데 몰아서 관리함.
@@ -46,19 +45,21 @@ var (
 	소켓REP_TR수신   = 에러체크(lib.NewNano소켓REP(lib.P주소_Xing_C함수_호출)).(lib.I소켓)
 	소켓PUB_실시간_정보 = 에러체크(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
 
-	ch로그인                 = make(chan bool, 1)
-	ch도우미_종료, ch호출_도우미_종료 chan error
-
 	소켓REQ_저장소 = lib.New소켓_저장소(20, func() lib.I소켓 {
 		return lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P30초)
 	})
 
+	접속_처리_잠금 sync.Mutex
+
+	ch로그인                 = make(chan bool, 1)
+	ch도우미_종료, ch호출_도우미_종료 chan error
+	Ch메인_종료               = make(chan lib.T신호, 1)
+
 	TR소켓_중계_중 = lib.New안전한_bool(false)
 	메시지_저장소   = New메시지_저장소()
 
-	접속_처리_잠금 sync.Mutex
-
-	Ch메인_종료 = make(chan lib.T신호, 1)
+	전일_당일_설정_잠금         sync.Mutex
+	전일, 당일, 전일_당일_설정_일자 lib.I안전한_시각
 )
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
@@ -67,9 +68,6 @@ var (
 	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한_TR코드별)
 
 	설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/xing_C32/internal/config.ini`
-
-	전일_금일_초기값            = time.Time{}
-	영업일_기준_전일, 영업일_기준_당일 time.Time
 )
 
 // lib 패키지 재선언

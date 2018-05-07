@@ -37,7 +37,9 @@ import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing_types"
 
+	"fmt"
 	"runtime"
+	"time"
 	"unsafe"
 )
 
@@ -98,7 +100,6 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 
 		select {
 		case 회신값 := <-ch회신값:
-			//lib.F체크포인트(회신값, 호출_인수.G함수())
 			소켓REP_TR수신.S송신(수신값.G변환_형식(0), 회신값)
 		case 에러 := <-ch에러:
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
@@ -142,51 +143,72 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 	defer lib.S에러패닉_처리기{M함수with내역: func(r interface{}) { ch에러 <- lib.New에러(r) }}.S실행()
 
 	switch 질의값.G_TR구분() {
-	case lib.TR조회, lib.TR주문:
+	case xt.TR조회, xt.TR주문:
 		식별번호 := 에러체크(f조회_및_주문_질의_처리(질의값)).(int)
 		ch회신값 <- 식별번호
-	case lib.TR실시간_정보_구독, lib.TR실시간_정보_해지:
+	case xt.TR실시간_정보_구독, xt.TR실시간_정보_해지:
 		에러체크(f실시간_정보_구독_해지_처리(질의값))
 		ch회신값 <- lib.P신호_OK
-	case lib.TR실시간_정보_일괄_해지:
+	case xt.TR실시간_정보_일괄_해지:
 		에러체크(F실시간_정보_모두_해지())
 		ch회신값 <- lib.P신호_OK
-	case lib.TR접속:
+	case xt.TR접속:
 		접속_처리_결과 := f접속_처리()
 		ch회신값 <- 접속_처리_결과
-	case lib.TR접속됨:
+	case xt.TR접속됨:
 		ch회신값 <- F접속됨()
-	case lib.TR서버_이름:
+	case xt.TR서버_이름:
 		ch회신값 <- F서버_이름()
-	case lib.TR에러_코드:
+	case xt.TR에러_코드:
 		ch회신값 <- F에러_코드()
-	case lib.TR에러_메시지:
+	case xt.TR에러_메시지:
 		ch회신값 <- F에러_메시지(질의값.(*lib.S질의값_정수).M정수값)
-	case lib.TR코드별_쿼터:
+	case xt.TR코드별_쿼터:
 		ch회신값 <- F초당_TR쿼터(질의값.(*lib.S질의값_문자열).M문자열)
-	case lib.TR계좌_수량:
+	case xt.TR계좌_수량:
 		ch회신값 <- F계좌_수량()
-	case lib.TR계좌_번호:
+	case xt.TR계좌_번호:
 		ch회신값 <- F계좌_번호(질의값.(*lib.S질의값_정수).M정수값)
-	case lib.TR계좌_이름:
+	case xt.TR계좌_이름:
 		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
-	case lib.TR계좌_상세명:
+	case xt.TR계좌_상세명:
 		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
-	case lib.TR압축_해제:
-		바이트_모음 := 질의값.(*lib.S질의값_바이트_변환).G바이트_모음_단순형()
+	case xt.TR압축_해제:
+		바이트_모음 := 질의값.(*lib.S질의값_바이트_변환).M바이트_변환.G바이트_모음_단순형()
 		ch회신값 <- F압축_해제(unsafe.Pointer(&바이트_모음), len(바이트_모음))
-	case lib.TR종료:
+	case xt.TR소켓_테스트:
+		ch회신값 <- lib.P신호_OK
+	case xt.TR전일_당일:
+		f전일_당일_설정(질의값)
+		ch회신값 <- lib.P신호_OK
+	case xt.TR종료:
 		select {
 		case Ch메인_종료 <- lib.P신호_종료:
 		default:
 		}
 
 		ch회신값 <- lib.P신호_종료
-	case lib.TR소켓_테스트:
-		ch회신값 <- lib.P신호_OK
 	default:
 		panic(lib.New에러("예상하지 못한 TR구분값 : '%v'", int(질의값.G_TR구분())))
 	}
+}
+
+func f전일_당일_설정(질의값 lib.I질의값) (에러 error) {
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+
+	전일_당일_설정_잠금.Lock()
+	defer 전일_당일_설정_잠금.Unlock()
+
+	바이트_변환_모음 := 질의값.(*lib.S질의값_바이트_변환_모음)
+	전일_당일_설정_일자 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(0).(time.Time))
+	전일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(1).(time.Time))
+	당일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(2).(time.Time))
+
+	fmt.Println("**************************")
+	fmt.Println("* C32 전일 당일 설정 완료 *")
+	fmt.Println("**************************")
+
+	return nil
 }
 
 func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 error) {
@@ -195,9 +217,9 @@ func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 er
 	var 구독_해지_함수 func(string, string, int) error
 
 	switch 질의값.G_TR구분() {
-	case lib.TR실시간_정보_구독:
+	case xt.TR실시간_정보_구독:
 		구독_해지_함수 = F실시간_정보_구독
-	case lib.TR실시간_정보_해지:
+	case xt.TR실시간_정보_해지:
 		구독_해지_함수 = F실시간_정보_해지
 	}
 

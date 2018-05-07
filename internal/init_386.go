@@ -47,6 +47,8 @@ import (
 )
 
 func init() {
+	lib.TR구분_String = xt.TR구분_String
+
 	lib.F메모("의도하지 않게 로그아웃된 경우 재접속 하는 기능 구현할 것.")
 	lib.F메모("F계좌_별명(): 원인미상의 메모리 에러가 발생함.")
 }
@@ -138,7 +140,7 @@ func f초기화_서버_접속() (에러 error) {
 	F콜백(xt.New콜백_신호(xt.P신호_C32_READY))
 
 	fmt.Println("**************************")
-	fmt.Println("*   C32 서버 접속 성공   *")
+	fmt.Println("*       C32 READY        *")
 	fmt.Println("**************************")
 	return nil
 }
@@ -179,7 +181,6 @@ func f초기화_TR전송_제한() {
 	}
 
 	코드별_초당_TR전송_제한 := make(map[string]int)
-	코드별_초당_TR전송_제한[xt.TR계좌_번호] = 100
 	코드별_초당_TR전송_제한[xt.TR현물_정상주문] = 30
 	코드별_초당_TR전송_제한[xt.TR현물_정정주문] = 30
 	코드별_초당_TR전송_제한[xt.TR현물_취소주문] = 30
