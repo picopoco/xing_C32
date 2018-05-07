@@ -135,7 +135,7 @@ func f초기화_서버_접속() (에러 error) {
 		break
 	}
 
-	F콜백(xt.New콜백_신호(xt.P신호_C32_로그인))
+	F콜백(xt.New콜백_신호(xt.P신호_C32_READY))
 
 	fmt.Println("**************************")
 	fmt.Println("*   C32 서버 접속 성공   *")
