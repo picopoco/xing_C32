@@ -131,6 +131,7 @@ func New콜백_대기_항목(식별번호 int, TR코드 string, 값 interface{})
 	s := new(S콜백_대기_항목)
 	s.M식별번호 = 식별번호
 	s.M생성_시각 = time.Now()
+	s.M값 = 값
 
 	return s
 }
