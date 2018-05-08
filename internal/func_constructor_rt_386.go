@@ -45,15 +45,15 @@ func f실시간_데이터_해석(rt *REALTIME_DATA) (값 interface{}, 에러 err
 
 	switch RT코드 {
 	case xt.RT현물주문_접수:
-		New현물주문_접수(rt)
+		return New현물주문_접수(rt)
 	case xt.RT현물주문_체결:
-		New현물주문_체결(rt)
+		return New현물주문_체결(rt)
 	case xt.RT현물주문_정정:
-		New현물주문_정정(rt)
+		return New현물주문_정정(rt)
 	case xt.RT현물주문_취소:
-		New현물주문_취소(rt)
+		return New현물주문_취소(rt)
 	case xt.RT현물주문_거부:
-		New현물주문_거부(rt)
+		return New현물주문_거부(rt)
 	case xt.RT코스피_호가_잔량:
 		return New코스피_호가_잔량(rt)
 	case xt.RT코스피_시간외_호가_잔량:
