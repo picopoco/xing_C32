@@ -506,7 +506,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xt.S현물_정상주문_응
 	s.M종목코드 = lib.F2문자열_공백제거(g.IsuNo)
 	s.M주문수량 = lib.F2정수64_단순형(g.OrdQty)
 	s.M주문가격 = lib.F2정수64_단순형(g.OrdPrc)
-	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))
+	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2정수_단순형(g.BnsTpCode)))
 	s.M호가유형 = f2호가유형(xt.T호가유형(lib.F2문자열_공백제거(g.OrdprcPtnCode)))
 	s.M프로그램_호가유형 = lib.F2문자열_공백제거(g.PrgmOrdprcPtnCode)
 	s.M공매도_가능 = lib.F문자열_비교(g.StslAbleYn, "Y", true)
@@ -635,7 +635,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xt.S현물_정정주문_응
 	s.M반대매매주문_구분 = lib.F2문자열_공백제거(g.CvrgOrdTp)
 	s.M관리사원_번호 = lib.F2문자열_공백제거(g.MgempNo)
 	s.M주문금액 = lib.F2정수64_단순형_공백은_0(g.OrdAmt)
-	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))
+	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2정수_단순형(g.BnsTpCode)))
 	s.M예비_주문번호 = lib.F2정수64_단순형_공백은_0(g.SpareOrdNo)
 	s.M반대매매_일련번호 = lib.F2정수64_단순형_공백은_0(g.CvrgSeqno)
 	s.M예약_주문번호 = lib.F2정수64_단순형_공백은_0(g.RsvOrdNo)
@@ -929,7 +929,7 @@ func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (�
 
 	대기_항목 := 콜백_대기_저장소.G대기_항목(int(tr.RequestID))
 	lib.F조건부_패닉(대기_항목 == nil, "대기 항목이 존재하지 않음.")
-	lib.F조건부_패닉(대기_항목.TR코드 != xt.TR현물_당일_전일_분틱_조회,
+	lib.F조건부_패닉(대기_항목.TR코드 != xt.TR현물_당일_전일_분틱_조회 && 대기_항목.TR코드 != "",
 		"예상과 다른 TR코드 : '%v' '%v'", xt.TR현물_당일_전일_분틱_조회, 대기_항목.TR코드)
 
 	당일전일_구분, ok := 대기_항목.M값.(xt.T당일전일_구분)
