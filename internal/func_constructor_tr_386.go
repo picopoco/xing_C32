@@ -506,7 +506,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xt.S현물_정상주문_응
 	s.M종목코드 = lib.F2문자열_공백제거(g.IsuNo)
 	s.M주문수량 = lib.F2정수64_단순형(g.OrdQty)
 	s.M주문가격 = lib.F2정수64_단순형(g.OrdPrc)
-	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2정수_단순형(g.BnsTpCode)))
+	s.M매매구분 = f2매수매도(xt.T매수_매도(int(g.BnsTpCode[0])))
 	s.M호가유형 = f2호가유형(xt.T호가유형(lib.F2문자열_공백제거(g.OrdprcPtnCode)))
 	s.M프로그램_호가유형 = lib.F2문자열_공백제거(g.PrgmOrdprcPtnCode)
 	s.M공매도_가능 = lib.F문자열_비교(g.StslAbleYn, "Y", true)
@@ -635,7 +635,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xt.S현물_정정주문_응
 	s.M반대매매주문_구분 = lib.F2문자열_공백제거(g.CvrgOrdTp)
 	s.M관리사원_번호 = lib.F2문자열_공백제거(g.MgempNo)
 	s.M주문금액 = lib.F2정수64_단순형_공백은_0(g.OrdAmt)
-	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2정수_단순형(g.BnsTpCode)))
+	s.M매매구분 = f2매수매도(xt.T매수_매도(int(g.BnsTpCode[0])))
 	s.M예비_주문번호 = lib.F2정수64_단순형_공백은_0(g.SpareOrdNo)
 	s.M반대매매_일련번호 = lib.F2정수64_단순형_공백은_0(g.CvrgSeqno)
 	s.M예약_주문번호 = lib.F2정수64_단순형_공백은_0(g.RsvOrdNo)
@@ -1032,7 +1032,9 @@ func New증시주변자금추이_응답_반복값_모음(tr *TR_DATA) (값 *xt.S
 	g_모음 := (*[1 << 20]T8428OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
 	배열 := make([]*xt.S증시주변자금추이_응답_반복값, len(g_모음), len(g_모음))
 
-	for _, g := range g_모음 {
+	for i, g := range g_모음 {
+		체크(i)
+
 		시각_문자열_원본 := lib.F2문자열(g.Date)
 
 		lib.F조건부_패닉(len(시각_문자열_원본) != 8, "예상과 다른 시각 문자열 길이 : '%v', '%v'",
