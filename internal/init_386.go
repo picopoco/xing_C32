@@ -146,7 +146,7 @@ func f초기화_서버_접속() (에러 error) {
 	F콜백(xt.New콜백_신호(xt.P신호_C32_READY))
 
 	fmt.Println("***************************")
-	fmt.Println("*        C32 READY        *")
+	fmt.Println("*       C32 READY         *")
 	fmt.Println("***************************")
 	return nil
 }
