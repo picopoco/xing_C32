@@ -40,7 +40,7 @@ import "C"
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing_types"
+	"github.com/ghts/xing"
 
 	"unsafe"
 )
@@ -51,7 +51,7 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 
 	데이터 := 에러체크(tr데이터_해석(g))
 	바이트_변환값 := 에러체크(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
-	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
+	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
 	F콜백(콜백값)
 }
 
@@ -69,8 +69,8 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 		panic(lib.New에러("예상하지 못한 구분값. '%v'", g.SystemError))
 	}
 
-	콜백값 := new(xt.S콜백_메시지_및_에러)
-	콜백값.S콜백_기본형 = xt.New콜백_기본형(xt.P콜백_메시지_및_에러)
+	콜백값 := new(xing.S콜백_메시지_및_에러)
+	콜백값.S콜백_기본형 = xing.New콜백_기본형(xing.P콜백_메시지_및_에러)
 	콜백값.M식별번호 = int(g.RequestID)
 	콜백값.M코드 = lib.F2문자열_공백제거(g.MsgCode)
 	콜백값.M내용 = lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(g.MsgData), C.int(g.MsgLength)))
@@ -96,7 +96,7 @@ func OnReleaseData_Go(c C.int) {
 
 	메시지_저장소.S삭제(식별번호)
 
-	F콜백(xt.New콜백_TR완료(식별번호))
+	F콜백(xing.New콜백_TR완료(식별번호))
 }
 
 //export OnRealtimeData_Go
@@ -133,15 +133,15 @@ func OnDisconnected_Go() {
 
 //export OnTimeout_Go
 func OnTimeout_Go(c C.int) {
-	F콜백(xt.New콜백_타임아웃(int(c)))
+	F콜백(xing.New콜백_타임아웃(int(c)))
 }
 
 //export OnLinkData_Go
 func OnLinkData_Go() {
-	F콜백(xt.New콜백_기본형(xt.P콜백_링크_데이터)) // TODO
+	F콜백(xing.New콜백_기본형(xing.P콜백_링크_데이터)) // TODO
 }
 
 //export OnRealtimeDataChart_Go
 func OnRealtimeDataChart_Go() {
-	F콜백(xt.New콜백_기본형(xt.P콜백_실시간_차트_데이터)) // TODO
+	F콜백(xing.New콜백_기본형(xing.P콜백_실시간_차트_데이터)) // TODO
 }
