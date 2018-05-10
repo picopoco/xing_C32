@@ -64,6 +64,10 @@ const 크기T8428OutBlock1 = int(unsafe.Sizeof(T8428OutBlock1{}))
 const 크기T8436OutBlock = int(unsafe.Sizeof(T8436OutBlock{}))
 
 func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
+	lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() {
+		체크("에러패닉 처리")
+		값 = nil
+	}}.S실행()
 
 	TR코드 := lib.F2문자열(tr.TrCode)
 	데이터_길이 := int(tr.DataLength)
@@ -94,7 +98,6 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 			s := new(xt.S현물_정정주문_응답)
 			s.M응답1 = 에러체크(New현물_정정주문_응답1(tr)).(*xt.S현물_정정주문_응답1)
 			s.M응답2 = 에러체크(New현물_정정주문_응답2(tr)).(*xt.S현물_정정주문_응답2)
-
 			return s, nil
 		}
 	case xt.TR현물_취소주문:
@@ -506,7 +509,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xt.S현물_정상주문_응
 	s.M종목코드 = lib.F2문자열_공백제거(g.IsuNo)
 	s.M주문수량 = lib.F2정수64_단순형(g.OrdQty)
 	s.M주문가격 = lib.F2정수64_단순형(g.OrdPrc)
-	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))
+	s.M매매구분 = 에러체크(f2매수매도(xt.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))).(lib.T매수_매도)
 	s.M호가유형 = f2호가유형(xt.T호가유형(lib.F2문자열_공백제거(g.OrdprcPtnCode)))
 	s.M프로그램_호가유형 = lib.F2문자열_공백제거(g.PrgmOrdprcPtnCode)
 	s.M공매도_가능 = lib.F문자열_비교(g.StslAbleYn, "Y", true)
@@ -607,7 +610,10 @@ func New현물_정정주문_응답1(tr *TR_DATA) (s *xt.S현물_정정주문_응
 }
 
 func New현물_정정주문_응답2(tr *TR_DATA) (s *xt.S현물_정정주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() {
+		체크("에러패닉 처리")
+		s = nil
+	}}.S실행()
 
 	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
@@ -635,8 +641,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xt.S현물_정정주문_응
 	s.M반대매매주문_구분 = lib.F2문자열_공백제거(g.CvrgOrdTp)
 	s.M관리사원_번호 = lib.F2문자열_공백제거(g.MgempNo)
 	s.M주문금액 = lib.F2정수64_단순형_공백은_0(g.OrdAmt)
-	체크(int(g.BnsTpCode[0]))
-	s.M매매구분 = f2매수매도(xt.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))
+	s.M매매구분 = 에러체크(f2매수매도(xt.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))).(lib.T매수_매도)
 	s.M예비_주문번호 = lib.F2정수64_단순형_공백은_0(g.SpareOrdNo)
 	s.M반대매매_일련번호 = lib.F2정수64_단순형_공백은_0(g.CvrgSeqno)
 	s.M예약_주문번호 = lib.F2정수64_단순형_공백은_0(g.RsvOrdNo)

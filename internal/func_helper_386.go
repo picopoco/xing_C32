@@ -238,14 +238,14 @@ func f2Xing매수매도(매수_매도 lib.T매수_매도) xt.T매수_매도 {
 	}
 }
 
-func f2매수매도(매수_매도 xt.T매수_매도) lib.T매수_매도 {
+func f2매수매도(매수_매도 xt.T매수_매도) (lib.T매수_매도, error) {
 	switch 매수_매도 {
 	case xt.P매도:
-		return lib.P매도
+		return lib.P매도, nil
 	case xt.P매수:
-		return lib.P매수
+		return lib.P매수, nil
 	default:
-		panic(lib.New에러("예상하지 못한 매수 매도 구분값. %v", 매수_매도))
+		return lib.T매수_매도(0), lib.New에러("예상하지 못한 매수 매도 구분값. %v", 매수_매도)
 	}
 }
 
