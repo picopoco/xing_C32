@@ -36,6 +36,7 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"sync"
+	"reflect"
 )
 
 // 전역 변수는 항상 동시 액세스로 인한 오류의 위험이 있어서 한 군데 몰아서 관리함.
@@ -52,11 +53,10 @@ var (
 	접속_처리_잠금 sync.Mutex
 
 	ch로그인                 = make(chan bool, 1)
-	ch도우미_종료, ch호출_도우미_종료 chan error
 	Ch메인_종료               = make(chan lib.T신호, 1)
 
-	TR소켓_중계_중 = lib.New안전한_bool(false)
-	메시지_저장소   = New메시지_저장소()
+	TR_수신_중 = lib.New안전한_bool(false)
+	메시지_저장소 = New메시지_저장소()
 
 	전일_당일_설정_잠금         sync.Mutex
 	전일, 당일, 전일_당일_설정_일자 lib.I안전한_시각
@@ -69,7 +69,7 @@ var (
 	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한_TR코드별)
 	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한_TR코드별)
 
-	설정화일_경로 = lib.F_GOPATH() + `/src/github.com/ghts/xing_C32/internal/config.ini`
+	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(F초기화).PkgPath() + `/config.ini`
 )
 
 // lib 패키지 재선언

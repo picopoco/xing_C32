@@ -75,41 +75,41 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 	switch TR코드 {
 	default:
 		return nil, lib.New에러("구현되지 않은 TR코드. %v", TR코드)
-	case xing.TR현물_정상주문:
+	case xing.TR현물_정상_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00600OutBlock1:
 			return New현물_정상주문_응답1(tr)
 		case 크기CSPAT00600OutBlock2:
 			return New현물_정상주문_응답2(tr)
 		default:
-			s := new(xing.S현물_정상주문_응답)
-			s.M응답1 = 에러체크(New현물_정상주문_응답1(tr)).(*xing.S현물_정상주문_응답1)
-			s.M응답2 = 에러체크(New현물_정상주문_응답2(tr)).(*xing.S현물_정상주문_응답2)
+			s := new(xing.S현물_정상_주문_응답)
+			s.M응답1 = 에러체크(New현물_정상주문_응답1(tr)).(*xing.S현물_정상_주문_응답1)
+			s.M응답2 = 에러체크(New현물_정상주문_응답2(tr)).(*xing.S현물_정상_주문_응답2)
 
 			return s, nil
 		}
-	case xing.TR현물_정정주문:
+	case xing.TR현물_정정_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00700OutBlock1:
 			return New현물_정정주문_응답1(tr)
 		case 크기CSPAT00700OutBlock2:
 			return New현물_정정주문_응답2(tr)
 		default:
-			s := new(xing.S현물_정정주문_응답)
-			s.M응답1 = 에러체크(New현물_정정주문_응답1(tr)).(*xing.S현물_정정주문_응답1)
-			s.M응답2 = 에러체크(New현물_정정주문_응답2(tr)).(*xing.S현물_정정주문_응답2)
+			s := new(xing.S현물_정정_주문_응답)
+			s.M응답1 = 에러체크(New현물_정정주문_응답1(tr)).(*xing.S현물_정정_주문_응답1)
+			s.M응답2 = 에러체크(New현물_정정주문_응답2(tr)).(*xing.S현물_정정_주문_응답2)
 			return s, nil
 		}
-	case xing.TR현물_취소주문:
+	case xing.TR현물_취소_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00800OutBlock1:
 			return New현물_취소주문_응답1(tr)
 		case 크기CSPAT00800OutBlock2:
 			return New현물_취소주문_응답2(tr)
 		default:
-			s := new(xing.S현물_취소주문_응답)
-			s.M응답1 = 에러체크(New현물_취소주문_응답1(tr)).(*xing.S현물_취소주문_응답1)
-			s.M응답2 = 에러체크(New현물_취소주문_응답2(tr)).(*xing.S현물_취소주문_응답2)
+			s := new(xing.S현물_취소_주문_응답)
+			s.M응답1 = 에러체크(New현물_취소주문_응답1(tr)).(*xing.S현물_취소_주문_응답1)
+			s.M응답2 = 에러체크(New현물_취소주문_응답2(tr)).(*xing.S현물_취소_주문_응답2)
 
 			return s, nil
 		}
@@ -469,7 +469,7 @@ func New현물시세조회_응답(tr *TR_DATA) (s *xing.S현물_시세조회_응
 	return s, nil
 }
 
-func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상주문) (g *CSPAT00600InBlock1) {
+func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상_주문) (g *CSPAT00600InBlock1) {
 	g = new(CSPAT00600InBlock1)
 	lib.F바이트_복사_문자열(g.AcntNo[:], 질의값.M계좌번호)
 	lib.F바이트_복사_문자열(g.InptPwd[:], 질의값.M계좌_비밀번호)
@@ -493,7 +493,7 @@ func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상주문) (g *CSPAT0060
 	return g
 }
 
-func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상주문_응답1, 에러 error) {
+func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상_주문_응답1, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
@@ -502,7 +502,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상주문_�
 		lib.F바이트_복사_문자열(g.LoanDt[:], "")
 	}
 
-	s = new(xing.S현물_정상주문_응답1)
+	s = new(xing.S현물_정상_주문_응답1)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M계좌번호 = lib.F2문자열_공백제거(g.AcntNo)
 	s.M계좌_비밀번호 = lib.F2문자열_공백제거(g.InptPwd)
@@ -532,7 +532,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상주문_�
 	return s, nil
 }
 
-func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상주문_응답2, 에러 error) {
+func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상_주문_응답2, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
@@ -542,7 +542,7 @@ func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상주문_�
 		시각_문자열 = lib.F문자열_삽입(lib.F2문자열_공백제거(g.OrdTime), ".", 6)
 	}
 
-	s = new(xing.S현물_정상주문_응답2)
+	s = new(xing.S현물_정상_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M주문번호 = lib.F2정수64_단순형(g.OrdNo) // 주문 에러발생시 공백 문자열이 수신됨.
 	s.M주문시각 = lib.F2금일_시각_단순형("150405.999999", 시각_문자열)
@@ -568,7 +568,7 @@ func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상주문_�
 	return s, nil
 }
 
-func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정주문) (g *CSPAT00700InBlock1) {
+func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정_주문) (g *CSPAT00700InBlock1) {
 	g = new(CSPAT00700InBlock1)
 	lib.F바이트_복사_정수(g.OrgOrdNo[:], 질의값.M원주문번호)
 	lib.F바이트_복사_문자열(g.AcntNo[:], 질의값.M계좌번호)
@@ -582,12 +582,12 @@ func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정주문) (g *CSPAT0070
 	return g
 }
 
-func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정주문_응답1, 에러 error) {
+func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정_주문_응답1, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
-	s = new(xing.S현물_정정주문_응답1)
+	s = new(xing.S현물_정정_주문_응답1)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M원_주문번호 = lib.F2정수64_단순형(g.OrgOrdNo)
 	s.M계좌번호 = lib.F2문자열_공백제거(g.AcntNo)
@@ -609,7 +609,7 @@ func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정주문_�
 	return s, nil
 }
 
-func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정주문_응답2, 에러 error) {
+func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정_주문_응답2, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() {
 		체크("에러패닉 처리")
 		s = nil
@@ -626,7 +626,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정주문_�
 		lib.F바이트_복사_문자열(g.LoanDt[:], "")
 	}
 
-	s = new(xing.S현물_정정주문_응답2)
+	s = new(xing.S현물_정정_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M주문번호 = lib.F2정수64_단순형_공백은_0(g.OrdNo)
 	s.M모_주문번호 = lib.F2정수64_단순형_공백은_0(g.PrntOrdNo)
@@ -658,7 +658,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정주문_�
 	return s, nil
 }
 
-func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소주문) (g *CSPAT00800InBlock1) {
+func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소_주문) (g *CSPAT00800InBlock1) {
 	g = new(CSPAT00800InBlock1)
 	lib.F바이트_복사_정수(g.OrgOrdNo[:], 질의값.M원주문번호)
 	lib.F바이트_복사_문자열(g.AcntNo[:], 질의값.M계좌번호)
@@ -669,12 +669,12 @@ func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소주문) (g *CSPAT0080
 	return g
 }
 
-func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소주문_응답1, 에러 error) {
+func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소_주문_응답1, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
-	s = new(xing.S현물_취소주문_응답1)
+	s = new(xing.S현물_취소_주문_응답1)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M원_주문번호 = lib.F2정수64_단순형(g.OrgOrdNo)
 	s.M계좌번호 = lib.F2문자열_공백제거(g.AcntNo)
@@ -693,7 +693,7 @@ func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소주문_�
 	return s, nil
 }
 
-func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소주문_응답2, 에러 error) {
+func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소_주문_응답2, 에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
@@ -707,7 +707,7 @@ func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소주문_�
 		lib.F바이트_복사_문자열(g.LoanDt[:], "")
 	}
 
-	s = new(xing.S현물_취소주문_응답2)
+	s = new(xing.S현물_취소_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M주문번호 = lib.F2정수64_단순형_공백은_0(g.OrdNo)
 	s.M모_주문번호 = lib.F2정수64_단순형_공백은_0(g.PrntOrdNo)

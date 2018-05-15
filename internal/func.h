@@ -33,7 +33,7 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <stdbool.h>
 #include <windef.h>
-#include "./type_c.h"
+#include "./types_c.h"
 
 // 윈도우 핸들
 HWND getHWND();

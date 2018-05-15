@@ -44,15 +44,15 @@ import (
 )
 
 func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
-	if TR소켓_중계_중.G값() {
+	if TR_수신_중.G값() {
 		ch초기화 <- lib.P신호_초기화
 		return nil
-	} else if 에러 = TR소켓_중계_중.S값(true); 에러 != nil {
+	} else if 에러 = TR_수신_중.S값(true); 에러 != nil {
 		ch초기화 <- lib.P신호_초기화
 		return 에러
 	}
 
-	defer TR소켓_중계_중.S값(false)
+	defer TR_수신_중.S값(false)
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
 
 	var 수신값 *lib.S바이트_변환_모음
@@ -139,7 +139,7 @@ func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, ch에러 chan error) {
 	defer lib.S에러패닉_처리기{M함수with내역: func(r interface{}) { ch에러 <- lib.New에러(r) }}.S실행()
 
-	switch 질의값.G_TR구분() {
+	switch 질의값.TR구분() {
 	case xing.TR조회, xing.TR주문:
 		식별번호 := 에러체크(f조회_및_주문_질의_처리(질의값)).(int)
 		ch회신값 <- 식별번호
@@ -150,8 +150,7 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		에러체크(F실시간_정보_모두_해지())
 		ch회신값 <- lib.P신호_OK
 	case xing.TR접속:
-		접속_처리_결과 := f접속_처리()
-		ch회신값 <- 접속_처리_결과
+		ch회신값 <- f접속_처리()
 	case xing.TR접속됨:
 		ch회신값 <- F접속됨()
 	case xing.TR서버_이름:
@@ -186,54 +185,7 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 
 		ch회신값 <- lib.P신호_종료
 	default:
-		panic(lib.New에러("예상하지 못한 TR구분값 : '%v'", int(질의값.G_TR구분())))
-	}
-}
-
-func f전일_당일_설정(질의값 lib.I질의값) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
-
-	전일_당일_설정_잠금.Lock()
-	defer 전일_당일_설정_잠금.Unlock()
-
-	바이트_변환_모음 := 질의값.(*lib.S질의값_바이트_변환_모음)
-	전일_당일_설정_일자 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(0).(time.Time))
-	전일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(1).(time.Time))
-	당일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(2).(time.Time))
-
-	fmt.Println("***************************")
-	fmt.Println("* C32 전일 당일 설정 완료 *")
-	fmt.Println("***************************")
-
-	return nil
-}
-
-func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
-
-	var 구독_해지_함수 func(string, string, int) error
-
-	switch 질의값.G_TR구분() {
-	case xing.TR실시간_정보_구독:
-		구독_해지_함수 = F실시간_정보_구독
-	case xing.TR실시간_정보_해지:
-		구독_해지_함수 = F실시간_정보_해지
-	}
-
-	switch 질의값.G_TR코드() {
-	case xing.RT현물주문_접수, xing.RT현물주문_체결, xing.RT현물주문_정정,
-		xing.RT현물주문_거부, xing.RT현물주문_취소, xing.RT장_운영정보:
-		// 단순 TR. 종목코드 및 단위길이가 필요없음.
-		return 구독_해지_함수(질의값.G_TR코드(), "", 0)
-	case xing.RT코스피_호가_잔량, xing.RT코스피_시간외_호가_잔량,
-		xing.RT코스피_체결, xing.RT코스피_예상_체결,
-		xing.RT코스피_ETF_NAV, xing.RT업종별_투자자별_매매_현황,
-		xing.RT주식_VI발동해제, xing.RT시간외_단일가VI발동해제: // 복수 종목
-		전체_종목코드 := 질의값.(*lib.S질의값_복수종목).G전체_종목코드()
-		단위_길이 := len(질의값.(*lib.S질의값_복수종목).M종목코드_모음[0])
-		return 구독_해지_함수(질의값.G_TR코드(), 전체_종목코드, 단위_길이)
-	default:
-		return lib.New에러("예상하지 못한 RT코드 : '%v'", 질의값.G_TR코드())
+		panic(lib.New에러("예상하지 못한 TR구분값 : '%v'", int(질의값.TR구분())))
 	}
 }
 
@@ -241,7 +193,7 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 식별번호 = 0 }}.S실행()
 
 	lib.F조건부_패닉(!F접속됨(), "XingAPI에 접속되어 있지 않습니다.")
-	f질의값_종목코드_검사(질의값)
+	에러체크(lib.F질의값_종목코드_검사(질의값))
 
 	var c데이터 unsafe.Pointer
 	defer lib.F조건부_실행(c데이터 != nil, F메모리_해제, c데이터)
@@ -249,31 +201,31 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	var 길이 int
 	연속_조회_여부 := false
 	연속_조회_키 := ""
-	TR코드 := 질의값.(lib.I질의값).G_TR코드()
+	TR코드 := 질의값.(lib.I질의값).TR코드()
 
 	fTR전송권한획득(TR코드)
 
 	switch TR코드 {
-	case xing.TR현물_정상주문:
-		c데이터 = unsafe.Pointer(NewCSPAT00600InBlock(질의값.(*xing.S질의값_정상주문)))
+	case xing.TR현물_정상_주문:
+		c데이터 = unsafe.Pointer(NewCSPAT00600InBlock(질의값.(*xing.S질의값_정상_주문)))
 		길이 = int(unsafe.Sizeof(CSPAT00600InBlock1{}))
-	case xing.TR현물_정정주문:
-		c데이터 = unsafe.Pointer(NewCSPAT00700InBlock(질의값.(*xing.S질의값_정정주문)))
+	case xing.TR현물_정정_주문:
+		c데이터 = unsafe.Pointer(NewCSPAT00700InBlock(질의값.(*xing.S질의값_정정_주문)))
 		길이 = int(unsafe.Sizeof(CSPAT00700InBlock1{}))
-	case xing.TR현물_취소주문:
-		c데이터 = unsafe.Pointer(NewCSPAT00800InBlock(질의값.(*xing.S질의값_취소주문)))
+	case xing.TR현물_취소_주문:
+		c데이터 = unsafe.Pointer(NewCSPAT00800InBlock(질의값.(*xing.S질의값_취소_주문)))
 		길이 = int(unsafe.Sizeof(CSPAT00800InBlock1{}))
 	case xing.TR시간_조회:
 		c데이터 = unsafe.Pointer(C문자열(""))
 		길이 = 0
 	case xing.TR현물_호가_조회:
 		g := new(T1101InBlock)
-		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일종목).M종목코드)
+		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
 		c데이터 = unsafe.Pointer(g)
 		길이 = int(unsafe.Sizeof(T1101InBlock{}))
 	case xing.TR현물_시세_조회:
 		g := new(T1102InBlock)
-		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일종목).M종목코드)
+		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
 		c데이터 = unsafe.Pointer(g)
 		길이 = int(unsafe.Sizeof(T1102InBlock{}))
 	case xing.TR현물_기간별_조회:
@@ -352,6 +304,35 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	return 식별번호, nil
 }
 
+func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 error) {
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+
+	var 함수 func(string, string, int) error
+	var 전체_종목코드 string
+	var 단위_길이 int
+
+	switch 질의값.TR구분() {
+	case xing.TR실시간_정보_구독:
+		함수 = F실시간_정보_구독
+	case xing.TR실시간_정보_해지:
+		함수 = F실시간_정보_해지
+	}
+
+	switch 변환값 := 질의값.(type) {
+	case lib.I종목코드_모음:
+		전체_종목코드 = 변환값.G전체_종목코드()
+		단위_길이 = len(변환값.G종목코드_모음()[0])
+	case lib.I종목코드:
+		전체_종목코드 = 변환값.G종목코드()
+		단위_길이 = len(변환값.G종목코드())
+	default:
+		전체_종목코드 = ""
+		단위_길이 = 0
+	}
+
+	return 함수(질의값.TR코드(), 전체_종목코드, 단위_길이)
+}
+
 func f접속_처리() bool {
 	defer lib.S에러패닉_처리기{}.S실행()
 
@@ -370,4 +351,22 @@ func f접속_처리() bool {
 	}
 
 	return true // 로그인 콜백 함수가 실행될 때까지 기다림.
+}
+
+func f전일_당일_설정(질의값 lib.I질의값) (에러 error) {
+	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+
+	전일_당일_설정_잠금.Lock()
+	defer 전일_당일_설정_잠금.Unlock()
+
+	바이트_변환_모음 := 질의값.(*lib.S질의값_바이트_변환_모음)
+	전일_당일_설정_일자 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(0).(time.Time))
+	전일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(1).(time.Time))
+	당일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(2).(time.Time))
+
+	fmt.Println("***************************")
+	fmt.Println("* C32 전일 당일 설정 완료 *")
+	fmt.Println("***************************")
+
+	return nil
 }

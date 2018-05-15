@@ -95,15 +95,15 @@ func F접속됨() bool {
 func F로그인() (로그인_결과 bool) {
 	defer lib.S에러패닉_처리기{M함수: func() { 로그인_결과 = false }}.S실행_No출력()
 
-	if lib.F파일_없음(설정화일_경로) {
+	if lib.F파일_없음(설정파일_경로) {
 		버퍼 := new(bytes.Buffer)
 		버퍼.WriteString("Xing 설정화일 없음\n")
 		버퍼.WriteString("%v가 존재하지 않습니다.\n")
 		버퍼.WriteString("sample_config.ini를 참조하여 새로 생성하십시오.")
-		panic(lib.New에러(버퍼.String(), 설정화일_경로))
+		panic(lib.New에러(버퍼.String(), 설정파일_경로))
 	}
 
-	cfg파일 := 에러체크(ini.Load(설정화일_경로)).(*ini.File)
+	cfg파일 := 에러체크(ini.Load(설정파일_경로)).(*ini.File)
 	섹션 := 에러체크(cfg파일.GetSection("XingAPI_LogIn_Info")).(*ini.Section)
 
 	키_ID := 에러체크(섹션.GetKey("ID")).(*ini.Key)

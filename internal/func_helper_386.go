@@ -35,7 +35,7 @@ package xing_C32
 
 // #cgo CFLAGS: -Wall
 // #include <stdlib.h>
-// #include <./type_c.h>
+// #include <./types_c.h>
 import "C"
 
 import (
@@ -78,20 +78,6 @@ func fTR전송_코드별_초당_제한_확인(TR코드 string) {
 	}
 
 	전송_권한.G전송_권한_획득()
-}
-
-func f질의값_종목코드_검사(질의값_원본 lib.I질의값) {
-	switch 질의값 := 질의값_원본.(type) {
-	case lib.I종목코드:
-		lib.F조건부_패닉(!lib.F종목코드_존재함(질의값.G종목코드()),
-			"존재하지 않는 종목코드 : '%v'", 질의값.G종목코드())
-	case lib.I종목코드_모음:
-		종목코드_모음 := 질의값.G종목코드_모음()
-
-		for _, 종목코드 := range 종목코드_모음 {
-			lib.F조건부_패닉(!lib.F종목코드_존재함(종목코드), "존재하지 않는 종목코드 : '%v'", 종목코드)
-		}
-	}
 }
 
 func XingAPI디렉토리() (string, error) {

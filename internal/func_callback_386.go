@@ -35,7 +35,7 @@ package xing_C32
 
 // #cgo CFLAGS: -Wall
 // #include <windows.h>
-// #include "./type_c.h"
+// #include "./types_c.h"
 import "C"
 
 import (
