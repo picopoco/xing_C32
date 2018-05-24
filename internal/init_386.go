@@ -62,8 +62,6 @@ func init() {
 func F초기화() (에러 error) {
 	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
 
-	f초기화_32비트_환경_확인()
-	f초기화_XingAPI()
 	f초기화_TR전송_제한()
 	f초기화_Go루틴()
 	f초기화_서버_접속()
@@ -71,12 +69,16 @@ func F초기화() (에러 error) {
 	return nil
 }
 
-func f초기화_32비트_환경_확인() {
-	lib.F조건부_패닉(lib.F환경변수("GOARCH") != "386", "C32 모듈은 32비트 전용입니다.")
-}
-
 func f초기화_XingAPI() {
-	lib.F조건부_패닉(lib.F파일_없음(설정파일_경로), "설정화일 config.ini를 찾을 수 없습니다.")
+	if API_초기화_완료.G값() {
+		return
+	} else {
+		API_초기화_완료.S값(true)
+	}
+
+	f의존성_확인()
+
+	lib.F조건부_패닉(lib.F환경변수("GOARCH") != "386", "C32 모듈은 32비트 전용입니다.")
 
 	// DLL파일이 있는 디렉토리로 이동. (빼먹으면 안 됨)
 	원래_디렉토리, 에러 := os.Getwd()

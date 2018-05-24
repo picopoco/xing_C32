@@ -37,6 +37,6 @@ import (
 	"github.com/ghts/dep"
 )
 
-func c컴파일러_의존성_확인() {
+func f의존성_확인() {
 	dep.F의존관계_설정용_내용없는_함수()
 }

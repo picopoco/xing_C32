@@ -355,22 +355,3 @@ func f2호가유형(호가_유형 xing.T호가유형) lib.T호가유형 {
 	}
 }
 
-func F콜백(콜백값 xing.I콜백) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행_No출력()
-
-	소켓REQ := 소켓REQ_저장소.G소켓()
-	defer 소켓REQ_저장소.S회수(소켓REQ)
-
-	i값 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 콜백값).G해석값_단순형(0)
-
-	switch 값 := i값.(type) {
-	case error:
-		return 값
-	case lib.T신호:
-		lib.F조건부_패닉(값 != lib.P신호_OK, "예상하지 못한 신호값 : '%v'", 값)
-	default:
-		panic(lib.New에러("예상하지 못한 자료형 : '%T'", i값))
-	}
-
-	return nil
-}

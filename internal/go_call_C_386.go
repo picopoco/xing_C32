@@ -119,6 +119,7 @@ func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
+	f초기화_XingAPI()	// 모든 API 액세스를 단일 스레드에서 하기 위해서 여기에서 API 초기화를 실행함.
 	ch공통_종료 := lib.F공통_종료_채널()
 	ch초기화 <- lib.P신호_초기화
 
