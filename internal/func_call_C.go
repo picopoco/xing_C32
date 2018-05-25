@@ -135,7 +135,7 @@ func F로그아웃_및_접속해제() error {
 	}
 
 	for F접속됨() {
-		lib.F대기(lib.P500밀리초)
+		lib.F대기(lib.P300밀리초)
 	}
 
 	return nil
