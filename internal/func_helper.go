@@ -112,7 +112,7 @@ func XingAPI디렉토리() (string, error) {
 }
 
 func f자료형_크기_비교_확인() (에러 error) {
-	lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+	lib.S예외처리{M에러: &에러}.S실행()
 
 	lib.F조건부_패닉(unsafe.Sizeof(TR_DATA{}) != unsafe.Sizeof(C.TR_DATA_UNPACKED{}), "TR_DATA_UNPACKED 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(REALTIME_DATA{}) != unsafe.Sizeof(C.REALTIME_DATA_UNPACKED{}), "REALTIME_DATA_UNPACKED 크기 불일치")
@@ -257,7 +257,7 @@ func f2주문조건(주문_조건 xing.T주문조건) lib.T주문조건 {
 	case xing.P주문조건_FOK:
 		return lib.P주문조건_FOK
 	default:
-		panic(lib.New에러("예상하지 못한 신용거래_구분 값. %v", 주문_조건))
+		panic(lib.New에러("예상하지 못한 주문_조건 값. %v", 주문_조건))
 	}
 }
 

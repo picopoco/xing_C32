@@ -64,7 +64,7 @@ const 크기T8428OutBlock1 = int(unsafe.Sizeof(T8428OutBlock1{}))
 const 크기T8436OutBlock = int(unsafe.Sizeof(T8436OutBlock{}))
 
 func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
-	lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() {
+	lib.S예외처리{M에러: &에러, M함수: func() {
 		체크("에러패닉 처리")
 		값 = nil
 	}}.S실행()
@@ -164,7 +164,7 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 }
 
 func New현물호가조회(tr *TR_DATA) (s *xing.S현물_호가조회_응답, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*T1101OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -270,8 +270,8 @@ func New현물호가조회(tr *TR_DATA) (s *xing.S현물_호가조회_응답, �
 }
 
 func New현물시세조회_응답(tr *TR_DATA) (s *xing.S현물_시세조회_응답, 에러 error) {
-	defer lib.S에러패닉_처리기{
-		M에러_포인터: &에러,
+	defer lib.S예외처리{
+		M에러: &에러,
 		M함수: func() {
 			lib.F문자열_출력("'%v'(%v)", s.M한글명, s.M종목코드)
 			s = nil
@@ -494,7 +494,7 @@ func NewCSPAT00600InBlock(질의값 *xing.S질의값_정상_주문) (g *CSPAT006
 }
 
 func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상_주문_응답1, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
@@ -533,7 +533,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상_주문_
 }
 
 func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상_주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
@@ -583,7 +583,7 @@ func NewCSPAT00700InBlock(질의값 *xing.S질의값_정정_주문) (g *CSPAT007
 }
 
 func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정_주문_응답1, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
@@ -610,7 +610,7 @@ func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정_주문_
 }
 
 func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정_주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() {
+	defer lib.S예외처리{M에러: &에러, M함수: func() {
 		체크("에러패닉 처리")
 		s = nil
 	}}.S실행()
@@ -670,7 +670,7 @@ func NewCSPAT00800InBlock(질의값 *xing.S질의값_취소_주문) (g *CSPAT008
 }
 
 func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소_주문_응답1, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock1
 
@@ -694,7 +694,7 @@ func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소_주문_
 }
 
 func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소_주문_응답2, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
@@ -749,7 +749,7 @@ func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *T190
 }
 
 func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { s = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
 
 	g := (*T1902OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -762,7 +762,7 @@ func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xing.S_ETF시간별_�
 }
 
 func NewETF시간별_추이_응답_반복값_모음(tr *TR_DATA) (값 *xing.S_ETF시간별_추이_응답_반복값_모음, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
 	배열_길이 := int(tr.DataLength) / 크기T1902OutBlock1
@@ -824,7 +824,7 @@ func NewT1305InBlock(질의값 *xing.S질의값_현물_기간별_조회) (g *T13
 }
 
 func New현물_기간별_조회_응답_헤더(tr *TR_DATA) (값 *xing.S현물_기간별_조회_응답_헤더, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	g := (*T1305OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -836,7 +836,7 @@ func New현물_기간별_조회_응답_헤더(tr *TR_DATA) (값 *xing.S현물_�
 }
 
 func New현물_기간별_조회_응답_반복값_모음(tr *TR_DATA) (값 *xing.S현물_기간별_조회_응답_반복값_모음, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
 	배열_길이 := int(tr.DataLength) / 크기T1305OutBlock1
@@ -919,7 +919,7 @@ func NewT1310InBlock(질의값 *xing.S질의값_현물_전일당일_분틱_조�
 }
 
 func New현물_당일전일분틱조회_응답_헤더(tr *TR_DATA) (값 *xing.S현물_전일당일분틱조회_응답_헤더, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	g := (*T1310OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -930,7 +930,7 @@ func New현물_당일전일분틱조회_응답_헤더(tr *TR_DATA) (값 *xing.S�
 }
 
 func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (값 *xing.S현물_전일당일분틱조회_응답_반복값_모음, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	대기_항목 := 콜백_대기_저장소.G대기_항목(int(tr.RequestID))
 	lib.F조건부_패닉(대기_항목 == nil, "대기 항목이 존재하지 않음.")
@@ -1015,7 +1015,7 @@ func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *T8
 }
 
 func New증시주변자금추이_응답_헤더(tr *TR_DATA) (값 *xing.S증시주변자금추이_응답_헤더, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	g := (*T8428OutBlock)(unsafe.Pointer(tr.Data))
 
@@ -1027,7 +1027,7 @@ func New증시주변자금추이_응답_헤더(tr *TR_DATA) (값 *xing.S증시�
 }
 
 func New증시주변자금추이_응답_반복값_모음(tr *TR_DATA) (값 *xing.S증시주변자금추이_응답_반복값_모음, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
 	배열_길이 := int(tr.DataLength) / 크기T8428OutBlock1
@@ -1094,7 +1094,7 @@ func NewT8436InBlock(질의값 *lib.S질의값_문자열) (g *T8436InBlock) {
 }
 
 func New주식종목조회_응답_반복값_모음(tr *TR_DATA) (값 *xing.S현물_종목조회_응답_반복값_모음, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 값 = nil }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
 	배열_길이 := int(tr.DataLength) / 크기T8436OutBlock

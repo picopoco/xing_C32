@@ -44,16 +44,16 @@ func f실시간_데이터_해석(rt *REALTIME_DATA) (값 interface{}, 에러 err
 	RT코드 := lib.F2문자열(rt.TrCode)
 
 	switch RT코드 {
-	case xing.RT현물주문_접수:
-		return New현물주문_접수(rt)
-	case xing.RT현물주문_체결:
-		return New현물주문_체결(rt)
-	case xing.RT현물주문_정정:
-		return New현물주문_정정(rt)
-	case xing.RT현물주문_취소:
-		return New현물주문_취소(rt)
-	case xing.RT현물주문_거부:
-		return New현물주문_거부(rt)
+	case xing.RT현물_주문_접수:
+		return New현물_주문_접수(rt)
+	case xing.RT현물_주문_체결:
+		return New현물_주문_체결(rt)
+	case xing.RT현물_주문_정정:
+		return New현물_주문_정정(rt)
+	case xing.RT현물_주문_취소:
+		return New현물_주문_취소(rt)
+	case xing.RT현물_주문_거부:
+		return New현물_주문_거부(rt)
 	case xing.RT코스피_호가_잔량:
 		return New코스피_호가_잔량(rt)
 	case xing.RT코스피_시간외_호가_잔량:
@@ -84,7 +84,7 @@ func f실시간_데이터_해석(rt *REALTIME_DATA) (값 interface{}, 에러 err
 }
 
 // SC0
-func New현물주문_접수(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시간_정보, 에러 error) {
+func New현물_주문_접수(rt *REALTIME_DATA) (값 *xing.S현물_주문_응답_실시간_정보, 에러 error) {
 	g := (*SC0_OutBlock)(unsafe.Pointer(rt.Data))
 
 	시각_문자열 := lib.F2문자열(g.Ordtm)
@@ -94,10 +94,11 @@ func New현물주문_접수(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	종목코드 := lib.F2문자열_공백제거(g.Shtcode)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
-	s := new(xing.S주문_응답_실시간_정보)
+	s := new(xing.S현물_주문_응답_실시간_정보)
 	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
 	s.M원_주문번호 = lib.F2정수64_단순형_공백은_0(g.Orgordno)
 	s.RT코드 = lib.F2문자열(rt.TrCode)
+	s.M응답_구분 = f2주문_응답_구분(g.Trcode)
 	s.M종목코드 = 종목코드
 	s.M수량 = lib.F2정수64_단순형(g.Ordqty)
 	s.M가격 = lib.F2정수64_단순형(g.Ordprice)
@@ -108,7 +109,7 @@ func New현물주문_접수(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 }
 
 // SC1
-func New현물주문_체결(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시간_정보, 에러 error) {
+func New현물_주문_체결(rt *REALTIME_DATA) (값 *xing.S현물_주문_응답_실시간_정보, 에러 error) {
 	g := (*SC1_OutBlock)(unsafe.Pointer(rt.Data))
 
 	시각_문자열 := lib.F2문자열(g.Exectime)
@@ -118,10 +119,11 @@ func New현물주문_체결(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
-	s := new(xing.S주문_응답_실시간_정보)
+	s := new(xing.S현물_주문_응답_실시간_정보)
 	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
 	s.M원_주문번호 = lib.F2정수64_단순형_공백은_0(g.Orgordno)
 	s.RT코드 = lib.F2문자열(rt.TrCode)
+	s.M응답_구분 = f2주문_응답_구분(g.Trcode)
 	s.M종목코드 = 종목코드
 	s.M수량 = lib.F2정수64_단순형(g.Execqty)
 	s.M가격 = lib.F2정수64_단순형(g.Execprc)
@@ -131,7 +133,7 @@ func New현물주문_체결(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	return s, nil
 }
 
-func New현물주문_정정(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시간_정보, 에러 error) {
+func New현물_주문_정정(rt *REALTIME_DATA) (값 *xing.S현물_주문_응답_실시간_정보, 에러 error) {
 	g := (*SC2_OutBlock)(unsafe.Pointer(rt.Data))
 
 	시각_문자열 := lib.F2문자열(g.Exectime)
@@ -141,10 +143,11 @@ func New현물주문_정정(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
-	s := new(xing.S주문_응답_실시간_정보)
+	s := new(xing.S현물_주문_응답_실시간_정보)
 	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
 	s.M원_주문번호 = lib.F2정수64_단순형(g.Orgordno)
 	s.RT코드 = lib.F2문자열(rt.TrCode)
+	s.M응답_구분 = f2주문_응답_구분(g.Trcode)
 	s.M종목코드 = 종목코드
 	s.M수량 = lib.F2정수64_단순형(g.Mdfycnfqty)
 	s.M가격 = lib.F2정수64_단순형(g.Mdfycnfprc)
@@ -154,7 +157,7 @@ func New현물주문_정정(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	return s, nil
 }
 
-func New현물주문_취소(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시간_정보, 에러 error) {
+func New현물_주문_취소(rt *REALTIME_DATA) (값 *xing.S현물_주문_응답_실시간_정보, 에러 error) {
 	g := (*SC3_OutBlock)(unsafe.Pointer(rt.Data))
 
 	시각_문자열 := lib.F2문자열(g.Exectime)
@@ -164,10 +167,11 @@ func New현물주문_취소(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
-	s := new(xing.S주문_응답_실시간_정보)
+	s := new(xing.S현물_주문_응답_실시간_정보)
 	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
 	s.M원_주문번호 = lib.F2정수64_단순형(g.Orgordno)
 	s.RT코드 = lib.F2문자열(rt.TrCode)
+	s.M응답_구분 = f2주문_응답_구분(g.Trcode)
 	s.M종목코드 = 종목코드
 	s.M수량 = lib.F2정수64_단순형(g.Canccnfqty)
 	s.M잔량 = lib.F2정수64_단순형(g.Orgordunercqty)
@@ -176,7 +180,7 @@ func New현물주문_취소(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	return s, nil
 }
 
-func New현물주문_거부(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시간_정보, 에러 error) {
+func New현물_주문_거부(rt *REALTIME_DATA) (값 *xing.S현물_주문_응답_실시간_정보, 에러 error) {
 	g := (*SC4_OutBlock)(unsafe.Pointer(rt.Data))
 
 	시각_문자열 := lib.F2문자열(g.Exectime)
@@ -186,10 +190,11 @@ func New현물주문_거부(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	종목코드 := lib.F2문자열_공백제거(g.ShtnIsuno)
 	종목코드 = 종목코드[1:] // 맨 앞의 'A' 제거
 
-	s := new(xing.S주문_응답_실시간_정보)
+	s := new(xing.S현물_주문_응답_실시간_정보)
 	s.M주문번호 = lib.F2정수64_단순형(g.Ordno)
 	s.M원_주문번호 = lib.F2정수64_단순형(g.Orgordno)
 	s.RT코드 = lib.F2문자열(rt.TrCode)
+	s.M응답_구분 = f2주문_응답_구분(g.Trcode)
 	s.M종목코드 = 종목코드
 	s.M수량 = lib.F2정수64_단순형(g.Rjtqty)
 	s.M잔량 = lib.F2정수64_단순형(g.Unercqty)
@@ -197,6 +202,21 @@ func New현물주문_거부(rt *REALTIME_DATA) (값 *xing.S주문_응답_실시�
 	s.M시각 = 시각
 
 	return s, nil
+}
+
+func f2주문_응답_구분(값 [8]byte) xing.T주문_응답_구분 {
+	switch lib.F2문자열(값) {
+	case "SONAT000":
+		return xing.P주문_응답_신규_주문
+	case "SONAT001":
+		return xing.P주문_응답_정정_주문
+	case "SONAT002":
+		return xing.P주문_응답_취소_주문
+	case "SONAS100":
+		return xing.P주문_응답_체결_확인
+	default:
+		panic(lib.New에러("예상하지 못한 값 : '%v", 값))
+	}
 }
 
 func New코스피_호가_잔량(rt *REALTIME_DATA) (값 *xing.S코스피_호가_잔량_실시간_정보, 에러 error) {

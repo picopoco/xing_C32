@@ -40,7 +40,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	defer lib.S에러패닉_처리기{M함수: func() { lib.F체크포인트() }}.S실행()
+	defer lib.S예외처리{M함수: func() { lib.F체크포인트() }}.S실행()
 
 	f테스트_준비()
 	defer f테스트_정리()
@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 }
 
 func f테스트_준비() {
-	defer lib.S에러패닉_처리기{}.S실행()
+	defer lib.S예외처리{}.S실행()
 
 	lib.F테스트_모드_시작()
 

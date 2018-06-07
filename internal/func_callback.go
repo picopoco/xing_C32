@@ -46,7 +46,7 @@ import (
 )
 
 func F콜백(콜백값 xing.I콜백) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행_No출력()
+	defer lib.S예외처리{M에러: &에러}.S실행_No출력()
 
 	소켓REQ := 소켓REQ_저장소.G소켓()
 	defer 소켓REQ_저장소.S회수(소켓REQ)
@@ -121,7 +121,7 @@ func OnReleaseData_Go(c C.int) {
 
 //export OnRealtimeData_Go
 func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
-	defer lib.S에러패닉_처리기{}.S실행()
+	defer lib.S예외처리{}.S실행()
 
 	g := (*REALTIME_DATA)(unsafe.Pointer(c))
 	실시간_데이터 := 에러체크(f실시간_데이터_해석(g))

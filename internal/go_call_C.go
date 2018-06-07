@@ -53,7 +53,7 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 	}
 
 	defer TR_수신_중.S값(false)
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+	defer lib.S예외처리{M에러: &에러}.S실행()
 
 	var 수신값 *lib.S바이트_변환_모음
 	var 질의값 lib.I질의값
@@ -114,7 +114,7 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 // 단일 스레드에서 API처리와 윈도우 메시지 처리를 하기 위한 중간 매개 함수
 func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 	ch질의값 chan lib.I질의값, ch회신값 chan interface{}, ch에러 chan error) {
-	defer lib.S에러패닉_처리기{M함수: func() { ch종료 <- lib.P신호_종료 }}.S실행()
+	defer lib.S예외처리{M함수: func() { ch종료 <- lib.P신호_종료 }}.S실행()
 
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
@@ -138,7 +138,7 @@ func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 }
 
 func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, ch에러 chan error) {
-	defer lib.S에러패닉_처리기{M함수with내역: func(r interface{}) { ch에러 <- lib.New에러(r) }}.S실행()
+	defer lib.S예외처리{M함수with내역: func(r interface{}) { ch에러 <- lib.New에러(r) }}.S실행()
 
 	switch 질의값.TR구분() {
 	case xing.TR조회, xing.TR주문:
@@ -191,7 +191,7 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 }
 
 func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 int, 에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러, M함수: func() { 식별번호 = 0 }}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 식별번호 = 0 }}.S실행()
 
 	lib.F조건부_패닉(!F접속됨(), "XingAPI에 접속되어 있지 않습니다.")
 	에러체크(lib.F질의값_종목코드_검사(질의값))
@@ -306,7 +306,7 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 }
 
 func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+	defer lib.S예외처리{M에러: &에러}.S실행()
 
 	var 함수 func(string, string, int) error
 	var 전체_종목코드 string
@@ -335,7 +335,7 @@ func f실시간_정보_구독_해지_처리(질의값 lib.I질의값) (에러 er
 }
 
 func f접속_처리() bool {
-	defer lib.S에러패닉_처리기{}.S실행()
+	defer lib.S예외처리{}.S실행()
 
 	접속_처리_잠금.Lock()
 	defer 접속_처리_잠금.Unlock()
@@ -355,7 +355,7 @@ func f접속_처리() bool {
 }
 
 func f전일_당일_설정(질의값 lib.I질의값) (에러 error) {
-	defer lib.S에러패닉_처리기{M에러_포인터: &에러}.S실행()
+	defer lib.S예외처리{M에러: &에러}.S실행()
 
 	전일_당일_설정_잠금.Lock()
 	defer 전일_당일_설정_잠금.Unlock()
