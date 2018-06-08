@@ -43,6 +43,7 @@ import (
 	"github.com/ghts/xing"
 
 	"unsafe"
+	"fmt"
 )
 
 func F콜백(콜백값 xing.I콜백) (에러 error) {
@@ -134,6 +135,13 @@ func OnLogin_Go(wParam *C.char, lParam *C.char) {
 	코드 := C.GoString(wParam)
 	정수, 에러 := lib.F2정수(코드)
 	로그인_성공_여부 := (에러 == nil && 정수 == 0)
+
+	if !로그인_성공_여부 && lib.F테스트_모드_실행_중() {
+		fmt.Println("********************************")
+		fmt.Println("*  모의 투자 기간을 확인하세요. *")
+		fmt.Println("********************************")
+		lib.F문자열_출력("")
+	}
 
 	select {
 	case ch로그인 <- 로그인_성공_여부:
