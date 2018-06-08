@@ -78,40 +78,45 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 	case xing.TR현물_정상_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00600OutBlock1:
+			체크()
 			return New현물_정상주문_응답1(tr)
 		case 크기CSPAT00600OutBlock2:
+			체크()
 			return New현물_정상주문_응답2(tr)
 		default:
 			s := new(xing.S현물_정상_주문_응답)
 			s.M응답1 = 에러체크(New현물_정상주문_응답1(tr)).(*xing.S현물_정상_주문_응답1)
-			s.M응답2 = 에러체크(New현물_정상주문_응답2(tr)).(*xing.S현물_정상_주문_응답2)
-
-			return s, nil
+			s.M응답2, 에러 = New현물_정상주문_응답2(tr)
+			return s, 에러
 		}
 	case xing.TR현물_정정_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00700OutBlock1:
+			체크()
 			return New현물_정정주문_응답1(tr)
 		case 크기CSPAT00700OutBlock2:
+			체크()
 			return New현물_정정주문_응답2(tr)
 		default:
 			s := new(xing.S현물_정정_주문_응답)
 			s.M응답1 = 에러체크(New현물_정정주문_응답1(tr)).(*xing.S현물_정정_주문_응답1)
-			s.M응답2 = 에러체크(New현물_정정주문_응답2(tr)).(*xing.S현물_정정_주문_응답2)
-			return s, nil
+			s.M응답2, 에러 = New현물_정정주문_응답2(tr)
+			return s, 에러
 		}
 	case xing.TR현물_취소_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00800OutBlock1:
+			체크()
 			return New현물_취소주문_응답1(tr)
 		case 크기CSPAT00800OutBlock2:
+			체크()
 			return New현물_취소주문_응답2(tr)
 		default:
 			s := new(xing.S현물_취소_주문_응답)
 			s.M응답1 = 에러체크(New현물_취소주문_응답1(tr)).(*xing.S현물_취소_주문_응답1)
-			s.M응답2 = 에러체크(New현물_취소주문_응답2(tr)).(*xing.S현물_취소_주문_응답2)
+			s.M응답2, 에러 = New현물_취소주문_응답2(tr)
 
-			return s, nil
+			return s, 에러
 		}
 	case xing.TR시간_조회:
 		g := (*T0167OutBlock)(unsafe.Pointer(tr.Data))
@@ -537,6 +542,10 @@ func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상_주문_
 
 	g := (*CSPAT00600OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
+	if lib.F2문자열_공백제거(g.OrdNo) == "" {	// 주문 에러발생시 공백 문자열이 수신됨.
+		return nil, lib.New에러("New현물_정상주문_응답2() : 주문번호 생성 에러.")
+	}
+
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
 	if 시각_문자열 != "" {
 		시각_문자열 = lib.F문자열_삽입(lib.F2문자열_공백제거(g.OrdTime), ".", 6)
@@ -544,7 +553,7 @@ func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상_주문_
 
 	s = new(xing.S현물_정상_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
-	s.M주문번호 = lib.F2정수64_단순형(g.OrdNo) // 주문 에러발생시 공백 문자열이 수신됨.
+	s.M주문번호 = lib.F2정수64_단순형(g.OrdNo)
 	s.M주문시각 = lib.F2금일_시각_단순형("150405.999999", 시각_문자열)
 	s.M주문시장_코드 = xing.T주문_시장구분(lib.F2정수_단순형(g.OrdMktCode))
 	s.M주문유형_코드 = lib.F2문자열_공백제거(g.OrdPtnCode)
@@ -610,12 +619,13 @@ func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정_주문_
 }
 
 func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정_주문_응답2, 에러 error) {
-	defer lib.S예외처리{M에러: &에러, M함수: func() {
-		체크("에러패닉 처리")
-		s = nil
-	}}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행_No출력()
 
 	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
+
+	if lib.F2문자열_공백제거(g.OrdNo) == "" {	// 주문 에러발생시 공백 문자열이 수신됨.
+		return nil, lib.New에러("New현물_정정주문_응답2() : 주문번호 생성 에러.")
+	}
 
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
 	if 시각_문자열 != "" {
@@ -628,7 +638,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정_주문_
 
 	s = new(xing.S현물_정정_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
-	s.M주문번호 = lib.F2정수64_단순형_공백은_0(g.OrdNo)
+	s.M주문번호 = lib.F2정수64_단순형(g.OrdNo)
 	s.M모_주문번호 = lib.F2정수64_단순형_공백은_0(g.PrntOrdNo)
 	s.M주문시각 = lib.F2금일_시각_단순형_공백은_초기값("150405.999999", 시각_문자열)
 	s.M주문시장_코드 = xing.T주문_시장구분(lib.F2정수64_단순형_공백은_0(g.OrdMktCode))
@@ -698,6 +708,10 @@ func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소_주문_
 
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
+	if lib.F2문자열_공백제거(g.OrdNo) == "" {	// 주문 에러발생시 공백 문자열이 수신됨.
+		return nil, lib.New에러("New현물_취소주문_응답2() : 주문번호 생성 에러.")
+	}
+
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
 	if 시각_문자열 != "" {
 		시각_문자열 = lib.F문자열_삽입(lib.F2문자열_공백제거(g.OrdTime), ".", 6)
@@ -709,7 +723,7 @@ func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소_주문_
 
 	s = new(xing.S현물_취소_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
-	s.M주문번호 = lib.F2정수64_단순형_공백은_0(g.OrdNo)
+	s.M주문번호 = lib.F2정수64_단순형(g.OrdNo)
 	s.M모_주문번호 = lib.F2정수64_단순형_공백은_0(g.PrntOrdNo)
 	s.M주문시각 = lib.F2금일_시각_단순형("150405.999999", 시각_문자열)
 	s.M주문시장_코드 = xing.T주문_시장구분(lib.F2정수_단순형(g.OrdMktCode))

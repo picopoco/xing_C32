@@ -99,6 +99,7 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 		case 회신값 := <-ch회신값:
 			소켓REP_TR수신.S송신(수신값.G변환_형식(0), 회신값)
 		case 에러 := <-ch에러:
+			체크(에러)
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
 		case <-ch도우미_종료:
 			go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch질의값, ch회신값, ch에러)
@@ -344,10 +345,8 @@ func f접속_처리() bool {
 
 	switch {
 	case !F접속(서버_구분):
-		lib.F체크포인트()
 		return false
 	case !F로그인():
-		lib.F체크포인트()
 		return false
 	}
 
@@ -365,9 +364,7 @@ func f전일_당일_설정(질의값 lib.I질의값) (에러 error) {
 	전일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(1).(time.Time))
 	당일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(2).(time.Time))
 
-	fmt.Println("***************************")
-	fmt.Println("* C32 전일 당일 설정 완료 *")
-	fmt.Println("***************************")
+	fmt.Println("**     C32 전일 당일 설정 완료      **")
 
 	return nil
 }

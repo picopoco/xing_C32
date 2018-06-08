@@ -131,6 +131,7 @@ func f초기화_서버_접속() (에러 error) {
 		select {
 		case 접속_성공_여부 = <-ch로그인:
 		case <-ch타임아웃:
+			lib.F문자열_출력("접속 타임아웃")
 		}
 
 		if !접속_성공_여부 {
@@ -143,9 +144,8 @@ func f초기화_서버_접속() (에러 error) {
 
 	F콜백(xing.New콜백_신호(xing.P신호_C32_READY))
 
-	fmt.Println("***************************")
-	fmt.Println("*       C32 READY         *")
-	fmt.Println("***************************")
+	fmt.Println("**     C32 READY     **")
+
 	return nil
 }
 

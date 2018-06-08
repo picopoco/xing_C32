@@ -70,8 +70,14 @@ func F콜백(콜백값 xing.I콜백) (에러 error) {
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	g := (*TR_DATA)(unsafe.Pointer(c))
 
-	데이터 := 에러체크(tr데이터_해석(g))
-	바이트_변환값 := 에러체크(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
+	var 바이트_변환값 *lib.S바이트_변환
+
+	if 데이터, 에러 := tr데이터_해석(g); 에러 != nil {
+		바이트_변환값 = 에러체크(lib.New바이트_변환(lib.JSON, 에러)).(*lib.S바이트_변환)
+	} else {
+		바이트_변환값 = 에러체크(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
+	}
+
 	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
 	F콜백(콜백값)
 }
@@ -99,6 +105,10 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 
 	// f메시지_해제() 에서 포인터가 필요함.
 	메시지_저장소.S추가(콜백값.M식별번호, unsafe.Pointer(pointer))
+
+	if 에러여부 {
+		체크(콜백값)
+	}
 
 	F콜백(콜백값)
 }
