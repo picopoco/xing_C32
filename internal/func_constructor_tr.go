@@ -38,6 +38,7 @@ import (
 	"github.com/ghts/xing"
 
 	"bytes"
+	"errors"
 	"math"
 	"strconv"
 	"strings"
@@ -619,12 +620,17 @@ func New현물_정정주문_응답1(tr *TR_DATA) (s *xing.S현물_정정_주문_
 }
 
 func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정_주문_응답2, 에러 error) {
-	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행_No출력()
+	defer func() {
+		if r := recover(); r != nil {
+			s = nil
+			에러 = lib.New에러(r)
+		}}()
 
 	g := (*CSPAT00700OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
 	if lib.F2문자열_공백제거(g.OrdNo) == "" {	// 주문 에러발생시 공백 문자열이 수신됨.
-		return nil, lib.New에러("New현물_정정주문_응답2() : 주문번호 생성 에러.")
+		// 에러가 너무 장황해서 lib.New에러() 대신에 errors.New()로 대체함.
+		return nil, errors.New("New현물_정정주문_응답2() : 주문번호 생성 에러.")
 	}
 
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
@@ -704,12 +710,17 @@ func New현물_취소주문_응답1(tr *TR_DATA) (s *xing.S현물_취소_주문_
 }
 
 func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소_주문_응답2, 에러 error) {
-	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
-
+	defer func() {
+		if r := recover(); r != nil {
+			s = nil
+			에러 = lib.New에러(r)
+		}}()
+	
 	g := (*CSPAT00800OutBlockAll)(unsafe.Pointer(tr.Data)).OutBlock2
 
 	if lib.F2문자열_공백제거(g.OrdNo) == "" {	// 주문 에러발생시 공백 문자열이 수신됨.
-		return nil, lib.New에러("New현물_취소주문_응답2() : 주문번호 생성 에러.")
+		// 에러가 너무 장황해서 lib.New에러() 대신에 errors.New()로 대체함.
+		return nil, errors.New("New현물_취소주문_응답2() : 주문번호 생성 에러.")
 	}
 
 	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
