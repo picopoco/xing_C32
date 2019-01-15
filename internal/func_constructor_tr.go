@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2018 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
-Copyright (C) 2015-2018년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
 
 This file is part of GHTS.
 
@@ -547,15 +547,17 @@ func New현물_정상주문_응답2(tr *TR_DATA) (s *xing.S현물_정상_주문_
 		return nil, lib.New에러("New현물_정상주문_응답2() : 주문번호 생성 에러.")
 	}
 
-	시각_문자열 := lib.F2문자열_공백제거(g.OrdTime)
-	if 시각_문자열 != "" {
-		시각_문자열 = lib.F문자열_삽입(lib.F2문자열_공백제거(g.OrdTime), ".", 6)
-	}
-
 	s = new(xing.S현물_정상_주문_응답2)
 	s.M레코드_수량 = lib.F2정수_단순형(g.RecCnt)
 	s.M주문번호 = lib.F2정수64_단순형(g.OrdNo)
-	s.M주문시각 = lib.F2금일_시각_단순형("150405.999999", 시각_문자열)
+
+	if 시각_문자열 := lib.F2문자열_공백제거(g.OrdTime); 시각_문자열 != "" {
+		시각_문자열 = lib.F문자열_삽입(lib.F2문자열_공백제거(g.OrdTime), ".", 6)
+		s.M주문시각 = lib.F2금일_시각_단순형("150405.999999", 시각_문자열)
+	} else {
+		s.M주문시각 = time.Time{}
+	}
+
 	s.M주문시장_코드 = xing.T주문_시장구분(lib.F2정수_단순형(g.OrdMktCode))
 	s.M주문유형_코드 = lib.F2문자열_공백제거(g.OrdPtnCode)
 	s.M종목코드 = lib.F2문자열_공백제거(g.ShtnIsuNo)
