@@ -319,17 +319,17 @@ func F초당_TR쿼터(TR코드 string) int {
 	return int(C.etkGetTRCountPerSec(cTR코드))
 }
 
-func F압축_해제(데이터 unsafe.Pointer, 데이터_길이 int) []byte {
-	defer C.free(데이터) // 이게 문제가 될까?
-
-	const 버퍼_길이 = 2000
-	바이트_모음 := make([]byte, 버퍼_길이, 버퍼_길이)
-	버퍼 := unsafe.Pointer(&바이트_모음)
-
-	길이 := C.etkDecompress((*C.char)(데이터), C.int(데이터_길이), (*C.char)(버퍼), 버퍼_길이)
-
-	return C.GoBytes(버퍼, 길이)
-}
+//func F압축_해제(데이터 unsafe.Pointer, 데이터_길이 int) []byte {
+//	defer C.free(데이터) // 이게 문제가 될까?
+//
+//	const 버퍼_길이 = 2000 * 구조체_크기
+//	바이트_모음 := make([]byte, 버퍼_길이, 버퍼_길이)
+//	버퍼 := unsafe.Pointer(&바이트_모음)
+//
+//	길이 := C.etkDecompress((*C.char)(데이터), (*C.char)(버퍼), 버퍼_길이)
+//
+//	return C.GoBytes(버퍼, 길이)
+//}
 
 func f함수_존재함(함수명 string) bool {
 	c함수명 := C.CString(함수명)

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2018 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
-Copyright (C) 2015-2018년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
 
 This file is part of GHTS.
 
@@ -41,6 +41,8 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 #define StrCopy(x,y) strncpy(x,y,sizeof x)
 #define StrCompare(x,y) strncmp(x,y,sizeof x)
 
+int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen);
+
 //---------------------------------------------------------------------------//
 // 윈도우 메시지 처리 함수.
 //---------------------------------------------------------------------------//
@@ -63,6 +65,23 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             // XingAPI에서 수신한 구조체는 메모리 저장방식이 '#pragma pack(push, 1)'이어서 Go언어에서 읽을 수 없음.
             // Go언어에서 읽을 수 있도록 기본 메모리 저장방식으로 저장한 _UNPACKED 구조체로 복사.
             trData = (TR_DATA*)lParam;
+
+            printf("Block Name : %s.\n", trData->BlockName);
+
+            // t8411은 압축되어 있음. 압축해제가 필요.
+//            if (strcmp(trData->BlockName, "t8411OutBlock1") == 0) {   // NAME_t8411OutBlock1 ???
+//                // int etkDecompress(char* pszSrc, int nSrcLen, char* pszDes, int nDesLen);
+//                // int nDestSize= g_iXingAPI.Decompress((char *)pOutBlock1, (char *)&szOutBlock1[0], pRpData->nDataLength);
+//                // int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen)
+//
+//                T8411OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
+//
+//                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
+//
+//                trData->Data = (unsigned char*)&buffer[0];
+//                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
+//                trData->DataLength = DestSize;
+//            }
 
             TR_DATA_UNPACKED unpackedTrData = {
                 .RequestID = trData->RequestID,
@@ -581,19 +600,11 @@ int etkGetTRCountPerSec(char* TrCode) {
 
 // t8411 TR 처럼 압축데이터 수신이 가능한 TR에 압축 해제용으로 사용합니다.
 // 압축을 해제한 데이터의 길이
-int etkDecompress(char* CompressedData, int CompressedDataLen, char* Buffer, int BufferSize) {
+int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen) {
     ETK_Decompress func = (ETK_Decompress)etkFunc("ETK_Decompress");
     if (func == NULL) {
         return 0;
     }
 
-    memset(Buffer, 0, BufferSize);
-
-    int DecompressedDataLen = func((LPCTSTR)CompressedData, (LPCTSTR)Buffer, CompressedDataLen);
-
-    if (DecompressedDataLen > BufferSize) {
-        printf("C.etkDecompress() : BufferSize too small. %d %d", BufferSize, DecompressedDataLen);
-    }
-
-    return DecompressedDataLen;
+    return func((LPCTSTR)CompressedData, (LPCTSTR)Buffer, CompressedDataLen);
 }

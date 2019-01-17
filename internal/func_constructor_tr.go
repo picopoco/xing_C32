@@ -46,22 +46,36 @@ import (
 	"unsafe"
 )
 
+const 크기CSPAT00600InBlock1 = int(unsafe.Sizeof(CSPAT00600InBlock1{}))
 const 크기CSPAT00600OutBlock1 = int(unsafe.Sizeof(CSPAT00600OutBlock1{}))
 const 크기CSPAT00600OutBlock2 = int(unsafe.Sizeof(CSPAT00600OutBlock2{}))
+const 크기CSPAT00700InBlock1 = int(unsafe.Sizeof(CSPAT00700InBlock1{}))
 const 크기CSPAT00700OutBlock1 = int(unsafe.Sizeof(CSPAT00700OutBlock1{}))
 const 크기CSPAT00700OutBlock2 = int(unsafe.Sizeof(CSPAT00700OutBlock2{}))
+const 크기CSPAT00800InBlock1 = int(unsafe.Sizeof(CSPAT00800InBlock1{}))
 const 크기CSPAT00800OutBlock1 = int(unsafe.Sizeof(CSPAT00800OutBlock1{}))
 const 크기CSPAT00800OutBlock2 = int(unsafe.Sizeof(CSPAT00800OutBlock2{}))
+const 크기T1101InBlock = int(unsafe.Sizeof(T1101InBlock{}))
+const 크기T1102InBlock = int(unsafe.Sizeof(T1102InBlock{}))
+const 크기T1301InBlock = int(unsafe.Sizeof(T1301InBlock{}))
 const 크기T1301OutBlock = int(unsafe.Sizeof(T1301OutBlock{}))
 const 크기T1301OutBlock1 = int(unsafe.Sizeof(T1301OutBlock1{}))
+const 크기T1305InBlock = int(unsafe.Sizeof(T1305InBlock{}))
 const 크기T1305OutBlock = int(unsafe.Sizeof(T1305OutBlock{}))
 const 크기T1305OutBlock1 = int(unsafe.Sizeof(T1305OutBlock1{}))
+const 크기T1310InBlock = int(unsafe.Sizeof(T1310InBlock{}))
 const 크기T1310OutBlock = int(unsafe.Sizeof(T1310OutBlock{}))
 const 크기T1310OutBlock1 = int(unsafe.Sizeof(T1310OutBlock1{}))
+const 크기T1902InBlock = int(unsafe.Sizeof(T1902InBlock{}))
 const 크기T1902OutBlock = int(unsafe.Sizeof(T1902OutBlock{}))
 const 크기T1902OutBlock1 = int(unsafe.Sizeof(T1902OutBlock1{}))
+const 크기T8411InBlock = int(unsafe.Sizeof(T8411InBlock{}))
+const 크기T8411OutBlock = int(unsafe.Sizeof(T8411OutBlock{}))
+const 크기T8411OutBlock1 = int(unsafe.Sizeof(T8411OutBlock1{}))
+const 크기T8428InBlock = int(unsafe.Sizeof(T8428InBlock{}))
 const 크기T8428OutBlock = int(unsafe.Sizeof(T8428OutBlock{}))
 const 크기T8428OutBlock1 = int(unsafe.Sizeof(T8428OutBlock1{}))
+const 크기T8436InBlock = int(unsafe.Sizeof(T8436InBlock{}))
 const 크기T8436OutBlock = int(unsafe.Sizeof(T8436OutBlock{}))
 
 func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
@@ -156,6 +170,15 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 			return NewETF시간별_추이_응답_헤더(tr)
 		default:
 			return NewETF시간별_추이_응답_반복값_모음(tr)
+		}
+	case xing.TR현물_차트_틱:
+		switch 데이터_길이 {
+		case 크기T8411OutBlock:
+			lib.F체크포인트("콜백용 데이터 송신 준비 : 헤더")
+			return New현물_차트_틱_응답_헤더(tr)
+		default:
+			lib.F체크포인트("콜백용 데이터 송신 준비 : 반복값 모음")
+			return New현물_차트_틱_응답_반복값_모음(tr)
 		}
 	case xing.TR증시_주변_자금_추이:
 		switch 데이터_길이 {
@@ -762,79 +785,6 @@ func New현물_취소주문_응답2(tr *TR_DATA) (s *xing.S현물_취소_주문_
 	return s, nil
 }
 
-func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *T1902InBlock) {
-	g = new(T1902InBlock)
-	lib.F바이트_복사_문자열(g.ShCode[:], 질의값.M종목코드)
-
-	if lib.F2문자열_공백제거(질의값.M연속키) == "" {
-		lib.F바이트_배열_공백문자열_채움(g.Time[:])
-	} else {
-		lib.F바이트_복사_문자열(g.Time[:], 질의값.M연속키)
-	}
-
-	return g
-}
-
-func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
-	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
-
-	g := (*T1902OutBlock)(unsafe.Pointer(tr.Data))
-
-	s = new(xing.S_ETF시간별_추이_응답_헤더)
-	s.M연속키 = lib.F2문자열_공백제거(g.Time)
-	s.M종목명 = lib.F2문자열_EUC_KR_공백제거(g.HName)
-	s.M업종지수명 = lib.F2문자열_EUC_KR_공백제거(g.UpName)
-
-	return s, nil
-}
-
-func NewETF시간별_추이_응답_반복값_모음(tr *TR_DATA) (값 *xing.S_ETF시간별_추이_응답_반복값_모음, 에러 error) {
-	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
-
-	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
-	배열_길이 := int(tr.DataLength) / 크기T1902OutBlock1
-	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
-
-	g_모음 := (*[1 << 20]T1902OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
-	배열 := make([]*xing.S_ETF시간별_추이_응답_반복값, len(g_모음), len(g_모음))
-
-	당일값 := 당일.G값()
-
-	for i, g := range g_모음 {
-		s := new(xing.S_ETF시간별_추이_응답_반복값)
-
-		if lib.F2문자열_EUC_KR(g.Time) == "장:마:감" {
-			s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", g_모음[i+1].Time).Add(lib.P10초)
-		} else {
-			s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", g.Time)
-		}
-
-		s.M현재가 = lib.F2정수64_단순형(g.Price)
-		s.M전일대비구분 = xing.T전일대비_구분(lib.F2정수_단순형(g.Sign))
-		s.M전일대비등락폭 = s.M전일대비구분.G부호보정_정수64(lib.F2정수64_단순형(g.Change))
-		s.M누적_거래량 = lib.F2실수_단순형(g.Volume)
-		s.M현재가_NAV_차이 = lib.F2실수_단순형(g.NavDiff)
-		s.NAV = lib.F2실수_단순형(g.Nav)
-		s.NAV전일대비등락폭 = lib.F2실수_단순형(g.NavChange)
-		s.M추적오차 = lib.F2실수_단순형(g.Crate)
-		s.M괴리율 = lib.F2실수_단순형(g.Grate)
-		s.M지수 = lib.F2실수_단순형(g.Jisu)
-		s.M지수_전일대비등락폭 = lib.F2실수_단순형(g.JiChange)
-		s.M지수_전일대비등락율 = lib.F2실수_단순형(g.JiRate)
-
-		if uint8(g.X_jichange) == 160 && s.M지수_전일대비등락폭 > 0 {
-			s.M지수_전일대비등락폭 = -1 * s.M지수_전일대비등락폭
-		}
-
-		배열[i] = s
-	}
-
-	값 = new(xing.S_ETF시간별_추이_응답_반복값_모음)
-	값.M배열 = 배열
-
-	return 값, nil
-}
-
 func NewT1305InBlock(질의값 *xing.S질의값_현물_기간별_조회) (g *T1305InBlock) {
 	g = new(T1305InBlock)
 	lib.F바이트_복사_문자열(g.Shcode[:], 질의값.M종목코드)
@@ -986,19 +936,9 @@ func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (�
 	}
 
 	for i, g := range g_모음 {
-		시각_문자열_원본 := lib.F2문자열(g.Chetime[:6])
-
-		버퍼 := new(bytes.Buffer)
-		버퍼.WriteString(시각_문자열_원본[0:2])
-		버퍼.WriteString(":")
-		버퍼.WriteString(시각_문자열_원본[2:4])
-		버퍼.WriteString(":")
-		버퍼.WriteString(시각_문자열_원본[4:])
-		시각_문자열 := 버퍼.String()
-
 		s := new(xing.S현물_전일당일분틱조회_응답_반복값)
-		s.M시각 = lib.F2일자별_시각_단순형(일자, "15:04:05", 시각_문자열)
-		s.M현재가 = lib.F2정수64_단순형(g.Price[:])
+		s.M시각 = lib.F2일자별_시각_단순형(일자, "150405", lib.F2문자열(g.Chetime[:6]))
+		s.M현재가 = lib.F2정수64_단순형(g.Price)
 		s.M전일대비구분 = xing.T전일대비_구분(lib.F2정수64_단순형(g.Sign))
 		s.M전일대비등락폭 = s.M전일대비구분.G부호보정_정수64(lib.F2정수64_단순형(g.Change))
 		s.M전일대비등락율 = s.M전일대비구분.G부호보정_실수64(lib.F2실수_단순형(g.Diff))
@@ -1011,6 +951,161 @@ func New현물_당일전일분틱조회_응답_반복값_모음(tr *TR_DATA) (�
 		s.M매수체결건수 = lib.F2정수64_단순형(g.Mschecnt)
 		s.M순체결량 = lib.F2정수64_단순형(g.Revolume)
 		s.M순체결건수 = lib.F2정수64_단순형(g.Rechecnt)
+
+		값.M배열[i] = s
+	}
+
+	return 값, nil
+}
+
+func NewT1902InBlock(질의값 *xing.S질의값_단일종목_연속키) (g *T1902InBlock) {
+	g = new(T1902InBlock)
+	lib.F바이트_복사_문자열(g.ShCode[:], 질의값.M종목코드)
+
+	if lib.F2문자열_공백제거(질의값.M연속키) == "" {
+		lib.F바이트_배열_공백문자열_채움(g.Time)
+	} else {
+		lib.F바이트_복사_문자열(g.Time[:], 질의값.M연속키)
+	}
+
+	return g
+}
+
+func NewETF시간별_추이_응답_헤더(tr *TR_DATA) (s *xing.S_ETF시간별_추이_응답_헤더, 에러 error) {
+	defer lib.S예외처리{M에러: &에러, M함수: func() { s = nil }}.S실행()
+
+	g := (*T1902OutBlock)(unsafe.Pointer(tr.Data))
+
+	s = new(xing.S_ETF시간별_추이_응답_헤더)
+	s.M연속키 = lib.F2문자열_공백제거(g.Time)
+	s.M종목명 = lib.F2문자열_EUC_KR_공백제거(g.HName)
+	s.M업종지수명 = lib.F2문자열_EUC_KR_공백제거(g.UpName)
+
+	return s, nil
+}
+
+func NewETF시간별_추이_응답_반복값_모음(tr *TR_DATA) (값 *xing.S_ETF시간별_추이_응답_반복값_모음, 에러 error) {
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
+
+	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+	배열_길이 := int(tr.DataLength) / 크기T1902OutBlock1
+	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
+
+	g_모음 := (*[1 << 20]T1902OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
+	배열 := make([]*xing.S_ETF시간별_추이_응답_반복값, len(g_모음), len(g_모음))
+
+	당일값 := 당일.G값()
+
+	for i, g := range g_모음 {
+		s := new(xing.S_ETF시간별_추이_응답_반복값)
+
+		if lib.F2문자열_EUC_KR(g.Time) == "장:마:감" {
+			s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", g_모음[i+1].Time).Add(lib.P10초)
+		} else {
+			s.M시각 = lib.F2일자별_시각_단순형(당일값, "15:04:05", g.Time)
+		}
+
+		s.M현재가 = lib.F2정수64_단순형(g.Price)
+		s.M전일대비구분 = xing.T전일대비_구분(lib.F2정수_단순형(g.Sign))
+		s.M전일대비등락폭 = s.M전일대비구분.G부호보정_정수64(lib.F2정수64_단순형(g.Change))
+		s.M누적_거래량 = lib.F2실수_단순형(g.Volume)
+		s.M현재가_NAV_차이 = lib.F2실수_단순형(g.NavDiff)
+		s.NAV = lib.F2실수_단순형(g.Nav)
+		s.NAV전일대비등락폭 = lib.F2실수_단순형(g.NavChange)
+		s.M추적오차 = lib.F2실수_단순형(g.Crate)
+		s.M괴리율 = lib.F2실수_단순형(g.Grate)
+		s.M지수 = lib.F2실수_단순형(g.Jisu)
+		s.M지수_전일대비등락폭 = lib.F2실수_단순형(g.JiChange)
+		s.M지수_전일대비등락율 = lib.F2실수_단순형(g.JiRate)
+
+		if uint8(g.X_jichange) == 160 && s.M지수_전일대비등락폭 > 0 {
+			s.M지수_전일대비등락폭 = -1 * s.M지수_전일대비등락폭
+		}
+
+		배열[i] = s
+	}
+
+	값 = new(xing.S_ETF시간별_추이_응답_반복값_모음)
+	값.M배열 = 배열
+
+	return 값, nil
+}
+
+func NewT8411InBlock(질의값 *xing.S질의값_현물_차트_틱) (g *T8411InBlock) {
+	압축여부 := "N"
+
+	if 질의값.M압축여부 {
+		압축여부 = "Y"
+	}
+
+	g = new(T8411InBlock)
+	lib.F바이트_복사_문자열(g.Shcode[:], 질의값.M종목코드)
+	lib.F바이트_복사_정수(g.Ncnt[:], 질의값.M단위)
+	lib.F바이트_복사_정수(g.Qrycnt[:], 질의값.M요청건수)
+	lib.F바이트_복사_정수(g.Nday[:], 질의값.M조회영업일수)
+	lib.F바이트_복사_문자열(g.Sdate[:], 질의값.M시작일자.Format("20060102"))
+	lib.F바이트_복사_문자열(g.Edate[:], 질의값.M종료일자.Format("20060102"))
+	lib.F바이트_복사_문자열(g.Cts_date[:], 질의값.M연속일자)
+	lib.F바이트_복사_문자열(g.Cts_time[:], 질의값.M연속시간)
+	lib.F바이트_복사_문자열(g.Comp_yn[:], 압축여부)
+
+	return g
+}
+
+func New현물_차트_틱_응답_헤더(tr *TR_DATA) (값 *xing.S현물_차트_틱_응답_헤더, 에러 error) {
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
+
+	g := (*T8411OutBlock)(unsafe.Pointer(tr.Data))
+
+	값 = new(xing.S현물_차트_틱_응답_헤더)
+	값.M종목코드 = lib.F2문자열(g.Shcode)
+	값.M전일시가 = lib.F2정수64_단순형(g.Jisiga)
+	값.M전일고가 = lib.F2정수64_단순형(g.Jihigh)
+	값.M전일저가 = lib.F2정수64_단순형(g.Jilow)
+	값.M전일종가 = lib.F2정수64_단순형(g.Jiclose)
+	값.M전일거래량 = lib.F2정수64_단순형(g.Jivolume)
+	값.M당일시가 = lib.F2정수64_단순형(g.Disiga)
+	값.M당일고가 = lib.F2정수64_단순형(g.Dihigh)
+	값.M당일저가 = lib.F2정수64_단순형(g.Dilow)
+	값.M당일종가 = lib.F2정수64_단순형(g.Diclose)
+	값.M상한가 = lib.F2정수64_단순형(g.Highend)
+	값.M하한가 = lib.F2정수64_단순형(g.Lowend)
+	값.M연속일자 = lib.F2문자열(g.Cts_date)
+	값.M연속시간 = lib.F2문자열(g.Cts_time)
+	값.M장시작시간 = lib.F2일자별_시각_단순형(당일.G값(), "150405", g.S_time)
+	값.M장종료시간 = lib.F2일자별_시각_단순형(당일.G값(), "150405", g.E_time)
+	값.M동시호가처리시간 =  lib.F2정수_단순형(g.Dshmin)
+	값.M수량 = lib.F2정수64_단순형(g.Rec_count)
+
+	return 값, nil
+}
+
+func New현물_차트_틱_응답_반복값_모음(tr *TR_DATA) (값 *xing.S현물_차트_틱_응답_반복값_모음, 에러 error) {
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
+
+	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
+	배열_길이 := int(tr.DataLength) / 크기T8411OutBlock1
+	lib.F조건부_패닉(배열_길이 >= (1<<20), "미리 확보하는 메모리가 부족함.")
+
+	g_모음 := (*[1 << 20]T8411OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
+
+	값 = new(xing.S현물_차트_틱_응답_반복값_모음)
+	값.M배열 = make([]*xing.S현물_차트_틱_응답_반복값, 배열_길이, 배열_길이)
+
+	for i, g := range g_모음 {
+		날짜_문자열 := lib.F2문자열_공백제거(g.Date)
+		시각_문자열 := lib.F2문자열_공백제거(g.Time[:6])
+
+		s := new(xing.S현물_차트_틱_응답_반복값)
+		s.M일자_시각 = lib.F2포맷된_시각_단순형("20060102 150405", 날짜_문자열 + " " + 시각_문자열)
+		s.M시가 = lib.F2정수64_단순형(g.Open)
+		s.M고가 = lib.F2정수64_단순형(g.High)
+		s.M저가 = lib.F2정수64_단순형(g.Low)
+		s.M종가 = lib.F2정수64_단순형(g.Close)
+		s.M거래량 = lib.F2정수64_단순형(g.Vol)
+		s.M수정구분 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
+		s.M수정비율 = lib.F2실수_단순형_공백은_0(g.Rate)
+		s.M수정주가반영항목 = lib.F2정수64_단순형_공백은_0(g.Pricechk)
 
 		값.M배열[i] = s
 	}
@@ -1041,19 +1136,19 @@ func NewT8428InBlock(질의값 *xing.S질의값_증시주변자금추이) (g *T8
 	return g
 }
 
-func New증시주변자금추이_응답_헤더(tr *TR_DATA) (값 *xing.S증시주변자금추이_응답_헤더, 에러 error) {
+func New증시주변자금추이_응답_헤더(tr *TR_DATA) (값 *xing.S증시_주변자금추이_응답_헤더, 에러 error) {
 	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	g := (*T8428OutBlock)(unsafe.Pointer(tr.Data))
 
-	값 = new(xing.S증시주변자금추이_응답_헤더)
+	값 = new(xing.S증시_주변자금추이_응답_헤더)
 	값.M연속키 = lib.F2문자열(g.Date)
 	값.M인덱스 = lib.F2정수64_단순형(g.Idx)
 
 	return 값, nil
 }
 
-func New증시주변자금추이_응답_반복값_모음(tr *TR_DATA) (값 *xing.S증시주변자금추이_응답_반복값_모음, 에러 error) {
+func New증시주변자금추이_응답_반복값_모음(tr *TR_DATA) (값 *xing.S증시_주변자금추이_응답_반복값_모음, 에러 error) {
 	defer lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	// C배열 -> Go슬라이스 : https://github.com/golang/go/wiki/cgo : Turning C arrays into Go slices
@@ -1062,25 +1157,12 @@ func New증시주변자금추이_응답_반복값_모음(tr *TR_DATA) (값 *xing
 
 	g_모음 := (*[1 << 20]T8428OutBlock1)(unsafe.Pointer(tr.Data))[:배열_길이:배열_길이]
 
-	값 = new(xing.S증시주변자금추이_응답_반복값_모음)
-	값.M배열 = make([]*xing.S증시주변자금추이_응답_반복값, 배열_길이, 배열_길이)
+	값 = new(xing.S증시_주변자금추이_응답_반복값_모음)
+	값.M배열 = make([]*xing.S증시_주변자금추이_응답_반복값, 배열_길이, 배열_길이)
 
 	for i, g := range g_모음 {
-		시각_문자열_원본 := lib.F2문자열(g.Date)
-
-		lib.F조건부_패닉(len(시각_문자열_원본) != 8, "예상과 다른 시각 문자열 길이 : '%v', '%v'",
-			len(시각_문자열_원본), 시각_문자열_원본)
-
-		버퍼 := new(bytes.Buffer)
-		버퍼.WriteString(시각_문자열_원본[0:4])
-		버퍼.WriteString("/")
-		버퍼.WriteString(시각_문자열_원본[4:6])
-		버퍼.WriteString("/")
-		버퍼.WriteString(시각_문자열_원본[6:])
-		시각_문자열 := 버퍼.String()
-
-		s := new(xing.S증시주변자금추이_응답_반복값)
-		s.M일자 = lib.F2포맷된_시각_단순형("2006/01/02", 시각_문자열)
+		s := new(xing.S증시_주변자금추이_응답_반복값)
+		s.M일자 = lib.F2포맷된_시각_단순형("20060102", lib.F2문자열(g.Date))
 		s.M지수 = lib.F2실수_단순형(g.Jisu)
 		s.M전일대비_구분 = xing.T전일대비_구분(lib.F2정수64_단순형(g.Sign))
 		s.M전일대비_등락폭 = s.M전일대비_구분.G부호보정_실수64(lib.F2실수_단순형(g.Change))

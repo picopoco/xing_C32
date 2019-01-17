@@ -68,9 +68,9 @@ func F콜백(콜백값 xing.I콜백) (에러 error) {
 
 //export OnTrData_Go
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
-	g := (*TR_DATA)(unsafe.Pointer(c))
-
 	var 바이트_변환값 *lib.S바이트_변환
+
+	g := (*TR_DATA)(unsafe.Pointer(c))
 
 	if 데이터, 에러 := tr데이터_해석(g); 에러 != nil {
 		바이트_변환값 = 에러체크(lib.New바이트_변환(lib.JSON, 에러)).(*lib.S바이트_변환)
@@ -78,8 +78,12 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 		바이트_변환값 = 에러체크(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
 	}
 
-	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값)
+	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
 	F콜백(콜백값)
+
+	//if lib.F2문자열_공백제거(g.TrCode) == xing.TR현물_차트_틱 {
+		lib.F체크포인트("콜백 전송", lib.F2문자열_공백제거(g.TrCode), 콜백값.G콜백(), lib.F2문자열(g.BlockName))
+	//}
 }
 
 //export OnMessageAndError_Go

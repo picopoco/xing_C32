@@ -61,6 +61,23 @@ type TR_DATA struct {
 	Data                *byte
 }
 
+type TR_DATA_PACKED struct {
+	RequestID           int32
+	DataLength          int32
+	TotalDataBufferSize int32
+	ElapsedTime         int32
+	DataMode            int32
+	TrCode              [10]byte
+	X_TrCode            [1]byte
+	Cont                [1]byte
+	ContKey             [18]byte
+	X_ContKey           [1]byte
+	None                [31]byte
+	BlockName           [16]byte
+	X_BlockName         [1]byte
+	Pad_cgo_0			[4]byte
+}
+
 // C.REALTIME_DATA_UNPACKED
 type REALTIME_DATA struct {
 	TrCode     [3]byte
@@ -75,6 +92,18 @@ type REALTIME_DATA struct {
 	Data       *byte
 }
 
+type REALTIME_DATA_PACKED struct {
+	TrCode    [3]byte
+	X_TrCode  [1]byte
+	KeyLength int32
+	KeyData   [32]byte
+	X_KeyData [1]byte
+	RegKey    [32]byte
+	X_RegKey  [1]byte
+	Pad_cgo_0 [4]byte
+	Pad_cgo_1 [4]byte
+}
+
 // C.MSG_DATA_UNPACKED
 type MSG_DATA struct {
 	RequestID   int32
@@ -84,6 +113,15 @@ type MSG_DATA struct {
 	Pad_cgo_0   [2]byte
 	MsgLength   int32
 	MsgData     *byte
+}
+
+type MSG_DATA_PACKED struct {
+	RequestID   int32
+	SystemError int32
+	MsgCode     [5]byte
+	X_MsgCode   [1]byte
+	Pad_cgo_0   [4]byte
+	Pad_cgo_1   [4]byte
 }
 
 type S메시지_저장소 struct {

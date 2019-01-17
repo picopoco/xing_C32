@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2018 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
-Copyright (C) 2015-2018년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
 
 This file is part of GHTS.
 
@@ -67,7 +67,7 @@ int etkGetTRCountPerSec(const char* pszCode);
 //int etkRequestLinkToHTS(HWND hWnd, LPCTSTR pszLinkKey, LPCTSTR pszData, LPCTSTR pszFiller);
 //void etkAdviseLinkFromHTS(HWND hWnd);
 //void etkUnadviseLinkFromHTS();
-int etkDecompress(char* pszSrc, int nSrcLen, char* pszDes, int nDesLen);
+int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen);
 
 bool etkFuncExist(char* funcName);
 void initXingApi(int dummy);

@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2018 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, Inc., 
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA) 
 
-Copyright (C) 2015-2018년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
 
 This file is part of GHTS.
 
@@ -44,14 +44,15 @@ import "C"
 // 기본 구조체
 //------------------------------------------------------------------------------
 
-// _UNPACKED 자동변환 시 오류가 발생함.
+// 자동변환 시 오류가 발생하는 경우, 코멘트 처리.
+
 //type TR_DATA C.TR_DATA_UNPACKED
 //type MSG_DATA C.MSG_DATA_UNPACKEDD
 //type REALTIME_DATA C.REALTIME_DATA_UNPACKED
 
-type TR_DATA_PACKED C.TR_DATA
-type REALTIME_DATA_PACKED C.REALTIME_DATA
-type MSG_DATA_PACKED C.MSG_DATA
+//type TR_DATA_PACKED C.TR_DATA
+//type REALTIME_DATA_PACKED C.REALTIME_DATA
+//type MSG_DATA_PACKED C.MSG_DATA
 type LINK_DATA C.LINK_DATA
 
 //------------------------------------------------------------------------------
@@ -120,6 +121,11 @@ type T1901OutBlock C.T1901OutBlock
 type T1902InBlock C.T1902InBlock
 type T1902OutBlock C.T1902OutBlock
 type T1902OutBlock1 C.T1902OutBlock1
+
+// 현물 차트 틱
+type T8411InBlock C.T8411InBlock
+type T8411OutBlock C.T8411OutBlock
+type T8411OutBlock1 C.T8411OutBlock1
 
 // 증시 주변 자금 추이
 type T8428InBlock C.T8428InBlock

@@ -171,9 +171,9 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR계좌_상세명:
 		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
-	case xing.TR압축_해제:
-		바이트_모음 := 질의값.(*lib.S질의값_바이트_변환).M바이트_변환.G바이트_모음_단순형()
-		ch회신값 <- F압축_해제(unsafe.Pointer(&바이트_모음), len(바이트_모음))
+	//case xing.TR압축_해제:
+	//	바이트_모음 := 질의값.(*lib.S질의값_바이트_변환).M바이트_변환.G바이트_모음_단순형()
+	//	ch회신값 <- F압축_해제(unsafe.Pointer(&바이트_모음), len(바이트_모음))
 	case xing.TR소켓_테스트:
 		ch회신값 <- lib.P신호_OK
 	case xing.TR전일_당일:
@@ -212,13 +212,13 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	switch TR코드 {
 	case xing.TR현물_정상_주문:
 		c데이터 = unsafe.Pointer(NewCSPAT00600InBlock(질의값.(*xing.S질의값_정상_주문)))
-		길이 = int(unsafe.Sizeof(CSPAT00600InBlock1{}))
+		길이 = 크기CSPAT00600InBlock1
 	case xing.TR현물_정정_주문:
 		c데이터 = unsafe.Pointer(NewCSPAT00700InBlock(질의값.(*xing.S질의값_정정_주문)))
-		길이 = int(unsafe.Sizeof(CSPAT00700InBlock1{}))
+		길이 = 크기CSPAT00700InBlock1
 	case xing.TR현물_취소_주문:
 		c데이터 = unsafe.Pointer(NewCSPAT00800InBlock(질의값.(*xing.S질의값_취소_주문)))
-		길이 = int(unsafe.Sizeof(CSPAT00800InBlock1{}))
+		길이 = 크기CSPAT00800InBlock1
 	case xing.TR시간_조회:
 		c데이터 = unsafe.Pointer(C문자열(""))
 		길이 = 0
@@ -226,12 +226,12 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		g := new(T1101InBlock)
 		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
 		c데이터 = unsafe.Pointer(g)
-		길이 = int(unsafe.Sizeof(T1101InBlock{}))
+		길이 = 크기T1101InBlock
 	case xing.TR현물_시세_조회:
 		g := new(T1102InBlock)
 		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
 		c데이터 = unsafe.Pointer(g)
-		길이 = int(unsafe.Sizeof(T1102InBlock{}))
+		길이 = 크기T1102InBlock
 	case xing.TR현물_기간별_조회:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_기간별_조회).M연속키)
 		if 연속키 != "" {
@@ -240,7 +240,7 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		}
 
 		c데이터 = unsafe.Pointer(NewT1305InBlock(질의값.(*xing.S질의값_현물_기간별_조회)))
-		길이 = int(unsafe.Sizeof(T1310InBlock{}))
+		길이 = 크기T1305InBlock
 	case xing.TR현물_당일_전일_분틱_조회:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_전일당일_분틱_조회).M연속키)
 		if 연속키 != "" {
@@ -249,7 +249,7 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		}
 
 		c데이터 = unsafe.Pointer(NewT1310InBlock(질의값.(*xing.S질의값_현물_전일당일_분틱_조회)))
-		길이 = int(unsafe.Sizeof(T1310InBlock{}))
+		길이 = 크기T1310InBlock
 	case xing.TR_ETF_시간별_추이:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_단일종목_연속키).M연속키)
 		if 연속키 != "" {
@@ -258,7 +258,20 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		}
 
 		c데이터 = unsafe.Pointer(NewT1902InBlock(질의값.(*xing.S질의값_단일종목_연속키)))
-		길이 = int(unsafe.Sizeof(T1902InBlock{}))
+		길이 = 크기T1902InBlock
+	case xing.TR현물_차트_틱:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱).M연속일자) +
+			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱).M연속시간)
+
+		if 연속키 != "" {
+			연속_조회_여부 = true
+			연속_조회_키 = 연속키
+		}
+
+		lib.F체크포인트("xing.TR현물_차트_틱 질의값 수신.")
+
+		c데이터 = unsafe.Pointer(NewT8411InBlock(질의값.(*xing.S질의값_현물_차트_틱)))
+		길이 = 크기T8411InBlock
 	case xing.TR증시_주변_자금_추이:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_증시주변자금추이).M연속키)
 		if 연속키 != "" {
@@ -267,10 +280,10 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		}
 
 		c데이터 = unsafe.Pointer(NewT8428InBlock(질의값.(*xing.S질의값_증시주변자금추이)))
-		길이 = int(unsafe.Sizeof(T8428InBlock{}))
+		길이 = 크기T8428InBlock
 	case xing.TR현물_종목_조회:
 		c데이터 = unsafe.Pointer(NewT8436InBlock(질의값.(*lib.S질의값_문자열)))
-		길이 = int(unsafe.Sizeof(T8436InBlock{}))
+		길이 = 크기T8436InBlock
 	case xing.TR계좌_거래_내역,
 		xing.TR현물계좌_예수금_주문가능금액_총평가,
 		xing.TR현물계좌_잔고내역,
