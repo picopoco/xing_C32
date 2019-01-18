@@ -68,20 +68,16 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
             printf("Block Name : %s.\n", trData->BlockName);
 
-            // t8411은 압축되어 있음. 압축해제가 필요.
-//            if (strcmp(trData->BlockName, "t8411OutBlock1") == 0) {   // NAME_t8411OutBlock1 ???
-//                // int etkDecompress(char* pszSrc, int nSrcLen, char* pszDes, int nDesLen);
-//                // int nDestSize= g_iXingAPI.Decompress((char *)pOutBlock1, (char *)&szOutBlock1[0], pRpData->nDataLength);
-//                // int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen)
-//
-//                T8411OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
-//
-//                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
-//
-//                trData->Data = (unsigned char*)&buffer[0];
-//                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
-//                trData->DataLength = DestSize;
-//            }
+            // t8411 반복값은 압축되어 있음. 압축해제가 필요.
+            if (strcmp(trData->BlockName, "t8411OutBlock1") == 0) {
+                T8411OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
+
+                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
+
+                trData->Data = (unsigned char*)&buffer[0];
+                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
+                trData->DataLength = DestSize;
+            }
 
             TR_DATA_UNPACKED unpackedTrData = {
                 .RequestID = trData->RequestID,
