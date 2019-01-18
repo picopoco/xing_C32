@@ -174,10 +174,8 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 	case xing.TR현물_차트_틱:
 		switch 데이터_길이 {
 		case 크기T8411OutBlock:
-			lib.F체크포인트("콜백용 데이터 송신 준비 : 헤더")
 			return New현물_차트_틱_응답_헤더(tr)
 		default:
-			lib.F체크포인트("콜백용 데이터 송신 준비 : 반복값 모음")
 			return New현물_차트_틱_응답_반복값_모음(tr)
 		}
 	case xing.TR증시_주변_자금_추이:

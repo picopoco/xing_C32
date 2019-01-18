@@ -79,11 +79,10 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	}
 
 	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
-	F콜백(콜백값)
 
-	//if lib.F2문자열_공백제거(g.TrCode) == xing.TR현물_차트_틱 {
-		lib.F체크포인트("콜백 전송", lib.F2문자열_공백제거(g.TrCode), 콜백값.G콜백(), lib.F2문자열(g.BlockName))
-	//}
+	//lib.F체크포인트("C32 콜백 시작", lib.F2문자열_공백제거(g.TrCode), 콜백값.G콜백(), lib.F2문자열(g.BlockName))
+	F콜백(콜백값)
+	//lib.F체크포인트("C32 콜백 완료", lib.F2문자열_공백제거(g.TrCode), 콜백값.G콜백(), lib.F2문자열(g.BlockName))
 }
 
 //export OnMessageAndError_Go
