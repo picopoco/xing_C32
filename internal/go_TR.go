@@ -144,7 +144,7 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 	switch 질의값.TR구분() {
 	case xing.TR조회, xing.TR주문:
 		//lib.F체크포인트("C32 조회/주문 TR 수신")
-		
+
 		식별번호 := 에러체크(f조회_및_주문_질의_처리(질의값)).(int)
 		ch회신값 <- 식별번호
 	case xing.TR실시간_정보_구독, xing.TR실시간_정보_해지:
