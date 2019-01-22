@@ -274,6 +274,17 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 
 		c데이터 = unsafe.Pointer(NewT8411InBlock(질의값.(*xing.S질의값_현물_차트_틱)))
 		길이 = 크기T8411InBlock
+	case xing.TR현물_차트_분:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_분).M연속일자) +
+			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_분).M연속시간)
+
+		if 연속키 != "" {
+			연속_조회_여부 = true
+			연속_조회_키 = 연속키
+		}
+
+		c데이터 = unsafe.Pointer(NewT8412InBlock(질의값.(*xing.S질의값_현물_차트_분)))
+		길이 = 크기T8412InBlock
 	case xing.TR증시_주변_자금_추이:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_증시주변자금추이).M연속키)
 		if 연속키 != "" {

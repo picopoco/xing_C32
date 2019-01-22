@@ -210,7 +210,7 @@ func f2Xing수정구분(값 int64) xing.T수정구분 {
 	case 0x00020:
 		return xing.P수정구분_기업분할
 	case 0x00080:
-		return xing.P수정구분_관리
+		return xing.P수정구분_관리종목
 	case 0x00100:
 		return xing.P수정구분_투자경고
 	case 0x00200:
@@ -221,7 +221,19 @@ func f2Xing수정구분(값 int64) xing.T수정구분 {
 		return xing.P수정구분_우선주
 	case 0x08000:
 		return xing.P수정구분_CB발동예고
+	case 0x200000:
+		return xing.P수정구분_증거금50_100
+	case 0x00400000:
+		return xing.P수정구분_증거금50
+	case 0x00800000:
+		return xing.P수정구분_증거금100
+	case 0x01000000:
+		return xing.P수정구분_정리매매
+	case 0x04000000:
+		return xing.P수정구분_투자유의
+	case 0x80000000:
+		return xing.P수정구분_불성실공시
 	default:
-		panic(lib.New에러("예상하지 못한 값 : '%v"))
+		panic(lib.New에러("예상하지 못한 값 : '%v'", 값))
 	}
 }

@@ -66,11 +66,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             // Go언어에서 읽을 수 있도록 기본 메모리 저장방식으로 저장한 _UNPACKED 구조체로 복사.
             trData = (TR_DATA*)lParam;
 
-            printf("Block Name : %s.\n", trData->BlockName);
-
             // t8411 반복값은 압축되어 있음. 압축해제가 필요.
             if (strcmp(trData->BlockName, "t8411OutBlock1") == 0) {
                 T8411OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
+
+                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
+
+                trData->Data = (unsigned char*)&buffer[0];
+                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
+                trData->DataLength = DestSize;
+            } else if (strcmp(trData->BlockName, "t8412OutBlock1") == 0) {
+                T8412OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
 
                 int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
 
@@ -594,8 +600,7 @@ int etkGetTRCountPerSec(char* TrCode) {
 //void etkAdviseLinkFromHTS(HWND hWnd);
 //void etkUnadviseLinkFromHTS();
 
-// t8411 TR 처럼 압축데이터 수신이 가능한 TR에 압축 해제용으로 사용합니다.
-// 압축을 해제한 데이터의 길이
+// t8411 TR 처럼 압축데이터 수신이 가능한 TR에 압축 해제용으로 사용합니다. 압축을 해제한 데이터의 길이
 int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen) {
     ETK_Decompress func = (ETK_Decompress)etkFunc("ETK_Decompress");
     if (func == NULL) {
