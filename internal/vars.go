@@ -43,8 +43,8 @@ import (
 
 // 다중 사용에 안전한 값들.
 var (
-	소켓REP_TR수신   = 에러체크(lib.NewNano소켓REP(lib.P주소_Xing_C함수_호출)).(lib.I소켓)
-	소켓PUB_실시간_정보 = 에러체크(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
+	소켓REP_TR수신   = lib.F확인(lib.NewNano소켓REP(lib.P주소_Xing_C함수_호출)).(lib.I소켓)
+	소켓PUB_실시간_정보 = lib.F확인(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
 
 	소켓REQ_저장소 = lib.New소켓_저장소(20, func() lib.I소켓_질의 {
 		return lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P30초)
@@ -73,8 +73,3 @@ var (
 	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(S메시지_저장소{}).PkgPath() + `/config.ini`
 )
 
-// lib 패키지 재선언
-var (
-	에러체크 = lib.F에러체크
-	체크   = lib.F체크포인트
-)

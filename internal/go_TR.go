@@ -99,7 +99,7 @@ func Go소켓_C함수_호출(ch초기화 chan lib.T신호) (에러 error) {
 		case 회신값 := <-ch회신값:
 			소켓REP_TR수신.S송신(수신값.G변환_형식(0), 회신값)
 		case 에러 := <-ch에러:
-			체크(에러)
+			lib.F에러_출력(에러)
 			소켓REP_TR수신.S송신(lib.JSON, 에러)
 		case <-ch도우미_종료:
 			go go소켓_C함수_호출_도우미(ch도우미_초기화, ch도우미_종료, ch질의값, ch회신값, ch에러)
@@ -145,13 +145,13 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 	case xing.TR조회, xing.TR주문:
 		//lib.F체크포인트("C32 조회/주문 TR 수신")
 
-		식별번호 := 에러체크(f조회_및_주문_질의_처리(질의값)).(int)
+		식별번호 := lib.F확인(f조회_및_주문_질의_처리(질의값)).(int)
 		ch회신값 <- 식별번호
 	case xing.TR실시간_정보_구독, xing.TR실시간_정보_해지:
-		에러체크(f실시간_정보_구독_해지_처리(질의값))
+		lib.F확인(f실시간_정보_구독_해지_처리(질의값))
 		ch회신값 <- lib.P신호_OK
 	case xing.TR실시간_정보_일괄_해지:
-		에러체크(F실시간_정보_모두_해지())
+		lib.F확인(F실시간_정보_모두_해지())
 		ch회신값 <- lib.P신호_OK
 	case xing.TR접속:
 		ch회신값 <- f접속_처리()
@@ -201,7 +201,7 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	lib.F조건부_패닉(!F접속됨(), "XingAPI에 접속되어 있지 않습니다.")
 
 	// 종목코드 관련 기능은 lib에서 xing으로 이전되어서 xing_C32에서 검사 불가.
-	//에러체크(lib.F질의값_종목코드_검사(질의값))
+	//lib.F확인(lib.F질의값_종목코드_검사(질의값))
 
 	var c데이터 unsafe.Pointer
 	defer lib.F조건부_실행(c데이터 != nil, F메모리_해제, c데이터)

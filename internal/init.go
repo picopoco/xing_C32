@@ -82,18 +82,18 @@ func f초기화_XingAPI() {
 
 	// DLL파일이 있는 디렉토리로 이동. (빼먹으면 안 됨)
 	원래_디렉토리, 에러 := os.Getwd()
-	에러체크(에러)
+	lib.F확인(에러)
 
 	xing디렉토리, 에러 := XingAPI디렉토리()
-	에러체크(에러)
+	lib.F확인(에러)
 
-	에러체크(os.Chdir(xing디렉토리))
+	lib.F확인(os.Chdir(xing디렉토리))
 
 	// XingAPI 초기화 ('반드시' DLL파일이 있는 디렉토리에서 실행해야 함.)
 	C.initXingApi(0)
 
 	// 원래 디렉토리로 이동
-	에러체크(os.Chdir(원래_디렉토리))
+	lib.F확인(os.Chdir(원래_디렉토리))
 }
 
 func f초기화_Go루틴() {

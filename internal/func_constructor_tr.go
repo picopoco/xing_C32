@@ -85,10 +85,7 @@ const 크기T8436InBlock = int(unsafe.Sizeof(T8436InBlock{}))
 const 크기T8436OutBlock = int(unsafe.Sizeof(T8436OutBlock{}))
 
 func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
-	lib.S예외처리{M에러: &에러, M함수: func() {
-		체크("에러패닉 처리")
-		값 = nil
-	}}.S실행()
+	lib.S예외처리{M에러: &에러, M함수: func() { 값 = nil }}.S실행()
 
 	TR코드 := lib.F2문자열(tr.TrCode)
 	데이터_길이 := int(tr.DataLength)
@@ -99,42 +96,36 @@ func tr데이터_해석(tr *TR_DATA) (값 interface{}, 에러 error) {
 	case xing.TR현물_정상_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00600OutBlock1:
-			체크()
 			return New현물_정상주문_응답1(tr)
 		case 크기CSPAT00600OutBlock2:
-			체크()
 			return New현물_정상주문_응답2(tr)
 		default:
 			s := new(xing.S현물_정상_주문_응답)
-			s.M응답1 = 에러체크(New현물_정상주문_응답1(tr)).(*xing.S현물_정상_주문_응답1)
+			s.M응답1 = lib.F확인(New현물_정상주문_응답1(tr)).(*xing.S현물_정상_주문_응답1)
 			s.M응답2, 에러 = New현물_정상주문_응답2(tr)
 			return s, 에러
 		}
 	case xing.TR현물_정정_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00700OutBlock1:
-			체크()
 			return New현물_정정주문_응답1(tr)
 		case 크기CSPAT00700OutBlock2:
-			체크()
 			return New현물_정정주문_응답2(tr)
 		default:
 			s := new(xing.S현물_정정_주문_응답)
-			s.M응답1 = 에러체크(New현물_정정주문_응답1(tr)).(*xing.S현물_정정_주문_응답1)
+			s.M응답1 = lib.F확인(New현물_정정주문_응답1(tr)).(*xing.S현물_정정_주문_응답1)
 			s.M응답2, 에러 = New현물_정정주문_응답2(tr)
 			return s, 에러
 		}
 	case xing.TR현물_취소_주문:
 		switch 데이터_길이 {
 		case 크기CSPAT00800OutBlock1:
-			체크()
 			return New현물_취소주문_응답1(tr)
 		case 크기CSPAT00800OutBlock2:
-			체크()
 			return New현물_취소주문_응답2(tr)
 		default:
 			s := new(xing.S현물_취소_주문_응답)
-			s.M응답1 = 에러체크(New현물_취소주문_응답1(tr)).(*xing.S현물_취소_주문_응답1)
+			s.M응답1 = lib.F확인(New현물_취소주문_응답1(tr)).(*xing.S현물_취소_주문_응답1)
 			s.M응답2, 에러 = New현물_취소주문_응답2(tr)
 
 			return s, 에러
@@ -556,7 +547,7 @@ func New현물_정상주문_응답1(tr *TR_DATA) (s *xing.S현물_정상_주문_
 	s.M종목코드 = lib.F2문자열_공백제거(g.IsuNo)
 	s.M주문수량 = lib.F2정수64_단순형(g.OrdQty)
 	s.M주문가격 = lib.F2정수64_단순형(g.OrdPrc)
-	s.M매매구분 = 에러체크(f2매수매도(xing.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))).(lib.T매수_매도)
+	s.M매매구분 = lib.F확인(f2매수매도(xing.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))).(lib.T매수_매도)
 	s.M호가유형 = f2호가유형(xing.T호가유형(lib.F2문자열_공백제거(g.OrdprcPtnCode)))
 	s.M프로그램_호가유형 = lib.F2문자열_공백제거(g.PrgmOrdprcPtnCode)
 	s.M공매도_가능 = lib.F문자열_비교(g.StslAbleYn, "Y", true)
@@ -701,7 +692,7 @@ func New현물_정정주문_응답2(tr *TR_DATA) (s *xing.S현물_정정_주문_
 	s.M반대매매주문_구분 = lib.F2문자열_공백제거(g.CvrgOrdTp)
 	s.M관리사원_번호 = lib.F2문자열_공백제거(g.MgempNo)
 	s.M주문금액 = lib.F2정수64_단순형_공백은_0(g.OrdAmt)
-	s.M매매구분 = 에러체크(f2매수매도(xing.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))).(lib.T매수_매도)
+	s.M매매구분 = lib.F확인(f2매수매도(xing.T매수_매도(lib.F2문자열_공백제거(g.BnsTpCode)))).(lib.T매수_매도)
 	s.M예비_주문번호 = lib.F2정수64_단순형_공백은_0(g.SpareOrdNo)
 	s.M반대매매_일련번호 = lib.F2정수64_단순형_공백은_0(g.CvrgSeqno)
 	s.M예약_주문번호 = lib.F2정수64_단순형_공백은_0(g.RsvOrdNo)

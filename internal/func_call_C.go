@@ -103,16 +103,16 @@ func F로그인() (로그인_결과 bool) {
 		panic(lib.New에러(버퍼.String(), 설정파일_경로))
 	}
 
-	cfg파일 := 에러체크(ini.Load(설정파일_경로)).(*ini.File)
-	섹션 := 에러체크(cfg파일.GetSection("XingAPI_LogIn_Info")).(*ini.Section)
+	cfg파일 := lib.F확인(ini.Load(설정파일_경로)).(*ini.File)
+	섹션 := lib.F확인(cfg파일.GetSection("XingAPI_LogIn_Info")).(*ini.Section)
 
-	키_ID := 에러체크(섹션.GetKey("ID")).(*ini.Key)
+	키_ID := lib.F확인(섹션.GetKey("ID")).(*ini.Key)
 	c아이디 := C.CString(키_ID.String())
 
-	키_PWD := 에러체크(섹션.GetKey("PWD")).(*ini.Key)
+	키_PWD := lib.F확인(섹션.GetKey("PWD")).(*ini.Key)
 	c암호 := C.CString(키_PWD.String())
 
-	키_CertPWD := 에러체크(섹션.GetKey("CertPWD")).(*ini.Key)
+	키_CertPWD := lib.F확인(섹션.GetKey("CertPWD")).(*ini.Key)
 	공인인증서_암호 := lib.F조건부_값(lib.F테스트_모드_실행_중(), "", 키_CertPWD.String()).(string)
 	c공인인증서_암호 := C.CString(공인인증서_암호)
 
