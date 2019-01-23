@@ -193,47 +193,47 @@ func f2호가유형(호가_유형 xing.T호가유형) lib.T호가유형 {
 	}
 }
 
-func f2Xing수정구분(값 int64) xing.T수정구분 {
-	switch 값 {
-	case 0:
-		return xing.P수정구분_없음
-	case 0x00001:
-		return xing.P수정구분_권리락
-	case 0x00002:
-		return xing.P수정구분_배당락
-	case 0x00004:
-		return xing.P수정구분_액면분할
-	case 0x00008:
-		return xing.P수정구분_액면병합
-	case 0x00010:
-		return xing.P수정구분_주식병합
-	case 0x00020:
-		return xing.P수정구분_기업분할
-	case 0x00080:
-		return xing.P수정구분_관리종목
-	case 0x00100:
-		return xing.P수정구분_투자경고
-	case 0x00200:
-		return xing.P수정구분_거래정지
-	case 0x01000:
-		return xing.P수정구분_기준가조정
-	case 0x04000:
-		return xing.P수정구분_우선주
-	case 0x08000:
-		return xing.P수정구분_CB발동예고
-	case 0x200000:
-		return xing.P수정구분_증거금50_100
-	case 0x00400000:
-		return xing.P수정구분_증거금50
-	case 0x00800000:
-		return xing.P수정구분_증거금100
-	case 0x01000000:
-		return xing.P수정구분_정리매매
-	case 0x04000000:
-		return xing.P수정구분_투자유의
-	case 0x80000000:
-		return xing.P수정구분_불성실공시
-	default:
-		panic(lib.New에러("예상하지 못한 값 : '%v'", 값))
+func f2Xing수정구분(값 int64) []xing.T수정구분 {
+	if 값 == 0 {
+		return []xing.T수정구분{xing.P수정구분_없음}
 	}
+
+	수정구분_ALL := []xing.T수정구분{
+		xing.P수정구분_불성실공시종목,
+		xing.P수정구분_뮤추얼펀드,
+		xing.P수정구분_정리매매종목,
+		xing.P수정구분_ETF종목,
+		xing.P수정구분_증거금100퍼센트,
+		xing.P수정구분_종가범위연장,
+		xing.P수정구분_시가범위연장,
+		xing.P수정구분_권리중간배당락,
+		xing.P수정구분_중간배당락,
+		xing.P수정구분_CB발동예고,
+		xing.P수정구분_우선주,
+		xing.P수정구분_기준가조정,
+		xing.P수정구분_거래정지,
+		xing.P수정구분_투자경고,
+		xing.P수정구분_관리종목,
+		xing.P수정구분_기업분할,
+		xing.P수정구분_주식병합,
+		xing.P수정구분_액면병합,
+		xing.P수정구분_액면분할,
+		xing.P수정구분_배당락,
+		xing.P수정구분_권리락}
+
+	수정구분_모음 := make([]xing.T수정구분, 0)
+	잔여값 := uint32(값)
+
+	for _, 수정구분 := range 수정구분_ALL {
+		if 잔여값 >= 수정구분.G정수값() {
+			잔여값 -= 수정구분.G정수값()
+			수정구분_모음 = append(수정구분_모음, 수정구분)
+		}
+	}
+
+	if 잔여값 > 0 {
+		panic(lib.New에러with출력("예상하지 못한 값 : '%v'", 값))
+	}
+
+	return 수정구분_모음
 }

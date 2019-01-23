@@ -116,7 +116,7 @@ func f자료형_크기_비교_확인() (에러 error) {
 	lib.F조건부_패닉(unsafe.Sizeof(TR_DATA{}) != unsafe.Sizeof(C.TR_DATA_UNPACKED{}), "TR_DATA_UNPACKED 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(REALTIME_DATA{}) != unsafe.Sizeof(C.REALTIME_DATA_UNPACKED{}), "REALTIME_DATA_UNPACKED 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(MSG_DATA{}) != unsafe.Sizeof(C.MSG_DATA_UNPACKED{}), "MSG_DATA_UNPACKED 크기 불일치")
- 	lib.F조건부_패닉(unsafe.Sizeof(TR_DATA_PACKED{}) != unsafe.Sizeof(C.TR_DATA{}), "TR_DATA 크기 불일치")
+	lib.F조건부_패닉(unsafe.Sizeof(TR_DATA_PACKED{}) != unsafe.Sizeof(C.TR_DATA{}), "TR_DATA 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(REALTIME_DATA_PACKED{}) != unsafe.Sizeof(C.REALTIME_DATA{}), "REALTIME_DATA 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(MSG_DATA_PACKED{}) != unsafe.Sizeof(C.MSG_DATA{}), "MSG_DATA 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(LINK_DATA{}) != unsafe.Sizeof(C.LINK_DATA{}), "LINK_DATA 크기 불일치")
@@ -172,7 +172,11 @@ func f자료형_크기_비교_확인() (에러 error) {
 	lib.F조건부_패닉(unsafe.Sizeof(T8412InBlock{}) != unsafe.Sizeof(C.T8412InBlock{}), "T8412InBlock 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(T8412OutBlock{}) != unsafe.Sizeof(C.T8412OutBlock{}), "T8412OutBlock 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(T8412OutBlock1{}) != unsafe.Sizeof(C.T8412OutBlock1{}), "T8412OutBlock1 크기 불일치")
-	
+
+	lib.F조건부_패닉(unsafe.Sizeof(T8413InBlock{}) != unsafe.Sizeof(C.T8413InBlock{}), "T8413InBlock 크기 불일치")
+	lib.F조건부_패닉(unsafe.Sizeof(T8413OutBlock{}) != unsafe.Sizeof(C.T8413OutBlock{}), "T8413OutBlock 크기 불일치")
+	lib.F조건부_패닉(unsafe.Sizeof(T8413OutBlock1{}) != unsafe.Sizeof(C.T8413OutBlock1{}), "T8413OutBlock1 크기 불일치")
+
 	lib.F조건부_패닉(unsafe.Sizeof(T8428InBlock{}) != unsafe.Sizeof(C.T8428InBlock{}), "T8428InBlock 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(T8428OutBlock{}) != unsafe.Sizeof(C.T8428OutBlock{}), "T8428OutBlock 크기 불일치")
 	lib.F조건부_패닉(unsafe.Sizeof(T8428OutBlock1{}) != unsafe.Sizeof(C.T8428OutBlock1{}), "T8428OutBlock1 크기 불일치")

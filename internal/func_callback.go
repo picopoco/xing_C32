@@ -42,8 +42,8 @@ import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
 
-	"unsafe"
 	"fmt"
+	"unsafe"
 )
 
 func F콜백(콜백값 xing.I콜백) (에러 error) {

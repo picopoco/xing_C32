@@ -35,8 +35,8 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
-	"sync"
 	"reflect"
+	"sync"
 )
 
 // 전역 변수는 항상 동시 액세스로 인한 오류의 위험이 있어서 한 군데 몰아서 관리함.
@@ -52,12 +52,12 @@ var (
 
 	접속_처리_잠금 sync.Mutex
 
-	ch로그인                 = make(chan bool, 1)
-	Ch메인_종료               = make(chan lib.T신호, 1)
+	ch로그인   = make(chan bool, 1)
+	Ch메인_종료 = make(chan lib.T신호, 1)
 
-	TR_수신_중 = lib.New안전한_bool(false)
+	TR_수신_중    = lib.New안전한_bool(false)
 	API_초기화_완료 = lib.New안전한_bool(false)
-	메시지_저장소 = New메시지_저장소()
+	메시지_저장소    = New메시지_저장소()
 
 	전일_당일_설정_잠금         sync.Mutex
 	전일, 당일, 전일_당일_설정_일자 lib.I안전한_시각

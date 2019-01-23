@@ -75,7 +75,7 @@ type TR_DATA_PACKED struct {
 	None                [31]byte
 	BlockName           [16]byte
 	X_BlockName         [1]byte
-	Pad_cgo_0			[4]byte
+	Pad_cgo_0           [4]byte
 }
 
 // C.REALTIME_DATA_UNPACKED

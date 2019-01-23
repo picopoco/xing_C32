@@ -120,7 +120,7 @@ func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	f초기화_XingAPI()	// 모든 API 액세스를 단일 스레드에서 하기 위해서 여기에서 API 초기화를 실행함.
+	f초기화_XingAPI() // 모든 API 액세스를 단일 스레드에서 하기 위해서 여기에서 API 초기화를 실행함.
 	ch공통_종료 := lib.F공통_종료_채널()
 	ch초기화 <- lib.P신호_초기화
 
@@ -285,6 +285,16 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 
 		c데이터 = unsafe.Pointer(NewT8412InBlock(질의값.(*xing.S질의값_현물_차트_분)))
 		길이 = 크기T8412InBlock
+	case xing.TR현물_차트_일주월:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_일주월).M연속일자)
+
+		if 연속키 != "" {
+			연속_조회_여부 = true
+			연속_조회_키 = 연속키
+		}
+
+		c데이터 = unsafe.Pointer(NewT8413InBlock(질의값.(*xing.S질의값_현물_차트_일주월)))
+		길이 = 크기T8413InBlock
 	case xing.TR증시_주변_자금_추이:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_증시주변자금추이).M연속키)
 		if 연속키 != "" {

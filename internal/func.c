@@ -83,6 +83,14 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 trData->Data = (unsigned char*)&buffer[0];
                 trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
                 trData->DataLength = DestSize;
+            } else if (strcmp(trData->BlockName, "t8413OutBlock1") == 0) {
+                T8413OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
+
+                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
+
+                trData->Data = (unsigned char*)&buffer[0];
+                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
+                trData->DataLength = DestSize;
             }
 
             TR_DATA_UNPACKED unpackedTrData = {
