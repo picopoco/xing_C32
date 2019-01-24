@@ -1108,7 +1108,7 @@ func New현물_차트_틱_응답_반복값_모음(tr *TR_DATA) (값 *xing.S현�
 		s.M저가 = lib.F2정수64_단순형(g.Low)
 		s.M종가 = lib.F2정수64_단순형(g.Close)
 		s.M거래량 = lib.F2정수64_단순형(g.Vol)
-		s.M수정구분 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
+		s.M수정구분_모음 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
 		s.M수정비율 = lib.F2실수_단순형_공백은_0(g.Rate)
 		s.M수정주가반영항목 = lib.F2정수64_단순형_공백은_0(g.Pricechk)
 
@@ -1186,7 +1186,7 @@ func New현물_차트_분_응답_반복값_모음(tr *TR_DATA) (값 *xing.S현�
 		s.M종가 = lib.F2정수64_단순형(g.Close)
 		s.M거래량 = lib.F2정수64_단순형(g.Vol)
 		s.M거래대금_백만 = lib.F2정수64_단순형(g.Value)
-		s.M수정구분 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
+		s.M수정구분_모음 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
 		s.M수정비율 = lib.F2실수_단순형_공백은_0(g.Rate)
 		s.M종가등락구분 = xing.T전일대비_구분(lib.F2정수_단순형(g.Sign))
 
@@ -1263,7 +1263,7 @@ func New현물_차트_일주월_응답_반복값_모음(tr *TR_DATA) (값 *xing.
 			lib.F체크포인트(s.M일자)
 		}
 
-		s.M수정구분 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
+		s.M수정구분_모음 = f2Xing수정구분(lib.F2정수64_단순형_공백은_0(g.Jongchk))
 		s.M수정비율 = lib.F2실수_단순형_공백은_0(g.Rate)
 		s.M수정주가반영항목 = lib.F2정수64_단순형_공백은_0(g.Pricechk)
 		s.M수정비율반영거래대금 = lib.F2정수64_단순형_공백은_0(g.Ratevalue)
