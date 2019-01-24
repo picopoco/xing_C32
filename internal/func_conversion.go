@@ -200,6 +200,7 @@ func f2Xing수정구분(값 int64) []xing.T수정구분 {
 
 	수정구분_ALL := []xing.T수정구분{
 		xing.P수정구분_불성실공시종목,
+		xing.P수정구분_수정주가,
 		xing.P수정구분_뮤추얼펀드,
 		xing.P수정구분_정리매매종목,
 		xing.P수정구분_ETF종목,
