@@ -93,7 +93,7 @@ func F접속됨() bool {
 }
 
 func F로그인() (로그인_결과 bool) {
-	defer lib.S예외처리{M함수: func() { 로그인_결과 = false }}.S실행_No출력()
+	defer lib.S예외처리{M함수: func() { 로그인_결과 = false }}.S실행()
 
 	if lib.F파일_없음(설정파일_경로) {
 		버퍼 := new(bytes.Buffer)

@@ -47,7 +47,7 @@ import (
 )
 
 func F콜백(콜백값 xing.I콜백) (에러 error) {
-	defer lib.S예외처리{M에러: &에러}.S실행_No출력()
+	defer lib.S예외처리{M에러: &에러}.S실행()
 
 	소켓REQ := 소켓REQ_저장소.G소켓()
 	defer 소켓REQ_저장소.S회수(소켓REQ)
