@@ -45,14 +45,14 @@ import (
 	"unsafe"
 )
 
-func fTR전송권한획득(TR코드 string) {
+func TR전송권한획득(TR코드 string) {
 	lib.F조건부_패닉(TR코드 == "", "TR코드 없음.")
-	fTR전송_코드별_10분당_제한_확인(TR코드)
-	fTR전송_코드별_초당_제한_확인(TR코드)
+	TR전송_코드별_10분당_제한_확인(TR코드)
+	TR전송_코드별_초당_제한_확인(TR코드)
 }
 
-func fTR전송_코드별_10분당_제한_확인(TR코드 string) {
-	전송_권한, 존재함 := tr전송_코드별_초당_제한[TR코드]
+func TR전송_코드별_10분당_제한_확인(TR코드 string) {
+	전송_권한, 존재함 := tr전송_코드별_10분당_제한[TR코드]
 
 	switch {
 	case !존재함:
@@ -64,7 +64,7 @@ func fTR전송_코드별_10분당_제한_확인(TR코드 string) {
 	전송_권한.G전송_권한_획득()
 }
 
-func fTR전송_코드별_초당_제한_확인(TR코드 string) {
+func TR전송_코드별_초당_제한_확인(TR코드 string) {
 	전송_권한, 존재함 := tr전송_코드별_초당_제한[TR코드]
 
 	switch {
