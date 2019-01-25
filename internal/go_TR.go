@@ -173,14 +173,13 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR계좌_상세명:
 		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
-	//case xing.TR압축_해제:
-	//	바이트_모음 := 질의값.(*lib.S질의값_바이트_변환).M바이트_변환.G바이트_모음_단순형()
-	//	ch회신값 <- F압축_해제(unsafe.Pointer(&바이트_모음), len(바이트_모음))
 	case xing.TR소켓_테스트:
 		ch회신값 <- lib.P신호_OK
 	case xing.TR전일_당일:
 		f전일_당일_설정(질의값)
 		ch회신값 <- lib.P신호_OK
+	case xing.TR_10분_쿼터_잔여량:
+		ch회신값 <- F_10분_쿼터_잔여량(질의값.(*lib.S질의값_문자열_모음).M문자열_모음)
 	case xing.TR종료:
 		select {
 		case Ch메인_종료 <- lib.P신호_종료:

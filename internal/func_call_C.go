@@ -319,17 +319,22 @@ func F초당_TR쿼터(TR코드 string) int {
 	return int(C.etkGetTRCountPerSec(cTR코드))
 }
 
-//func F압축_해제(데이터 unsafe.Pointer, 데이터_길이 int) []byte {
-//	defer C.free(데이터) // 이게 문제가 될까?
-//
-//	const 버퍼_길이 = 2000 * 구조체_크기
-//	바이트_모음 := make([]byte, 버퍼_길이, 버퍼_길이)
-//	버퍼 := unsafe.Pointer(&바이트_모음)
-//
-//	길이 := C.etkDecompress((*C.char)(데이터), (*C.char)(버퍼), 버퍼_길이)
-//
-//	return C.GoBytes(버퍼, 길이)
-//}
+func F_10분_쿼터_잔여량(종목코드_모음 []string) []int {
+	잔여량 := make([]int, len(종목코드_모음), len(종목코드_모음))
+
+	for i, 종목코드 := range 종목코드_모음 {
+		전송_권한, 존재함 := tr전송_코드별_10분당_제한[종목코드]
+
+		if 존재함 {
+			잔여량[i] = 전송_권한.G남은_수량()
+		} else {
+			잔여량[i] = -1
+		}
+	}
+
+	return 잔여량
+}
+
 
 func f함수_존재함(함수명 string) bool {
 	c함수명 := C.CString(함수명)
