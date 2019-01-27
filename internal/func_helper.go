@@ -96,7 +96,7 @@ func XingAPI디렉토리() (string, error) {
 		return lib.F디렉토리명(기본_위치)
 	}
 
-	파일경로, 에러 = lib.F파일_검색(xing_dll)
+	파일경로, 에러 = lib.F파일_검색(`C:\`, xing_dll)
 	if 에러 == nil {
 		lib.F실행경로_추가(파일경로)
 

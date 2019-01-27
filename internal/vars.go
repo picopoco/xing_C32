@@ -67,8 +67,8 @@ var (
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
 var (
-	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한_TR코드별)
-	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한_TR코드별)
+	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한)
+	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한)
 
 	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(S메시지_저장소{}).PkgPath() + `/config.ini`
 )
