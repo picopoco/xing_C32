@@ -36,6 +36,7 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
+	"os"
 
 	"fmt"
 	"runtime"
@@ -179,14 +180,12 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		f전일_당일_설정(질의값)
 		ch회신값 <- lib.P신호_OK
 	case xing.TR_10분_쿼터_잔여량:
-		ch회신값 <- F_10분_쿼터_잔여량(질의값.(*lib.S질의값_문자열_모음).M문자열_모음)
+		ch회신값 <- F_10분_쿼터_잔여량(질의값)
 	case xing.TR종료:
-		select {
-		case Ch메인_종료 <- lib.P신호_종료:
-		default:
-		}
-
+		F리소스_정리()
 		ch회신값 <- lib.P신호_종료
+		Ch메인_종료 <- lib.P신호_종료
+		os.Exit(0)
 	default:
 		panic(lib.New에러("예상하지 못한 TR구분값 : '%v'", int(질의값.TR구분())))
 	}

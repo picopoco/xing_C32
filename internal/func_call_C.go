@@ -319,22 +319,27 @@ func F초당_TR쿼터(TR코드 string) int {
 	return int(C.etkGetTRCountPerSec(cTR코드))
 }
 
-func F_10분_쿼터_잔여량(종목코드_모음 []string) []int {
-	잔여량 := make([]int, len(종목코드_모음), len(종목코드_모음))
+func F_10분_쿼터_잔여량(질의값 lib.I질의값) (잔여량_모음 []int) {
+	defer lib.S예외처리{M함수: func() { 잔여량_모음 = []int{0} }, M출력_여부: true}.S실행()
+
+	질의값_문자열_모음, ok := 질의값.(*lib.S질의값_문자열_모음)
+	lib.F조건부_패닉(!ok, "예상하지 못한 자료형 : '%T'", 질의값)
+
+	종목코드_모음 := 질의값_문자열_모음.M문자열_모음
+	잔여량_모음 = make([]int, len(종목코드_모음), len(종목코드_모음))
 
 	for i, 종목코드 := range 종목코드_모음 {
 		전송_권한, 존재함 := tr전송_코드별_10분당_제한[종목코드]
 
 		if 존재함 {
-			잔여량[i] = 전송_권한.G남은_수량()
+			잔여량_모음[i] = 전송_권한.G남은_수량()
 		} else {
-			잔여량[i] = -1
+			잔여량_모음[i] = -1
 		}
 	}
 
-	return 잔여량
+	return 잔여량_모음
 }
-
 
 func f함수_존재함(함수명 string) bool {
 	c함수명 := C.CString(함수명)
