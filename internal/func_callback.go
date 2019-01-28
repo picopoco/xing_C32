@@ -35,7 +35,7 @@ package xing_C32
 
 // #cgo CFLAGS: -Wall
 // #include <windows.h>
-// #include "./types_c.h"
+// #include "../../xing/types_c.h"
 import "C"
 
 import (
@@ -70,7 +70,7 @@ func F콜백(콜백값 xing.I콜백) (에러 error) {
 func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 	var 바이트_변환값 *lib.S바이트_변환
 
-	g := (*TR_DATA)(unsafe.Pointer(c))
+	g := (*xing.TR_DATA)(unsafe.Pointer(c))
 
 	if 데이터, 에러 := tr데이터_해석(g); 에러 != nil {
 		바이트_변환값 = lib.F확인(lib.New바이트_변환(lib.JSON, 에러)).(*lib.S바이트_변환)
@@ -87,7 +87,7 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 
 //export OnMessageAndError_Go
 func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
-	g := (*MSG_DATA)(unsafe.Pointer(c))
+	g := (*xing.MSG_DATA)(unsafe.Pointer(c))
 
 	var 에러여부 bool
 	switch g.SystemError {
@@ -135,7 +135,7 @@ func OnReleaseData_Go(c C.int) {
 func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
 	defer lib.S예외처리{}.S실행()
 
-	g := (*REALTIME_DATA)(unsafe.Pointer(c))
+	g := (*xing.REALTIME_DATA)(unsafe.Pointer(c))
 	실시간_데이터 := lib.F확인(f실시간_데이터_해석(g))
 
 	소켓PUB_실시간_정보.S송신_검사(lib.P변환형식_기본값, 실시간_데이터)

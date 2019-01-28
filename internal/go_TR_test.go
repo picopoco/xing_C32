@@ -42,11 +42,6 @@ import (
 
 var 소켓REP_테스트용_TR수신, 소켓SUB_테스트용_콜백, 소켓SUB_테스트용_실시간정보 mangos.Socket
 
-func TestF자료형_크기_비교_확인(t *testing.T) {
-	t.Parallel()
-	lib.F테스트_에러없음(t, lib.F패닉2에러(f자료형_크기_비교_확인))
-}
-
 func TestP접속됨(t *testing.T) {
 	t.Parallel()
 	if !lib.F인터넷에_접속됨() {

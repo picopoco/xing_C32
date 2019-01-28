@@ -39,91 +39,6 @@ import (
 	"unsafe"
 )
 
-// _UNPACKED를 자동 변환하면 자꾸 문제가 생김.
-// 원인을 알 수 없어서 자동변환되지 않도록 따로 선언함.
-
-// C.TR_DATA_UNPACKED
-type TR_DATA struct {
-	RequestID           int32
-	DataLength          int32
-	TotalDataBufferSize int32
-	ElapsedTime         int32
-	DataMode            int32
-	TrCode              [10]byte
-	X_TrCode            [1]byte
-	Cont                [1]byte
-	ContKey             [18]byte
-	X_ContKey           [1]byte
-	None                [31]byte
-	BlockName           [16]byte
-	X_BlockName         [1]byte
-	Pad_cgo_0           [1]byte
-	Data                *byte
-}
-
-type TR_DATA_PACKED struct {
-	RequestID           int32
-	DataLength          int32
-	TotalDataBufferSize int32
-	ElapsedTime         int32
-	DataMode            int32
-	TrCode              [10]byte
-	X_TrCode            [1]byte
-	Cont                [1]byte
-	ContKey             [18]byte
-	X_ContKey           [1]byte
-	None                [31]byte
-	BlockName           [16]byte
-	X_BlockName         [1]byte
-	Pad_cgo_0           [4]byte
-}
-
-// C.REALTIME_DATA_UNPACKED
-type REALTIME_DATA struct {
-	TrCode     [3]byte
-	X_TrCode   [1]byte
-	KeyLength  int32
-	KeyData    [32]byte
-	X_KeyData  [1]byte
-	RegKey     [32]byte
-	X_RegKey   [1]byte
-	Pad_cgo_0  [2]byte
-	DataLength int32
-	Data       *byte
-}
-
-type REALTIME_DATA_PACKED struct {
-	TrCode    [3]byte
-	X_TrCode  [1]byte
-	KeyLength int32
-	KeyData   [32]byte
-	X_KeyData [1]byte
-	RegKey    [32]byte
-	X_RegKey  [1]byte
-	Pad_cgo_0 [4]byte
-	Pad_cgo_1 [4]byte
-}
-
-// C.MSG_DATA_UNPACKED
-type MSG_DATA struct {
-	RequestID   int32
-	SystemError int32
-	MsgCode     [5]byte
-	X_MsgCode   [1]byte
-	Pad_cgo_0   [2]byte
-	MsgLength   int32
-	MsgData     *byte
-}
-
-type MSG_DATA_PACKED struct {
-	RequestID   int32
-	SystemError int32
-	MsgCode     [5]byte
-	X_MsgCode   [1]byte
-	Pad_cgo_0   [4]byte
-	Pad_cgo_1   [4]byte
-}
-
 type S메시지_저장소 struct {
 	sync.Mutex
 	저장소 map[int][]unsafe.Pointer
@@ -206,3 +121,4 @@ func (s *S콜백_대기_저장소) S삭제(식별번호 int) {
 
 	delete(s.저장소, 식별번호)
 }
+
