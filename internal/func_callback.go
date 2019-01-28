@@ -41,6 +41,7 @@ import "C"
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
+	"strings"
 
 	"fmt"
 	"unsafe"
@@ -72,17 +73,18 @@ func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
 
 	g := (*xing.TR_DATA)(unsafe.Pointer(c))
 
-	if 데이터, 에러 := tr데이터_해석(g); 에러 != nil {
-		바이트_변환값 = lib.F확인(lib.New바이트_변환(lib.JSON, 에러)).(*lib.S바이트_변환)
-	} else {
-		바이트_변환값 = lib.F확인(lib.New바이트_변환(lib.P변환형식_기본값, 데이터)).(*lib.S바이트_변환)
+	자료형_문자열 := lib.F2문자열(g.BlockName)
+
+	if strings.ToLower(자료형_문자열[:1]) == 자료형_문자열[:1] {
+		자료형_문자열 = strings.ToUpper(자료형_문자열[:1]) + 자료형_문자열[1:]
 	}
 
-	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
+	raw값 := C.GoBytes(unsafe.Pointer(g.Data), C.int(g.DataLength))
+	바이트_변환값 = lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값)).(*lib.S바이트_변환)
 
-	//lib.F체크포인트("C32 콜백 시작", lib.F2문자열_공백제거(g.TrCode), 콜백값.G콜백(), lib.F2문자열(g.BlockName))
+	// 필요하다면 'S콜백_TR데이터' 데이터 길이를 추가할 수 있다.
+	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
 	F콜백(콜백값)
-	//lib.F체크포인트("C32 콜백 완료", lib.F2문자열_공백제거(g.TrCode), 콜백값.G콜백(), lib.F2문자열(g.BlockName))
 }
 
 //export OnMessageAndError_Go
