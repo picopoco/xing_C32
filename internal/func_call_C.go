@@ -320,7 +320,7 @@ func F초당_TR쿼터(TR코드 string) int {
 }
 
 func F_10분_쿼터_잔여량(질의값 lib.I질의값) (잔여량_모음 []int) {
-	defer lib.S예외처리{M함수: func() { 잔여량_모음 = []int{0} }, M출력_여부: true}.S실행()
+	defer lib.S예외처리{M함수: func() { 잔여량_모음 = []int{0} }}.S실행()
 
 	질의값_문자열_모음, ok := 질의값.(*lib.S질의값_문자열_모음)
 	lib.F조건부_패닉(!ok, "예상하지 못한 자료형 : '%T'", 질의값)
