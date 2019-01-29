@@ -94,6 +94,9 @@ func f초기화_XingAPI() {
 func f초기화_Go루틴() {
 	ch초기화 := make(chan lib.T신호)
 	go Go소켓_C함수_호출(ch초기화)
+	go go콜백(ch초기화)
+
+	<-ch초기화
 	<-ch초기화
 }
 

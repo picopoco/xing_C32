@@ -12,7 +12,7 @@
 보다 자세한 사항에 대해서는 GNU LGPL 2.1판을 참고하시기 바랍니다.
 GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 만약, 이 문서가 누락되어 있다면 자유 소프트웨어 재단으로 문의하시기 바랍니다.
-(자유 소프트웨어 재단 : Free Software Foundation, Inc.,
+(자유 소프트웨어 재단 : Free Software Foundation, In,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
 Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
@@ -33,40 +33,19 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 
 package xing_C32
 
-import (
-	"github.com/ghts/lib"
-	"github.com/ghts/xing"
-	"reflect"
-	"sync"
-)
+import "github.com/ghts/lib"
 
-// 전역 변수는 항상 동시 액세스로 인한 오류의 위험이 있어서 한 군데 몰아서 관리함.
+func go콜백(ch초기화 chan lib.T신호) (에러 error) {
 
-// 다중 사용에 안전한 값들.
-var (
-	소켓REP_TR수신   = lib.F확인(lib.NewNano소켓REP(lib.P주소_Xing_C함수_호출)).(lib.I소켓)
-	소켓PUB_실시간_정보 = lib.F확인(lib.NewNano소켓PUB(lib.P주소_Xing_실시간)).(lib.I소켓)
+	ch종료 := lib.F공통_종료_채널()
+	ch초기화 <- lib.P신호_초기화
 
-	소켓REQ_저장소 = lib.New소켓_저장소(20, func() lib.I소켓_질의 {
-		return lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_콜백, lib.P30초)
-	})
-
-	접속_처리_잠금 sync.Mutex
-
-	ch로그인   = make(chan bool, 1)
-	ch콜백    = make(chan xing.I콜백, 1000)
-	Ch메인_종료 = make(chan lib.T신호, 1)
-
-	TR_수신_중    = lib.New안전한_bool(false)
-	API_초기화_완료 = lib.New안전한_bool(false)
-
-	콜백_대기_저장소 *S콜백_대기_저장소
-)
-
-// 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
-var (
-	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한)
-	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한)
-
-	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(S콜백_대기_저장소{}).PkgPath() + `/config.ini`
-)
+	for {
+		select {
+		case <-ch종료:
+			return nil
+		case i콜백 := <-ch콜백:
+			f콜백_동기식(i콜백)
+		}
+	}
+}

@@ -50,9 +50,13 @@ import (
 )
 
 func F콜백(콜백값 xing.I콜백) (에러 error) {
-	defer lib.S예외처리{M에러: &에러}.S실행()
+	ch콜백 <- 콜백값
+	return nil
+	//return f콜백_동기식(콜백값)	// 동기식으로 전환할 때 사용.
+}
 
-	lib.F메모("F콜백()을 비동기식으로 수정할 것.")
+func f콜백_동기식(콜백값 xing.I콜백) (에러 error) {
+	defer lib.S예외처리{M에러: &에러}.S실행()
 
 	소켓REQ := 소켓REQ_저장소.G소켓()
 	defer 소켓REQ_저장소.S회수(소켓REQ)
@@ -91,7 +95,7 @@ func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
 	binary.Read(버퍼, binary.LittleEndian, &g.None)
 	binary.Read(버퍼, binary.LittleEndian, &g.BlockName)
 
-	자료형_문자열 := lib.F2문자열(g.BlockName)	//; lib.F체크포인트(자료형_문자열)
+	자료형_문자열 := lib.F2문자열(g.BlockName) //; lib.F체크포인트(자료형_문자열)
 
 	// 자료형 문자열 1번째 대문자로 변환.
 	if len(자료형_문자열) == 0 {
@@ -174,7 +178,7 @@ func OnRealtimeData_Go(REALTIME데이터 *C.REALTIME_DATA, 데이터_포인터 *
 }
 
 //export OnLogin_Go
-func OnLogin_Go(wParam *C.char) {	//, lParam *C.char) {
+func OnLogin_Go(wParam *C.char) { //, lParam *C.char) {
 	코드 := C.GoString(wParam)
 	정수, 에러 := lib.F2정수(코드)
 	로그인_성공_여부 := (에러 == nil && 정수 == 0)
