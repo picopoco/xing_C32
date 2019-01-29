@@ -57,10 +57,6 @@ var (
 
 	TR_수신_중    = lib.New안전한_bool(false)
 	API_초기화_완료 = lib.New안전한_bool(false)
-	메시지_저장소    = New메시지_저장소()
-
-	전일_당일_설정_잠금         sync.Mutex
-	전일, 당일, 전일_당일_설정_일자 lib.I안전한_시각
 
 	콜백_대기_저장소 *S콜백_대기_저장소
 )
@@ -68,8 +64,8 @@ var (
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
 var (
 	tr전송_코드별_10분당_제한 = make(map[string]lib.I전송_권한)
-	tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한)
+	             tr전송_코드별_초당_제한   = make(map[string]lib.I전송_권한)
 
-	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(S메시지_저장소{}).PkgPath() + `/config.ini`
+	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(S콜백_대기_저장소{}).PkgPath() + `/config.ini`
 )
 

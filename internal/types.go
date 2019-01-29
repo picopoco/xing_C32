@@ -36,49 +36,7 @@ package xing_C32
 import (
 	"sync"
 	"time"
-	"unsafe"
 )
-
-type S메시지_저장소 struct {
-	sync.Mutex
-	저장소 map[int][]unsafe.Pointer
-}
-
-func New메시지_저장소() *S메시지_저장소 {
-	s := new(S메시지_저장소)
-	s.저장소 = make(map[int][]unsafe.Pointer)
-
-	return s
-}
-
-func (s *S메시지_저장소) G값(식별번호 int) []unsafe.Pointer {
-	s.Lock()
-	defer s.Unlock()
-
-	기존_내용 := s.저장소[식별번호]
-
-	return 기존_내용
-}
-
-func (s *S메시지_저장소) S추가(식별번호 int, 메시지 unsafe.Pointer) {
-	s.Lock()
-	defer s.Unlock()
-
-	기존_내용, ok := s.저장소[식별번호]
-
-	if !ok {
-		s.저장소[식별번호] = []unsafe.Pointer{메시지}
-	} else {
-		s.저장소[식별번호] = append(기존_내용, 메시지)
-	}
-}
-
-func (s *S메시지_저장소) S삭제(식별번호 int) {
-	s.Lock()
-	defer s.Unlock()
-
-	delete(s.저장소, 식별번호)
-}
 
 func New콜백_대기_항목(식별번호 int, TR코드 string, 값 interface{}) *S콜백_대기_항목 {
 	s := new(S콜백_대기_항목)

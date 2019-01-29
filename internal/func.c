@@ -38,10 +38,12 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 #include "const.h"
 #include "_cgo_export.h"
 
-#define StrCopy(x,y) strncpy(x,y,sizeof x)
-#define StrCompare(x,y) strncmp(x,y,sizeof x)
-
 int etkDecompress(char* CompressedData, char* Buffer, int CompressedDataLen);
+
+// 압축 해제용 버퍼 메모리 미리 배정. 압축 해제시 최대 2000건 수신
+T8411OutBlock1 b8411[2000];
+T8412OutBlock1 b8412[2000];
+T8413OutBlock1 b8413[2000];
 
 //---------------------------------------------------------------------------//
 // 윈도우 메시지 처리 함수.
@@ -55,86 +57,34 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     switch (uMsg) {
     case XM_DISCONNECT:
-        //printf("XM_DISCONNECT\n");
         OnDisconnected_Go();
         return TRUE;
     case XM_RECEIVE_DATA:
         switch (wParam) {
         case RCV_TR_DATA:
-            //printf("XM_RECEIVE_TR_DATA\n");
-            // XingAPI에서 수신한 구조체는 메모리 저장방식이 '#pragma pack(push, 1)'이어서 Go언어에서 읽을 수 없음.
-            // Go언어에서 읽을 수 있도록 기본 메모리 저장방식으로 저장한 _UNPACKED 구조체로 복사.
             trData = (TR_DATA*)lParam;
+            unsigned char* pData = trData->Data;    // 데이터 포인터.
 
-            // t8411 반복값은 압축되어 있음. 압축해제가 필요.
+            // t8411, t8412, t8413 반복값은 압축되어 있음. 압축해제가 필요.
             if (strcmp(trData->BlockName, "t8411OutBlock1") == 0) {
-                T8411OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
-
-                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
-
-                trData->Data = (unsigned char*)&buffer[0];
-                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
-                trData->DataLength = DestSize;
+                trData->DataLength = etkDecompress((char *)trData->Data, (char *)&b8411[0], trData->DataLength);
+                pData = (unsigned char*)&b8411[0];
             } else if (strcmp(trData->BlockName, "t8412OutBlock1") == 0) {
-                T8412OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
-
-                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
-
-                trData->Data = (unsigned char*)&buffer[0];
-                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
-                trData->DataLength = DestSize;
+                trData->DataLength = etkDecompress((char *)trData->Data, (char *)&b8412[0], trData->DataLength);
+                pData = (unsigned char*)&b8412[0];
             } else if (strcmp(trData->BlockName, "t8413OutBlock1") == 0) {
-                T8413OutBlock1 buffer[2000];	// 압축 해제시 최대 2000건 수신
-
-                int DestSize = etkDecompress((char *)trData->Data, (char *)&buffer[0], trData->DataLength);
-
-                trData->Data = (unsigned char*)&buffer[0];
-                trData->TotalDataBufferSize = trData->TotalDataBufferSize - trData->DataLength + DestSize;
-                trData->DataLength = DestSize;
+                trData->DataLength = etkDecompress((char *)trData->Data, (char *)&b8413[0], trData->DataLength);
+                pData = (unsigned char*)&b8413[0];
             }
 
-            TR_DATA_UNPACKED unpackedTrData = {
-                .RequestID = trData->RequestID,
-                .DataLength = trData->DataLength,
-                .TotalDataBufferSize = trData->TotalDataBufferSize,
-                .ElapsedTime = trData->ElapsedTime,
-                .DataMode = trData->DataMode,
-                .Data = trData->Data};
-
-            StrCopy(unpackedTrData.TrCode, trData->TrCode);
-            StrCopy(unpackedTrData._TrCode, trData->_TrCode);
-            StrCopy(unpackedTrData.Cont, trData->Cont);
-            StrCopy(unpackedTrData.ContKey, trData->ContKey);
-            StrCopy(unpackedTrData._ContKey, trData->_ContKey);
-            StrCopy(unpackedTrData.None, trData->None);
-            StrCopy(unpackedTrData.BlockName, trData->BlockName);
-            StrCopy(unpackedTrData._BlockName, trData->_BlockName);
-
-            OnTrData_Go(&unpackedTrData);
-
+            OnTrData_Go(trData, pData);
             return TRUE;
         case RCV_MSG_DATA:
         case RCV_SYSTEM_ERROR:
-            //printf("XM_RECEIVE_MSG_DATA, XM_RECEIVE_SYSTEM_ERROR\n");
-
-            // XingAPI에서 수신한 구조체는 메모리 저장방식이 '#pragma pack(push, 1)'이어서 Go언어에서 읽을 수 없음.
-            // Go언어에서 읽을 수 있도록 기본 메모리 저장방식으로 저장한 _UNPACKED 구조체로 복사 후 반환.
             msgData = (MSG_DATA*)lParam;
-            MSG_DATA_UNPACKED unpackedMsgData = {
-                .RequestID = msgData->RequestID,
-                .SystemError = msgData->SystemError,
-                .MsgLength = msgData->MsgLength,
-                .MsgData = msgData->MsgData};
-
-            StrCopy(unpackedMsgData.MsgCode, msgData->MsgCode);
-            StrCopy(unpackedMsgData._MsgCode, msgData->_MsgCode);
-
-            // Go 콜백 함수 호출
-            OnMessageAndError_Go(&unpackedMsgData, msgData);
-
+            OnMessageAndError_Go(msgData, msgData->MsgData);
             return TRUE;
         case RCV_RELEASE:
-            //printf("XM_RECEIVE_RELEASE\n");
             OnReleaseData_Go((int)lParam);
             return TRUE;
         }
@@ -142,45 +92,22 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         printf("Unexpected wParam. %d\n", wParam);
         return FALSE;
     case XM_RECEIVE_REAL_DATA:
-        //printf("XM_RECEIVE_REAL_DATA\n");
-
-        // XingAPI에서 수신한 구조체는 메모리 저장방식이 '#pragma pack(push, 1)'이어서 Go언어에서 읽을 수 없음.
-        // Go언어에서 읽을 수 있도록 기본 메모리 저장방식으로 저장한 _UNPACKED 구조체로 복사 후 반환.
         realtimeData = (REALTIME_DATA*)lParam;
-        REALTIME_DATA_UNPACKED unpackedRealtimeData = {
-            .KeyLength = realtimeData->KeyLength,
-            .DataLength = realtimeData->DataLength,
-            .Data = realtimeData->Data};
-
-        StrCopy(unpackedRealtimeData.TrCode, realtimeData->TrCode);
-        StrCopy(unpackedRealtimeData._TrCode, realtimeData->_TrCode);
-        StrCopy(unpackedRealtimeData.KeyData, realtimeData->KeyData);
-        StrCopy(unpackedRealtimeData._KeyData, realtimeData->_KeyData);
-        StrCopy(unpackedRealtimeData.RegKey, realtimeData->RegKey);
-        StrCopy(unpackedRealtimeData._RegKey, realtimeData->_RegKey);
-
-        // Go 콜백 함수 호출
-        OnRealtimeData_Go(&unpackedRealtimeData);
-
+        OnRealtimeData_Go(realtimeData, realtimeData->Data);
         return TRUE;
     case XM_LOGIN:
-        //printf("XM_LOGIN\n");
-        OnLogin_Go((char*)wParam, (char*)lParam);
+        OnLogin_Go((char*)wParam);  //, (char*)lParam);
         return TRUE;
     case XM_LOGOUT:
-        //printf("XM_LOGOUT\n");
         OnLogout_Go();
         return TRUE;
     case XM_TIMEOUT:
-        //printf("XM_TIMEOUT\n");
         OnTimeout_Go((int)lParam);
         return TRUE;
     case XM_RECEIVE_LINK_DATA:
-        //printf("XM_RECEIVE_LINK_DATA\n");
         OnLinkData_Go();
         return TRUE;
     case XM_RECEIVE_REAL_DATA_CHART:
-        //printf("XM_RECEIVE_REAL_DATA_CHART\n");
         OnRealtimeDataChart_Go();
         return TRUE;
     }

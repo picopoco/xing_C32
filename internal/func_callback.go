@@ -39,6 +39,8 @@ package xing_C32
 import "C"
 
 import (
+	"bytes"
+	"encoding/binary"
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
 	"strings"
@@ -49,6 +51,8 @@ import (
 
 func F콜백(콜백값 xing.I콜백) (에러 error) {
 	defer lib.S예외처리{M에러: &에러}.S실행()
+
+	lib.F메모("F콜백()을 비동기식으로 수정할 것.")
 
 	소켓REQ := 소켓REQ_저장소.G소켓()
 	defer 소켓REQ_저장소.S회수(소켓REQ)
@@ -68,30 +72,56 @@ func F콜백(콜백값 xing.I콜백) (에러 error) {
 }
 
 //export OnTrData_Go
-func OnTrData_Go(c *C.TR_DATA_UNPACKED) {
-	var 바이트_변환값 *lib.S바이트_변환
+func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
+	c데이터 := C.GoBytes(unsafe.Pointer(TR데이터), xing.Sizeof_C_TR_DATA)
+	버퍼 := bytes.NewBuffer(c데이터)
+	g := new(xing.TR_DATA)
 
-	g := (*xing.TR_DATA)(unsafe.Pointer(c))
+	// 데이터 포인터는 제대로 전달되지 않기에, 별도 인수로 전달 받음.
+	binary.Read(버퍼, binary.LittleEndian, &g.RequestID)
+	binary.Read(버퍼, binary.LittleEndian, &g.DataLength)
+	binary.Read(버퍼, binary.LittleEndian, &g.TotalDataBufferSize)
+	binary.Read(버퍼, binary.LittleEndian, &g.ElapsedTime)
+	binary.Read(버퍼, binary.LittleEndian, &g.DataMode)
+	binary.Read(버퍼, binary.LittleEndian, &g.TrCode)
+	binary.Read(버퍼, binary.LittleEndian, &g.X_TrCode)
+	binary.Read(버퍼, binary.LittleEndian, &g.Cont)
+	binary.Read(버퍼, binary.LittleEndian, &g.ContKey)
+	binary.Read(버퍼, binary.LittleEndian, &g.X_ContKey)
+	binary.Read(버퍼, binary.LittleEndian, &g.None)
+	binary.Read(버퍼, binary.LittleEndian, &g.BlockName)
 
-	자료형_문자열 := lib.F2문자열(g.BlockName)
+	자료형_문자열 := lib.F2문자열(g.BlockName)	//; lib.F체크포인트(자료형_문자열)
 
-	if strings.ToLower(자료형_문자열[:1]) == 자료형_문자열[:1] {
+	// 자료형 문자열 1번째 대문자로 변환.
+	if len(자료형_문자열) == 0 {
+		panic(lib.New에러with출력("자료형 문자열 비어있음. '%v'", lib.F2문자열_공백제거(g.TrCode)))
+	} else if strings.ToLower(자료형_문자열[:1]) == 자료형_문자열[:1] {
 		자료형_문자열 = strings.ToUpper(자료형_문자열[:1]) + 자료형_문자열[1:]
 	}
 
-	raw값 := C.GoBytes(unsafe.Pointer(g.Data), C.int(g.DataLength))
-	바이트_변환값 = lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값)).(*lib.S바이트_변환)
-
-	// 필요하다면 'S콜백_TR데이터' 데이터 길이를 추가할 수 있다.
+	raw값 := C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.DataLength))
+	바이트_변환값 := lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값, true)).(*lib.S바이트_변환)
 	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
 	F콜백(콜백값)
 }
 
 //export OnMessageAndError_Go
-func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
-	g := (*xing.MSG_DATA)(unsafe.Pointer(c))
+func OnMessageAndError_Go(MSG데이터 *C.MSG_DATA, 데이터_포인터 *C.char) {
+	c데이터 := C.GoBytes(unsafe.Pointer(MSG데이터), xing.Sizeof_C_MSG_DATA)
+	버퍼 := bytes.NewBuffer(c데이터)
+	g := new(xing.MSG_DATA)
+
+	// 데이터 포인터는 제대로 전달되지 않는 듯 해서 별도 인수로 전달 받음.
+	binary.Read(버퍼, binary.LittleEndian, &g.RequestID)
+	binary.Read(버퍼, binary.LittleEndian, &g.SystemError)
+	binary.Read(버퍼, binary.LittleEndian, &g.MsgCode)
+	binary.Read(버퍼, binary.LittleEndian, &g.X_MsgCode)
+	binary.Read(버퍼, binary.LittleEndian, &g.MsgLength)
+	//binary.Read(버퍼, binary.LittleEndian, &g.MsgData)
 
 	var 에러여부 bool
+
 	switch g.SystemError {
 	case 0: // 일반 메시지
 		에러여부 = false
@@ -105,11 +135,8 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 	콜백값.S콜백_기본형 = xing.New콜백_기본형(xing.P콜백_메시지_및_에러)
 	콜백값.M식별번호 = int(g.RequestID)
 	콜백값.M코드 = lib.F2문자열_공백제거(g.MsgCode)
-	콜백값.M내용 = lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(g.MsgData), C.int(g.MsgLength)))
+	콜백값.M내용 = lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.MsgLength)))
 	콜백값.M에러여부 = 에러여부
-
-	// f메시지_해제() 에서 포인터가 필요함.
-	메시지_저장소.S추가(콜백값.M식별번호, unsafe.Pointer(pointer))
 
 	lib.F조건부_실행(에러여부, lib.F체크포인트, 콜백값)
 
@@ -117,34 +144,37 @@ func OnMessageAndError_Go(c *C.MSG_DATA_UNPACKED, pointer *C.MSG_DATA) {
 }
 
 //export OnReleaseData_Go
-func OnReleaseData_Go(c C.int) {
-	식별번호 := int(c)
-
-	f데이터_해제(식별번호)
-
-	if 메시지_모음 := 메시지_저장소.G값(식별번호); 메시지_모음 != nil {
-		for _, 메시지 := range 메시지_모음 {
-			f메시지_해제(메시지)
-		}
-	}
-
-	메시지_저장소.S삭제(식별번호)
-
-	F콜백(xing.New콜백_TR완료(식별번호))
+func OnReleaseData_Go(식별번호 C.int) {
+	f데이터_해제(int(식별번호))
+	F콜백(xing.New콜백_TR완료(int(식별번호)))
 }
 
 //export OnRealtimeData_Go
-func OnRealtimeData_Go(c *C.REALTIME_DATA_UNPACKED) {
-	defer lib.S예외처리{}.S실행()
+func OnRealtimeData_Go(REALTIME데이터 *C.REALTIME_DATA, 데이터_포인터 *C.char) {
+	c데이터 := C.GoBytes(unsafe.Pointer(REALTIME데이터), xing.Sizeof_C_REALTIME_DATA)
+	버퍼 := bytes.NewBuffer(c데이터)
+	g := new(xing.REALTIME_DATA)
 
-	g := (*xing.REALTIME_DATA)(unsafe.Pointer(c))
-	실시간_데이터 := lib.F확인(f실시간_데이터_해석(g))
+	// 데이터 포인터는 제대로 전달되지 않는 듯 해서 별도 인수로 전달 받음.
+	binary.Read(버퍼, binary.LittleEndian, &g.TrCode)
+	binary.Read(버퍼, binary.LittleEndian, &g.X_TrCode)
+	binary.Read(버퍼, binary.LittleEndian, &g.KeyLength)
+	binary.Read(버퍼, binary.LittleEndian, &g.KeyData)
+	binary.Read(버퍼, binary.LittleEndian, &g.X_KeyData)
+	binary.Read(버퍼, binary.LittleEndian, &g.RegKey)
+	binary.Read(버퍼, binary.LittleEndian, &g.X_RegKey)
+	binary.Read(버퍼, binary.LittleEndian, &g.DataLength)
+	//binary.Read(버퍼, binary.LittleEndian, &g.Data)
 
-	소켓PUB_실시간_정보.S송신_검사(lib.P변환형식_기본값, 실시간_데이터)
+	// KeyData, RegKey등이 불필요한 듯 해서 전송하지 않음. 필요하면 추가할 것.
+	raw값 := C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.DataLength))
+	바이트_변환값 := lib.F확인(lib.New바이트_변환Raw(lib.F2문자열(g.TrCode), raw값, false)).(*lib.S바이트_변환)
+
+	소켓PUB_실시간_정보.S송신_검사(lib.Raw, 바이트_변환값)
 }
 
 //export OnLogin_Go
-func OnLogin_Go(wParam *C.char, lParam *C.char) {
+func OnLogin_Go(wParam *C.char) {	//, lParam *C.char) {
 	코드 := C.GoString(wParam)
 	정수, 에러 := lib.F2정수(코드)
 	로그인_성공_여부 := (에러 == nil && 정수 == 0)

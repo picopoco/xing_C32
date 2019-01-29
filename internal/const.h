@@ -47,7 +47,3 @@ const DWORD MSGFLT_DISALLOW = 2;
 const DWORD MSGFLT_RESET = 0;
 #endif
 //------------------------------------------------------------------------------
-
-#define CSPAT00600 "CSPAT00600"
-#define CSPAT00700 "CSPAT00700"
-#define CSPAT00800 "CSPAT00800"

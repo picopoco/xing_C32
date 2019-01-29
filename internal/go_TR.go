@@ -36,11 +36,8 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
-	"os"
 
-	"fmt"
 	"runtime"
-	"time"
 	"unsafe"
 )
 
@@ -140,12 +137,12 @@ func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 }
 
 func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, ch에러 chan error) {
-	defer lib.S예외처리{M함수with내역: func(r interface{}) { ch에러 <- lib.New에러(r) }}.S실행()
+	var 에러 error
+
+	defer lib.S예외처리{M에러: &에러, M함수: func() { ch에러 <- 에러 }}.S실행()
 
 	switch 질의값.TR구분() {
 	case xing.TR조회, xing.TR주문:
-		//lib.F체크포인트("C32 조회/주문 TR 수신")
-
 		식별번호 := lib.F확인(f조회_및_주문_질의_처리(질의값)).(int)
 		ch회신값 <- 식별번호
 	case xing.TR실시간_정보_구독, xing.TR실시간_정보_해지:
@@ -176,16 +173,13 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR소켓_테스트:
 		ch회신값 <- lib.P신호_OK
-	case xing.TR전일_당일:
-		f전일_당일_설정(질의값)
-		ch회신값 <- lib.P신호_OK
 	case xing.TR_10분_쿼터_잔여량:
 		ch회신값 <- F_10분_쿼터_잔여량(질의값)
 	case xing.TR종료:
 		F리소스_정리()
 		ch회신값 <- lib.P신호_종료
+		F회신_중단_종료()
 		Ch메인_종료 <- lib.P신호_종료
-		os.Exit(0)
 	default:
 		panic(lib.New에러("예상하지 못한 TR구분값 : '%v'", int(질의값.TR구분())))
 	}
@@ -208,8 +202,6 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	연속_조회_여부 := false
 	연속_조회_키 := ""
 	TR코드 := 질의값.(lib.I질의값).TR코드()
-
-	TR전송권한획득(TR코드)
 
 	switch TR코드 {
 	case xing.TR현물_정상_주문:
@@ -253,12 +245,12 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xing.NewT1310InBlock(질의값.(*xing.S질의값_현물_전일당일_분틱_조회)))
 		길이 = xing.SizeT1310InBlock
 	case xing.TR_ETF_시간별_추이:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_단일종목_연속키).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*lib.S질의값_단일종목_연속키).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
-		c데이터 = unsafe.Pointer(xing.NewT1902InBlock(질의값.(*xing.S질의값_단일종목_연속키)))
+		c데이터 = unsafe.Pointer(xing.NewT1902InBlock(질의값.(*lib.S질의값_단일종목_연속키)))
 		길이 = xing.SizeT1902InBlock
 	case xing.TR기업정보_요약:
 		panic(lib.New에러with출력("TODO"))
@@ -388,20 +380,4 @@ func f접속_처리() bool {
 	}
 
 	return true // 로그인 콜백 함수가 실행될 때까지 기다림.
-}
-
-func f전일_당일_설정(질의값 lib.I질의값) (에러 error) {
-	defer lib.S예외처리{M에러: &에러}.S실행()
-
-	전일_당일_설정_잠금.Lock()
-	defer 전일_당일_설정_잠금.Unlock()
-
-	바이트_변환_모음 := 질의값.(*lib.S질의값_바이트_변환_모음)
-	전일_당일_설정_일자 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(0).(time.Time))
-	전일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(1).(time.Time))
-	당일 = lib.New안전한_시각(바이트_변환_모음.M바이트_변환_모음.G해석값_단순형(2).(time.Time))
-
-	fmt.Println("**     C32 전일 당일 설정 완료      **")
-
-	return nil
 }

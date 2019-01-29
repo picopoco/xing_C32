@@ -39,6 +39,7 @@ package xing_C32
 import "C"
 
 import (
+	"github.com/ghts/dep"
 	"github.com/ghts/lib"
 
 	"os"
@@ -107,4 +108,8 @@ func XingAPI디렉토리() (string, error) {
 	}
 
 	return "", lib.New에러("DLL파일을 찾을 수 없습니다.")
+}
+
+func f의존성_확인() {
+	dep.F의존관계_설정용_내용없는_함수()
 }

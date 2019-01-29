@@ -143,6 +143,9 @@ func F로그아웃_및_접속해제() error {
 
 func F질의(TR코드 string, c데이터 unsafe.Pointer, 길이 int,
 	연속_조회_여부 bool, 연속키 string, 타임아웃 time.Duration) int {
+
+	TR전송권한획득(TR코드)
+
 	cTR코드 := C.CString(TR코드)
 	c길이 := C.int(길이)
 	c연속_조회_여부 := C.bool(연속_조회_여부)
@@ -350,12 +353,6 @@ func f함수_존재함(함수명 string) bool {
 
 func f데이터_해제(식별번호 int) {
 	C.etkReleaseRequestData(C.int(식별번호))
-}
-
-func f메시지_해제(포인터 unsafe.Pointer) {
-	c := (*C.MSG_DATA)(포인터)
-
-	C.etkReleaseMessageData(c)
 }
 
 func F자원_해제() {
