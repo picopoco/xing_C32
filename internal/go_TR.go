@@ -253,7 +253,8 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xing.NewT1902InBlock(질의값.(*lib.S질의값_단일종목_연속키)))
 		길이 = xing.SizeT1902InBlock
 	case xing.TR기업정보_요약:
-		panic(lib.New에러with출력("TODO"))
+		c데이터 = unsafe.Pointer(xing.NewT3320InBlock(질의값.(*lib.S질의값_단일_종목)))
+		길이 = xing.SizeT3320InBlock
 	case xing.TR현물_차트_틱:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱).M연속일자) +
 			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱).M연속시간)

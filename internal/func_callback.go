@@ -53,6 +53,21 @@ func F콜백(콜백값 xing.I콜백) (에러 error) {
 	//return f콜백_동기식(콜백값)	// 동기식으로 전환할 때 사용.
 }
 
+func go콜백(ch초기화 chan lib.T신호) (에러 error) {
+
+	ch종료 := lib.F공통_종료_채널()
+	ch초기화 <- lib.P신호_초기화
+
+	for {
+		select {
+		case <-ch종료:
+			return nil
+		case i콜백 := <-ch콜백:
+			f콜백_동기식(i콜백)
+		}
+	}
+}
+
 func f콜백_동기식(콜백값 xing.I콜백) (에러 error) {
 	defer lib.S예외처리{M에러: &에러}.S실행()
 

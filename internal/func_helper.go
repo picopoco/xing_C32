@@ -115,7 +115,7 @@ func f의존성_확인() {
 }
 
 func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, 에러 error) {
-	defer lib.S예외처리{M에러: &에러, M함수: func() { 자료형_문자열 = ""}}.S실행()
+	defer lib.S예외처리{M에러: &에러, M함수: func() { 자료형_문자열 = "" }}.S실행()
 
 	TR코드 := lib.F2문자열_공백제거(g.TrCode)
 	길이 := lib.F2정수_단순형(g.DataLength)
@@ -158,21 +158,21 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 		switch {
 		case 길이 == xing.SizeT1305OutBlock:
 			return xing.P자료형_T1305OutBlock, nil
-		case 길이 % xing.SizeT1305OutBlock1 == 0:
+		case 길이%xing.SizeT1305OutBlock1 == 0:
 			return xing.P자료형_T1305OutBlock1, nil
 		}
 	case xing.TR현물_당일_전일_분틱_조회:
 		switch {
 		case 길이 == xing.SizeT1310OutBlock:
 			return xing.P자료형_T1310OutBlock, nil
-		case 길이 % xing.SizeT1310OutBlock1 == 0:
+		case 길이%xing.SizeT1310OutBlock1 == 0:
 			return xing.P자료형_T1310OutBlock1, nil
 		}
 	case xing.TR_ETF_시간별_추이:
 		switch {
 		case 길이 == xing.SizeT1902OutBlock:
 			return xing.P자료형_T1902OutBlock, nil
-		case 길이 % xing.SizeT1902OutBlock1 == 0:
+		case 길이%xing.SizeT1902OutBlock1 == 0:
 			return xing.P자료형_T1902OutBlock1, nil
 		}
 	case xing.TR기업정보_요약:
@@ -186,32 +186,32 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 		switch {
 		case 길이 == xing.SizeT8411OutBlock:
 			return xing.P자료형_T8411OutBlock, nil
-		case 길이 % xing.SizeT8411OutBlock1 == 0:
+		case 길이%xing.SizeT8411OutBlock1 == 0:
 			return xing.P자료형_T8411OutBlock1, nil
 		}
 	case xing.TR현물_차트_분:
 		switch {
 		case 길이 == xing.SizeT8412OutBlock:
 			return xing.P자료형_T8412OutBlock, nil
-		case 길이 % xing.SizeT8412OutBlock1 == 0:
+		case 길이%xing.SizeT8412OutBlock1 == 0:
 			return xing.P자료형_T8412OutBlock1, nil
 		}
 	case xing.TR현물_차트_일주월:
 		switch {
 		case 길이 == xing.SizeT8413OutBlock:
 			return xing.P자료형_T8413OutBlock, nil
-		case 길이 % xing.SizeT8413OutBlock1 == 0:
+		case 길이%xing.SizeT8413OutBlock1 == 0:
 			return xing.P자료형_T8413OutBlock1, nil
 		}
 	case xing.TR증시_주변_자금_추이:
 		switch {
 		case 길이 == xing.SizeT8428OutBlock:
 			return xing.P자료형_T8428OutBlock, nil
-		case 길이 % xing.SizeT8428OutBlock1 == 0:
+		case 길이%xing.SizeT8428OutBlock1 == 0:
 			return xing.P자료형_T8428OutBlock1, nil
 		}
 	case xing.TR현물_종목_조회:
-		if 길이 % xing.SizeT8436OutBlock == 0 {
+		if 길이%xing.SizeT8436OutBlock == 0 {
 			return xing.P자료형_T8436OutBlock, nil
 		}
 	}
