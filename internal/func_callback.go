@@ -41,11 +41,9 @@ import "C"
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
-	"strings"
-
-	"fmt"
 	"unsafe"
 )
 
@@ -95,14 +93,7 @@ func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
 	binary.Read(버퍼, binary.LittleEndian, &g.None)
 	binary.Read(버퍼, binary.LittleEndian, &g.BlockName)
 
-	자료형_문자열 := lib.F2문자열(g.BlockName) //; lib.F체크포인트(자료형_문자열)
-
-	// 자료형 문자열 1번째 대문자로 변환.
-	if len(자료형_문자열) == 0 {
-		panic(lib.New에러with출력("자료형 문자열 비어있음. '%v'", lib.F2문자열_공백제거(g.TrCode)))
-	} else if strings.ToLower(자료형_문자열[:1]) == 자료형_문자열[:1] {
-		자료형_문자열 = strings.ToUpper(자료형_문자열[:1]) + 자료형_문자열[1:]
-	}
+	자료형_문자열 := lib.F확인(f자료형_문자열_해석(g)).(string)
 
 	raw값 := C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.DataLength))
 	바이트_변환값 := lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값, true)).(*lib.S바이트_변환)
