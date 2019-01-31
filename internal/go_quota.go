@@ -71,10 +71,10 @@ func go전송_제한_재충전_도우미(ch초기화, ch종료 chan lib.T신호)
 	ch공통_종료 := lib.F공통_종료_채널()
 	ch초기화 <- lib.P신호_초기화
 
-	매초_충전 := time.NewTicker(lib.P1초 + 3*lib.P10밀리초)
+	매초_충전 := time.NewTicker(lib.P1초 + 3*lib.P10밀리초)	// 3% 여유
 	defer 매초_충전.Stop()
 
-	매3초_충전 := time.NewTicker(lib.P3초 + 9*lib.P10밀리초)
+	매3초_충전 := time.NewTicker(lib.P3초 + 9*lib.P10밀리초)	// 3% 여유
 	defer 매3초_충전.Stop()
 
 	for {
