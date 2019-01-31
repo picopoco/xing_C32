@@ -57,7 +57,7 @@ func TR전송_코드별_10분당_제한_확인(TR코드 string) {
 	switch {
 	case !존재함:
 		return // 해당 TR코드 관련 제한이 존재하지 않음.
-	case 전송_권한.G코드() != TR코드:
+	case 전송_권한.TR코드() != TR코드:
 		panic("예상하지 못한 경우.")
 	}
 
@@ -70,7 +70,7 @@ func TR전송_코드별_초당_제한_확인(TR코드 string) {
 	switch {
 	case !존재함:
 		panic(lib.New에러("전송제한을 찾을 수 없음 : '%v'", TR코드))
-	case 전송_권한.G코드() != TR코드:
+	case 전송_권한.TR코드() != TR코드:
 		panic("예상하지 못한 경우.")
 	case 전송_권한.G남은_수량() > 100:
 		panic("전송 한도가 너무 큼. 1초당 한도와 10분당 한도를 혼동한 듯함.")
