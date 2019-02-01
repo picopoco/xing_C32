@@ -52,6 +52,7 @@ var (
 	})
 
 	접속_처리_잠금 sync.Mutex
+	cgo잠금 sync.Mutex
 
 	ch로그인   = make(chan bool, 1)
 	ch콜백    = make(chan xing.I콜백, 1000)

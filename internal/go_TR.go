@@ -33,6 +33,7 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 
 package xing_C32
 
+import "C"
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
@@ -213,7 +214,9 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xing.NewCSPAT00800InBlock(질의값.(*xing.S질의값_취소_주문)))
 		길이 = xing.SizeCSPAT00800InBlock1
 	case xing.TR시간_조회:
-		c데이터 = unsafe.Pointer(C문자열(""))
+		c데이터 = unsafe.Pointer(C.CString(""))
+		defer F메모리_해제(c데이터)
+
 		길이 = 0
 	case xing.TR현물_호가_조회:
 		g := new(xing.T1101InBlock)

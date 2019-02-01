@@ -84,7 +84,9 @@ func f초기화_XingAPI() {
 	lib.F확인(os.Chdir(xing디렉토리))
 
 	// XingAPI 초기화 ('반드시' DLL파일이 있는 디렉토리에서 실행해야 함.)
+	cgo잠금.Lock()
 	C.initXingApi(0)
+	cgo잠금.Unlock()
 
 	// 원래 디렉토리로 이동
 	lib.F확인(os.Chdir(원래_디렉토리))

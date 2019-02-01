@@ -40,11 +40,10 @@ package xing_C32
 import "C"
 
 import (
+	"bytes"
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
 	"gopkg.in/ini.v1"
-
-	"bytes"
 	"time"
 	"unsafe"
 )
@@ -64,6 +63,8 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 		}
 
 		c서버_이름 = C.CString("hts.ebestsec.co.kr")
+		defer F메모리_해제(unsafe.Pointer(c서버_이름))
+
 		c포트_번호 = C.int(20001)
 	case xing.P서버_모의투자:
 		if !lib.F테스트_모드_실행_중() {
@@ -71,6 +72,8 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 		}
 
 		c서버_이름 = C.CString("demo.ebestsec.co.kr")
+		defer F메모리_해제(unsafe.Pointer(c서버_이름))
+
 		c포트_번호 = C.int(20001)
 	case xing.P서버_XingACE:
 		if !lib.F테스트_모드_실행_중() {
@@ -78,17 +81,21 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 		}
 
 		c서버_이름 = C.CString("127.0.0.1")
+		defer F메모리_해제(unsafe.Pointer(c서버_이름))
+
 		c포트_번호 = C.int(0)
 	}
 
-	defer C.free(unsafe.Pointer(c서버_이름))
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
 
-	접속_결과 := bool(C.etkConnect(c서버_이름, c포트_번호))
-
-	return 접속_결과
+	return bool(C.etkConnect(c서버_이름, c포트_번호))
 }
 
 func F접속됨() bool {
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
 	return bool(C.etkIsConnected())
 }
 
@@ -108,29 +115,37 @@ func F로그인() (로그인_결과 bool) {
 
 	키_ID := lib.F확인(섹션.GetKey("ID")).(*ini.Key)
 	c아이디 := C.CString(키_ID.String())
+	defer F메모리_해제(unsafe.Pointer(c아이디))
 
 	키_PWD := lib.F확인(섹션.GetKey("PWD")).(*ini.Key)
 	c암호 := C.CString(키_PWD.String())
+	defer F메모리_해제(unsafe.Pointer(c암호))
 
 	키_CertPWD := lib.F확인(섹션.GetKey("CertPWD")).(*ini.Key)
 	공인인증서_암호 := lib.F조건부_값(lib.F테스트_모드_실행_중(), "", 키_CertPWD.String()).(string)
 	c공인인증서_암호 := C.CString(공인인증서_암호)
+	defer F메모리_해제(unsafe.Pointer(c공인인증서_암호))
 
-	로그인_결과 = bool(C.etkLogin(c아이디, c암호, c공인인증서_암호))
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
 
-	C.free(unsafe.Pointer(c아이디))
-	C.free(unsafe.Pointer(c암호))
-	C.free(unsafe.Pointer(c공인인증서_암호))
-
-	return 로그인_결과
+	return bool(C.etkLogin(c아이디, c암호, c공인인증서_암호))
 }
 
 func F로그아웃_및_접속해제() error {
-	if !bool(C.etkLogout()) {
-		return lib.New에러("로그아웃 실패.")
+	cgo잠금.Lock()
+	로그아웃_결과 := bool(C.etkLogout())
+	cgo잠금.Unlock()
+
+	if !로그아웃_결과 {
+		lib.New에러("로그아웃 실패.")
 	}
 
-	if !bool(C.etkDisconnect()) {
+	cgo잠금.Lock()
+	접속해제_결과 := bool(C.etkDisconnect())
+	cgo잠금.Unlock()
+
+	if !접속해제_결과 {
 		return lib.New에러("접속 해제 실패.")
 	}
 
@@ -145,151 +160,153 @@ func F질의(TR코드 string, c데이터 unsafe.Pointer, 길이 int,
 	연속_조회_여부 bool, 연속키 string, 타임아웃 time.Duration) int {
 
 	cTR코드 := C.CString(TR코드)
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
+	c연속_조회_키 := C.CString(연속키)
+	defer F메모리_해제(unsafe.Pointer(c연속_조회_키))
+
 	c길이 := C.int(길이)
 	c연속_조회_여부 := C.bool(연속_조회_여부)
-	c연속_조회_키 := C.CString(연속키)
 	c타임아웃 := C.int(타임아웃 / time.Second)
 
-	defer func() {
-		C.free(unsafe.Pointer(cTR코드))
-		C.free(unsafe.Pointer(c연속_조회_키))
-	}()
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
 
-	c식별번호 := C.etkRequest(cTR코드, c데이터, c길이, c연속_조회_여부, c연속_조회_키, c타임아웃)
-	return int(c식별번호)
+	return int(C.etkRequest(cTR코드, c데이터, c길이, c연속_조회_여부, c연속_조회_키, c타임아웃))
 }
 
 func F실시간_정보_구독(TR코드 string, 전체_종목코드 string, 단위_길이 int) error {
 	cTR코드 := C.CString(TR코드)
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
 	c전체_종목코드 := C.CString(전체_종목코드)
+	defer F메모리_해제(unsafe.Pointer(c전체_종목코드))
+
 	c단위_길이 := C.int(단위_길이)
 
-	defer func() {
-		C.free(unsafe.Pointer(cTR코드))
-		C.free(unsafe.Pointer(c전체_종목코드))
-	}()
+	cgo잠금.Lock()
+	구독_결과 := bool(C.etkAdviseRealData(cTR코드, c전체_종목코드, c단위_길이))
+	cgo잠금.Unlock()
 
-	if !bool(C.etkAdviseRealData(cTR코드, c전체_종목코드, c단위_길이)) {
-		return lib.New에러("실시간 정보 신청 실패. %v", 전체_종목코드)
-	}
-
-	return nil
+	return lib.New조건부_에러(!구독_결과,"실시간 정보 구독 실패. %v", 전체_종목코드)
 }
 
 func F실시간_정보_해지(TR코드 string, 전체_종목코드 string, 단위_길이 int) error {
 	cTR코드 := C.CString(TR코드)
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
 	c전체_종목코드 := C.CString(전체_종목코드)
+	defer F메모리_해제(unsafe.Pointer(c전체_종목코드))
+
 	c단위_길이 := C.int(단위_길이)
 
-	defer func() {
-		C.free(unsafe.Pointer(cTR코드))
-		C.free(unsafe.Pointer(c전체_종목코드))
-	}()
+	cgo잠금.Lock()
+	해지_결과 := bool(C.etkUnadviseRealData(cTR코드, c전체_종목코드, c단위_길이))
+	cgo잠금.Unlock()
 
-	if !bool(C.etkUnadviseRealData(cTR코드, c전체_종목코드, c단위_길이)) {
-		return lib.New에러("실시간 정보 해지 실패. %v", 전체_종목코드)
-	}
-
-	return nil
+	return lib.New조건부_에러(!해지_결과, "실시간 정보 해지 실패. %v", 전체_종목코드)
 }
 
 func F실시간_정보_모두_해지() error {
-	if !bool(C.etkUnadviseWindow()) {
-		return lib.New에러("실시간 정보 모두 해지 실패. %v")
-	}
+	cgo잠금.Lock()
+	해지_결과 := bool(C.etkUnadviseWindow())
+	cgo잠금.Unlock()
 
-	return nil
+	return lib.New조건부_에러(!해지_결과, "실시간 정보 모두 해지 실패. %v")
 }
 
-func F계좌_수량() int { return int(C.etkGetAccountListCount()) }
+func F계좌_수량() int {
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
+	return int(C.etkGetAccountListCount())
+}
 
 func F계좌_번호(인덱스 int) string {
 	버퍼_초기값 := "            " // 12자리 공백문자열
 	버퍼_크기 := C.int(len(버퍼_초기값))
+
 	c버퍼 := C.CString(버퍼_초기값)
-	defer C.free(unsafe.Pointer(c버퍼))
+	defer F메모리_해제(unsafe.Pointer(c버퍼))
 
+	cgo잠금.Lock()
 	C.etkGetAccountNo(C.int(인덱스), c버퍼, 버퍼_크기)
+	cgo잠금.Unlock()
 
-	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return lib.F2문자열_공백제거(바이트_모음)
+	return lib.F2문자열_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기))
 }
 
 func F계좌_이름(계좌_번호 string) string {
 	버퍼_초기값 := "                                         "
 	버퍼_크기 := C.int(len(버퍼_초기값))
+
 	c버퍼 := C.CString(버퍼_초기값)
+	defer F메모리_해제(unsafe.Pointer(c버퍼))
+
 	c계좌번호 := C.CString(계좌_번호)
+	defer F메모리_해제(unsafe.Pointer(c계좌번호))
 
-	defer func() {
-		C.free(unsafe.Pointer(c버퍼))
-		C.free(unsafe.Pointer(c계좌번호))
-	}()
-
+	cgo잠금.Lock()
 	C.etkGetAccountName(c계좌번호, c버퍼, 버퍼_크기)
+	cgo잠금.Unlock()
 
-	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return lib.F2문자열_EUC_KR(바이트_모음)
-
-	//return C.GoString(c버퍼)
+	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기))
 }
 
 func F계좌_상세명(계좌_번호 string) string {
 	버퍼_초기값 := "                                         "
 	버퍼_크기 := C.int(len(버퍼_초기값))
+
 	c버퍼 := C.CString(버퍼_초기값)
+	defer F메모리_해제(unsafe.Pointer(c버퍼))
+
 	c계좌번호 := C.CString(계좌_번호)
+	defer F메모리_해제(unsafe.Pointer(c계좌번호))
 
-	defer func() {
-		C.free(unsafe.Pointer(c버퍼))
-		C.free(unsafe.Pointer(c계좌번호))
-	}()
-
+	cgo잠금.Lock()
 	C.etkGetAccountDetailName(c계좌번호, c버퍼, 버퍼_크기)
+	cgo잠금.Unlock()
 
-	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기)
-	return lib.F2문자열_EUC_KR(바이트_모음)
-
-	//return C.GoString(c버퍼)
+	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기))
 }
 
-//func F계좌_별명(계좌_번호 string) string {
-//	버퍼_초기값 := "                                                     "
-//	버퍼_크기 := len(버퍼_초기값)
-//
-//	c버퍼 := C.CString(버퍼_초기값)
-//	c계좌번호 := C.CString(계좌_번호)
-//
-//	defer func() {
-//		if c버퍼 != nil {
-//			C.free(unsafe.Pointer(c버퍼))
-//		}
-//
-//		if c계좌번호 != nil {
-//			C.free(unsafe.Pointer(c계좌번호))
-//		}
-//	}()
-//
-//	C.etkGetAccountNickName(c계좌번호, c버퍼, C.int(버퍼_크기))
-//
-//	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), C.int(버퍼_크기))
-//
-//	return lib.F2문자열_EUC_KR(바이트_모음)
-//}
+func F계좌_별명(계좌_번호 string) string {
+	버퍼_초기값 := "                                                     "
+	버퍼_크기 := len(버퍼_초기값)
+
+	c버퍼 := C.CString(버퍼_초기값)
+	defer F메모리_해제(unsafe.Pointer(c버퍼))
+
+	c계좌번호 := C.CString(계좌_번호)
+	defer F메모리_해제(unsafe.Pointer(c계좌번호))
+
+	cgo잠금.Lock()
+	C.etkGetAccountNickName(c계좌번호, c버퍼, C.int(버퍼_크기))
+	cgo잠금.Unlock()
+
+	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), C.int(버퍼_크기)))
+}
 
 func F서버_이름() string {
 	버퍼_초기값 := "                                                   "
 	버퍼_길이 := C.int(len(버퍼_초기값))
+
 	c버퍼 := C.CString(버퍼_초기값)
-	defer C.free(unsafe.Pointer(c버퍼))
+	defer F메모리_해제(unsafe.Pointer(c버퍼))
 
+	cgo잠금.Lock()
 	C.etkGetServerName(c버퍼, 버퍼_길이)
+	cgo잠금.Unlock()
 
-	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이)
-	return lib.F2문자열_EUC_KR_공백제거(바이트_모음)
+	return lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
-func F에러_코드() int { return int(C.etkGetLastError(0)) }
+func F에러_코드() int {
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
+	return int(C.etkGetLastError(0))
+}
 
 func F에러_메시지(에러_코드 int) string {
 	go버퍼 := new(bytes.Buffer)
@@ -299,46 +316,59 @@ func F에러_메시지(에러_코드 int) string {
 
 	버퍼_초기값 := go버퍼.String()
 	버퍼_길이 := C.int(len(버퍼_초기값))
-	c버퍼 := C.CString(버퍼_초기값)
-	defer C.free(unsafe.Pointer(c버퍼))
 
+	c버퍼 := C.CString(버퍼_초기값)
+	defer F메모리_해제(unsafe.Pointer(c버퍼))
+
+	cgo잠금.Lock()
 	에러_메시지_길이 := C.etkGetErrorMessage(C.int(에러_코드), c버퍼, 버퍼_길이)
+	cgo잠금.Unlock()
 
 	if 에러_메시지_길이 == 0 {
-		lib.New에러("에러 메시지를 구할 수 없습니다.")
+		lib.New에러with출력("에러 메시지를 구할 수 없습니다.")
 		return ""
 	}
 
-	바이트_모음 := C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이)
-	return lib.F2문자열_EUC_KR_공백제거(바이트_모음)
+	return lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
 func F초당_TR쿼터(TR코드 string) int {
 	cTR코드 := C.CString(TR코드)
-	defer C.free(unsafe.Pointer(cTR코드))
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
 
 	return int(C.etkGetTRCountPerSec(cTR코드))
 }
 
 func f함수_존재함(함수명 string) bool {
 	c함수명 := C.CString(함수명)
-	defer C.free(unsafe.Pointer(c함수명))
+	defer F메모리_해제(unsafe.Pointer(c함수명))
+
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
 
 	return bool(C.etkFuncExist(c함수명))
 }
 
 func f데이터_해제(식별번호 int) {
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
 	C.etkReleaseRequestData(C.int(식별번호))
 }
 
 func F자원_해제() {
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
 	C.freeResource(0)
 }
 
 func F메모리_해제(포인터 unsafe.Pointer) {
-	C.free(포인터)
-}
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
 
-func C문자열(문자열 string) *C.char {
-	return C.CString(문자열)
+	C.free(포인터)
 }
