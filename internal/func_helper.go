@@ -148,6 +148,13 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 		case xing.SizeT3320OutBlock1:
 			return xing.P자료형_T3320OutBlock1, nil
 		}
+	case xing.TR재무순위_종합:
+		switch {
+		case 길이 == xing.SizeT3341OutBlock:
+			return xing.P자료형_T3341OutBlock, nil
+		case 길이%xing.SizeT3341OutBlock1 == 0:
+			return xing.P자료형_T3341OutBlock1, nil
+		}		
 	case xing.TR현물_차트_틱:
 		switch {
 		case 길이 == xing.SizeT8411OutBlock:
