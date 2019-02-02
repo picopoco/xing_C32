@@ -42,7 +42,6 @@ import (
 	"github.com/ghts/xing"
 
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -61,35 +60,6 @@ func F초기화() (에러 error) {
 	f초기화_서버_접속()
 
 	return nil
-}
-
-func f초기화_XingAPI() {
-	if API_초기화_완료.G값() {
-		return
-	} else {
-		API_초기화_완료.S값(true)
-	}
-
-	f의존성_확인()
-
-	lib.F조건부_패닉(lib.F환경변수("GOARCH") != "386", "C32 모듈은 32비트 전용입니다.")
-
-	// DLL파일이 있는 디렉토리로 이동. (빼먹으면 안 됨)
-	원래_디렉토리, 에러 := os.Getwd()
-	lib.F확인(에러)
-
-	xing디렉토리, 에러 := XingAPI디렉토리()
-	lib.F확인(에러)
-
-	lib.F확인(os.Chdir(xing디렉토리))
-
-	// XingAPI 초기화 ('반드시' DLL파일이 있는 디렉토리에서 실행해야 함.)
-	cgo잠금.Lock()
-	C.initXingApi(0)
-	cgo잠금.Unlock()
-
-	// 원래 디렉토리로 이동
-	lib.F확인(os.Chdir(원래_디렉토리))
 }
 
 func f초기화_Go루틴() {

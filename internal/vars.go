@@ -36,6 +36,7 @@ package xing_C32
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
+	"path/filepath"
 	"reflect"
 	"sync"
 )
@@ -66,5 +67,6 @@ var (
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
 var (
-	설정파일_경로 = lib.F_GOPATH() + `/src/` + reflect.TypeOf(S콜백_대기_저장소{}).PkgPath() + `/config.ini`
+	설정파일_디렉토리 = filepath.Join(lib.GOPATH(), "src", reflect.TypeOf(S콜백_대기_저장소{}).PkgPath())
+	설정파일_경로 = filepath.Join(설정파일_디렉토리, "config.ini")
 )

@@ -37,7 +37,6 @@ import "C"
 import (
 	"github.com/ghts/lib"
 	"github.com/ghts/xing"
-
 	"runtime"
 	"unsafe"
 )
@@ -187,13 +186,7 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 int, 에러 error) {
 	defer lib.S예외처리{M에러: &에러, M함수: func() { 식별번호 = 0 }}.S실행()
 
-	//lib.F체크포인트("C32 조회/주문 질의 처리 시작", 질의값.TR코드())
-
-	lib.F메모("접속이 끊긴 경우 재접속 하는 기능 추가할 것.")
 	lib.F조건부_패닉(!F접속됨(), "XingAPI에 접속되어 있지 않습니다.")
-
-	// 종목코드 관련 기능은 lib에서 xing으로 이전되어서 xing_C32에서 검사 불가.
-	//lib.F확인(lib.F질의값_종목코드_검사(질의값))
 
 	var c데이터 unsafe.Pointer
 	defer lib.F조건부_실행(c데이터 != nil, F메모리_해제, c데이터)
