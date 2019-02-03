@@ -529,6 +529,29 @@ int etkGetTRCountPerSec(char* TrCode) {
     return func((LPCTSTR)TrCode);
 }
 
+// TR의 초 베이스를 취득합니다.
+int etkGetTRCountBaseSec(char* TrCode) {
+    ETK_GetTRCountBaseSec func = (ETK_GetTRCountBaseSec)etkFunc("ETK_GetTRCountBaseSec");
+    if (func == NULL) {
+        return 0;
+    }
+
+    return func((LPCTSTR)TrCode);
+}
+
+
+// TR의 10분당 전송 가능 횟수를 취득합니다.
+int etkGetTRCountLimit(char* TrCode) {
+    ETK_GetTRCountLimit func = (ETK_GetTRCountLimit)etkFunc("ETK_GetTRCountLimit");
+    if (func == NULL) {
+        return 0;
+    }
+
+    return func((LPCTSTR)TrCode);
+}
+
+
+
 //int etkRequestService(HWND hWnd, LPCTSTR pszCode, LPCTSTR pszData);
 //int etkRemoveService(HWND hWnd, LPCTSTR pszCode, LPCTSTR pszData);
 //int etkRequestLinkToHTS(HWND hWnd, LPCTSTR pszLinkKey, LPCTSTR pszData, LPCTSTR pszFiller);

@@ -70,6 +70,8 @@ const (
 	FuncGetLastError        = "ETK_GetLastError"
 	FuncGetErrorMessage     = "ETK_GetErrorMessage"
 	FuncGetTRCountPerSec    = "ETK_GetTRCountPerSec"
+	FuncGetTRCountBaseSec   = "ETK_GetTRCountBaseSec"
+	FuncGetTRCountLimit     = "ETK_GetTRCountLimit"
 	FuncRequestService      = "ETK_RequestService"
 	FuncRemoveService       = "ETK_RemoveService"
 	FuncRequestLinkToHTS    = "ETK_RequestLinkToHTS"

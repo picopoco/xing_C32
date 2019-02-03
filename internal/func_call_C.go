@@ -224,7 +224,7 @@ func F실시간_정보_구독(TR코드 string, 전체_종목코드 string, 단�
 	구독_결과 := bool(C.etkAdviseRealData(cTR코드, c전체_종목코드, c단위_길이))
 	cgo잠금.Unlock()
 
-	return lib.New조건부_에러(!구독_결과,"실시간 정보 구독 실패. %v", 전체_종목코드)
+	return lib.New조건부_에러(!구독_결과, "실시간 정보 구독 실패. %v", 전체_종목코드)
 }
 
 func F실시간_정보_해지(TR코드 string, 전체_종목코드 string, 단위_길이 int) error {
@@ -368,7 +368,24 @@ func F에러_메시지(에러_코드 int) string {
 	return lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
-func F초당_TR쿼터(TR코드 string) int {
+func TR코드별_전송_제한(TR코드_모음 []string) (정보_모음 *xing.TR코드별_전송_제한_정보_모음) {
+	정보_모음 = new(xing.TR코드별_전송_제한_정보_모음)
+	정보_모음.M배열 = make([]*xing.TR코드별_전송_제한_정보, len(TR코드_모음))
+
+	for i, TR코드 := range TR코드_모음 {
+		값 := new(xing.TR코드별_전송_제한_정보)
+		값.TR코드 = TR코드
+		값.M초당_전송_제한 = f초당_TR쿼터(TR코드)
+		값.M초_베이스 = f초_베이스_TR쿼터(TR코드)
+		값.M10분당_전송_제한 = f10분당_TR쿼터(TR코드)
+
+		정보_모음.M배열[i] = 값
+	}
+
+	return 정보_모음
+}
+
+func f초당_TR쿼터(TR코드 string) int {
 	cTR코드 := C.CString(TR코드)
 	defer F메모리_해제(unsafe.Pointer(cTR코드))
 
@@ -376,6 +393,26 @@ func F초당_TR쿼터(TR코드 string) int {
 	defer cgo잠금.Unlock()
 
 	return int(C.etkGetTRCountPerSec(cTR코드))
+}
+
+func f초_베이스_TR쿼터(TR코드 string) int {
+	cTR코드 := C.CString(TR코드)
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
+	return int(C.etkGetTRCountBaseSec(cTR코드))
+}
+
+func f10분당_TR쿼터(TR코드 string) int {
+	cTR코드 := C.CString(TR코드)
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
+	return int(C.etkGetTRCountLimit(cTR코드))
 }
 
 func f함수_존재함(함수명 string) bool {

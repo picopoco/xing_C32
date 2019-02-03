@@ -161,8 +161,6 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F에러_코드()
 	case xing.TR에러_메시지:
 		ch회신값 <- F에러_메시지(질의값.(*lib.S질의값_정수).M정수값)
-	case xing.TR코드별_쿼터:
-		ch회신값 <- F초당_TR쿼터(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR계좌_수량:
 		ch회신값 <- F계좌_수량()
 	case xing.TR계좌_번호:
@@ -171,6 +169,8 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR계좌_상세명:
 		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
+	case xing.TR코드별_전송_제한:
+		ch회신값 <- TR코드별_전송_제한(질의값.(*lib.S질의값_문자열_모음).M문자열_모음)
 	case xing.TR소켓_테스트:
 		ch회신값 <- lib.P신호_OK
 	case xing.TR종료:

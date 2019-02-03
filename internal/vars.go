@@ -53,7 +53,7 @@ var (
 	})
 
 	접속_처리_잠금 sync.Mutex
-	cgo잠금 sync.Mutex
+	cgo잠금    sync.Mutex
 
 	ch로그인   = make(chan bool, 1)
 	ch콜백    = make(chan xing.I콜백, 1000)
@@ -68,5 +68,5 @@ var (
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.
 var (
 	설정파일_디렉토리 = filepath.Join(lib.GOPATH(), "src", reflect.TypeOf(S콜백_대기_저장소{}).PkgPath())
-	설정파일_경로 = filepath.Join(설정파일_디렉토리, "config.ini")
+	설정파일_경로   = filepath.Join(설정파일_디렉토리, "config.ini")
 )

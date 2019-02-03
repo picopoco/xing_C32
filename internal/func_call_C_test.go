@@ -62,6 +62,8 @@ func TestF함수_존재함(t *testing.T) {
 	lib.F테스트_참임(t, f함수_존재함(FuncGetLastError))
 	lib.F테스트_참임(t, f함수_존재함(FuncGetErrorMessage))
 	lib.F테스트_참임(t, f함수_존재함(FuncGetTRCountPerSec))
+	lib.F테스트_참임(t, f함수_존재함(FuncGetTRCountBaseSec))
+	lib.F테스트_참임(t, f함수_존재함(FuncGetTRCountLimit))
 	lib.F테스트_참임(t, f함수_존재함(FuncRequestService))
 	lib.F테스트_참임(t, f함수_존재함(FuncRemoveService))
 	lib.F테스트_참임(t, f함수_존재함(FuncRequestLinkToHTS))

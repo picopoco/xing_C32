@@ -154,7 +154,7 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 			return xing.P자료형_T3341OutBlock, nil
 		case 길이%xing.SizeT3341OutBlock1 == 0:
 			return xing.P자료형_T3341OutBlock1, nil
-		}		
+		}
 	case xing.TR현물_차트_틱:
 		switch {
 		case 길이 == xing.SizeT8411OutBlock:
