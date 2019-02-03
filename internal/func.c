@@ -539,6 +539,15 @@ int etkGetTRCountBaseSec(char* TrCode) {
     return func((LPCTSTR)TrCode);
 }
 
+// 10분 동안 전송한 TR수량을 취득합니다.
+int etkGetTRCountRequest(char* TrCode) {
+    ETK_GetTRCountRequest func = (ETK_GetTRCountRequest)etkFunc("ETK_GetTRCountRequest");
+    if (func == NULL) {
+        return 0;
+    }
+
+    return func((LPCTSTR)TrCode);
+}
 
 // TR의 10분당 전송 가능 횟수를 취득합니다.
 int etkGetTRCountLimit(char* TrCode) {
@@ -549,8 +558,6 @@ int etkGetTRCountLimit(char* TrCode) {
 
     return func((LPCTSTR)TrCode);
 }
-
-
 
 //int etkRequestService(HWND hWnd, LPCTSTR pszCode, LPCTSTR pszData);
 //int etkRemoveService(HWND hWnd, LPCTSTR pszCode, LPCTSTR pszData);

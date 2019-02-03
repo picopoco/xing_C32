@@ -415,6 +415,16 @@ func f10분당_TR쿼터(TR코드 string) int {
 	return int(C.etkGetTRCountLimit(cTR코드))
 }
 
+func f10분간_요청한_TR수량(TR코드 string) int {
+	cTR코드 := C.CString(TR코드)
+	defer F메모리_해제(unsafe.Pointer(cTR코드))
+
+	cgo잠금.Lock()
+	defer cgo잠금.Unlock()
+
+	return int(C.etkGetTRCountRequest(cTR코드))
+}
+
 func f함수_존재함(함수명 string) bool {
 	c함수명 := C.CString(함수명)
 	defer F메모리_해제(unsafe.Pointer(c함수명))

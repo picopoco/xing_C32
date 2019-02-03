@@ -63,6 +63,7 @@ int etkGetLastError(int Dummy);
 int etkGetErrorMessage(int ErrorCode, char* Buffer, int BufferSize);
 int etkGetTRCountPerSec(const char* pszCode);
 int etkGetTRCountBaseSec(const char* pszCode);
+int etkGetTRCountRequest(const char* pszCode);
 int etkGetTRCountLimit(const char* pszCode);
 //int etkRequestService(HWND hWnd, LPCTSTR pszCode, LPCTSTR pszData);
 //int etkRemoveService(HWND hWnd, LPCTSTR pszCode, LPCTSTR pszData);
