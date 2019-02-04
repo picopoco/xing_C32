@@ -169,6 +169,8 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR계좌_상세명:
 		ch회신값 <- F계좌_상세명(질의값.(*lib.S질의값_문자열).M문자열)
+	case xing.TR계좌_별명:
+		ch회신값 <- F계좌_별명(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR코드별_전송_제한:
 		ch회신값 <- TR코드별_전송_제한(질의값.(*lib.S질의값_문자열_모음).M문자열_모음)
 	case xing.TR소켓_테스트:

@@ -438,7 +438,6 @@ void etkGetAccountName(char* AccountNo, char* Buffer , int BufferSize) {
         return;
     }
 
-    printf("TODO : encoding AcccountName\n");
     memset(Buffer, 0, BufferSize);
     func((LPCTSTR)AccountNo, (LPSTR)Buffer, BufferSize);
 }
@@ -456,7 +455,6 @@ void etkGetAccountDetailName(char* AccountNo, char* Buffer, int BufferSize) {
         return;
     }
 
-    printf("TODO : encoding AcccountDetailName\n");
     memset(Buffer, 0, BufferSize);
     func((LPCTSTR)AccountNo, (LPSTR)Buffer, BufferSize);
 }
@@ -473,7 +471,6 @@ void etkGetAccountNickName(char* AccountNo, char* Buffer , int BufferSize) {
         return;
     }
 
-    printf("TODO : encoding AcccountNickName\n");
     memset(Buffer, 0, BufferSize);
     func((LPCTSTR)AccountNo, (LPSTR)Buffer, BufferSize);
 }
