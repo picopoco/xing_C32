@@ -90,7 +90,7 @@ func f콜백_동기식(콜백값 xing.I콜백) (에러 error) {
 
 //export OnTrData_Go
 func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
-	c데이터 := C.GoBytes(unsafe.Pointer(TR데이터), xing.Sizeof_C_TR_DATA)
+	c데이터 := C.GoBytes(unsafe.Pointer(TR데이터), C.int(xing.Sizeof_C_TR_DATA))
 	버퍼 := bytes.NewBuffer(c데이터)
 	g := new(xing.TR_DATA)
 
@@ -118,7 +118,7 @@ func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
 
 //export OnMessageAndError_Go
 func OnMessageAndError_Go(MSG데이터 *C.MSG_DATA, 데이터_포인터 *C.char) {
-	c데이터 := C.GoBytes(unsafe.Pointer(MSG데이터), xing.Sizeof_C_MSG_DATA)
+	c데이터 := C.GoBytes(unsafe.Pointer(MSG데이터), C.int(xing.Sizeof_C_MSG_DATA))
 	버퍼 := bytes.NewBuffer(c데이터)
 	g := new(xing.MSG_DATA)
 
@@ -161,7 +161,7 @@ func OnReleaseData_Go(식별번호 C.int) {
 
 //export OnRealtimeData_Go
 func OnRealtimeData_Go(REALTIME데이터 *C.REALTIME_DATA, 데이터_포인터 *C.char) {
-	c데이터 := C.GoBytes(unsafe.Pointer(REALTIME데이터), xing.Sizeof_C_REALTIME_DATA)
+	c데이터 := C.GoBytes(unsafe.Pointer(REALTIME데이터), C.int(xing.Sizeof_C_REALTIME_DATA))
 	버퍼 := bytes.NewBuffer(c데이터)
 	g := new(xing.REALTIME_DATA)
 

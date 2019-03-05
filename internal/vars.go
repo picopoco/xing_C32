@@ -69,4 +69,5 @@ var (
 var (
 	설정파일_디렉토리 = filepath.Join(lib.GOPATH(), "src", reflect.TypeOf(S콜백_대기_저장소{}).PkgPath())
 	설정파일_경로   = filepath.Join(설정파일_디렉토리, "config.ini")
+	계좌번호_모음   []string
 )

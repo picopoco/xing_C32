@@ -87,7 +87,7 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 	길이 := lib.F2정수_단순형(g.DataLength)
 
 	switch TR코드 {
-	case xing.TR현물_정상_주문:
+	case xing.TR현물_정상_주문_CSPAT00600:
 		switch 길이 {
 		case xing.SizeCSPAT00600OutBlock:
 			return xing.P자료형_CSPAT00600OutBlock, nil
@@ -96,7 +96,7 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 		case xing.SizeCSPAT00600OutBlock2:
 			return xing.P자료형_CSPAT00600OutBlock2, nil
 		}
-	case xing.TR현물_정정_주문:
+	case xing.TR현물_정정_주문_CSPAT00700:
 		switch 길이 {
 		case xing.SizeCSPAT00700OutBlock:
 			return xing.P자료형_CSPAT00700OutBlock, nil
@@ -105,7 +105,7 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 		case xing.SizeCSPAT00700OutBlock2:
 			return xing.P자료형_CSPAT00700OutBlock2, nil
 		}
-	case xing.TR현물_취소_주문:
+	case xing.TR현물_취소_주문_CSPAT00800:
 		switch 길이 {
 		case xing.SizeCSPAT00800OutBlock:
 			return xing.P자료형_CSPAT00800OutBlock, nil
@@ -114,76 +114,98 @@ func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, �
 		case xing.SizeCSPAT00800OutBlock2:
 			return xing.P자료형_CSPAT00800OutBlock2, nil
 		}
-	case xing.TR시간_조회:
+	case xing.TR시간_조회_t0167:
 		return xing.P자료형_T0167OutBlock, nil
-	case xing.TR현물_호가_조회:
+	case xing.TR체결_미체결_조회_t0425:
+		// Non-block 모드는 Occurs데이터 수량을 나타내는 5바이트 추가됨.
+		if 길이 < (xing.SizeT0425OutBlock+5) ||
+			(길이-(xing.SizeT0425OutBlock+5))%xing.SizeT0425OutBlock1 != 0 {
+			break
+		}
+
+		return xing.P자료형_T0425OutBlockAll, nil
+	case xing.TR현물_호가_조회_t1101:
 		return xing.P자료형_T1101OutBlock, nil
-	case xing.TR현물_시세_조회:
+	case xing.TR현물_시세_조회_t1102:
 		return xing.P자료형_T1102OutBlock, nil
-	case xing.TR현물_기간별_조회:
+	case xing.TR현물_기간별_조회_t1305:
 		switch {
 		case 길이 == xing.SizeT1305OutBlock:
 			return xing.P자료형_T1305OutBlock, nil
 		case 길이%xing.SizeT1305OutBlock1 == 0:
 			return xing.P자료형_T1305OutBlock1, nil
 		}
-	case xing.TR현물_당일_전일_분틱_조회:
+	case xing.TR현물_당일_전일_분틱_조회_t1310:
 		switch {
 		case 길이 == xing.SizeT1310OutBlock:
 			return xing.P자료형_T1310OutBlock, nil
 		case 길이%xing.SizeT1310OutBlock1 == 0:
 			return xing.P자료형_T1310OutBlock1, nil
 		}
-	case xing.TR_ETF_시간별_추이:
+	case xing.TR관리_불성실_투자유의_조회_t1404:
+		switch {
+		case 길이 == xing.SizeT1404OutBlock:
+			return xing.P자료형_T1404OutBlock, nil
+		case 길이%xing.SizeT1404OutBlock1 == 0:
+			return xing.P자료형_T1404OutBlock1, nil
+		}
+	case xing.TR투자경고_매매정지_정리매매_조회_t1405:
+		switch {
+		case 길이 == xing.SizeT1405OutBlock:
+			return xing.P자료형_T1405OutBlock, nil
+		case 길이%xing.SizeT1405OutBlock1 == 0:
+			return xing.P자료형_T1405OutBlock1, nil
+		}
+	case xing.TR_ETF_시간별_추이_t1902:
 		switch {
 		case 길이 == xing.SizeT1902OutBlock:
 			return xing.P자료형_T1902OutBlock, nil
 		case 길이%xing.SizeT1902OutBlock1 == 0:
 			return xing.P자료형_T1902OutBlock1, nil
 		}
-	case xing.TR기업정보_요약:
+	case xing.TR기업정보_요약_t3320:
 		switch 길이 {
 		case xing.SizeT3320OutBlock:
 			return xing.P자료형_T3320OutBlock, nil
 		case xing.SizeT3320OutBlock1:
 			return xing.P자료형_T3320OutBlock1, nil
 		}
-	case xing.TR재무순위_종합:
+	case xing.TR재무순위_종합_t3341:
 		switch {
 		case 길이 == xing.SizeT3341OutBlock:
 			return xing.P자료형_T3341OutBlock, nil
 		case 길이%xing.SizeT3341OutBlock1 == 0:
 			return xing.P자료형_T3341OutBlock1, nil
 		}
-	case xing.TR현물_차트_틱:
+	case xing.TR현물_차트_틱_t8411:
 		switch {
 		case 길이 == xing.SizeT8411OutBlock:
 			return xing.P자료형_T8411OutBlock, nil
 		case 길이%xing.SizeT8411OutBlock1 == 0:
 			return xing.P자료형_T8411OutBlock1, nil
 		}
-	case xing.TR현물_차트_분:
+	case xing.TR현물_차트_분_t8412:
 		switch {
 		case 길이 == xing.SizeT8412OutBlock:
 			return xing.P자료형_T8412OutBlock, nil
 		case 길이%xing.SizeT8412OutBlock1 == 0:
 			return xing.P자료형_T8412OutBlock1, nil
 		}
-	case xing.TR현물_차트_일주월:
+	case xing.TR현물_차트_일주월_t8413:
 		switch {
 		case 길이 == xing.SizeT8413OutBlock:
 			return xing.P자료형_T8413OutBlock, nil
 		case 길이%xing.SizeT8413OutBlock1 == 0:
 			return xing.P자료형_T8413OutBlock1, nil
 		}
-	case xing.TR증시_주변_자금_추이:
+	case xing.TR증시_주변_자금_추이_t8428:
 		switch {
 		case 길이 == xing.SizeT8428OutBlock:
 			return xing.P자료형_T8428OutBlock, nil
 		case 길이%xing.SizeT8428OutBlock1 == 0:
 			return xing.P자료형_T8428OutBlock1, nil
 		}
-	case xing.TR현물_종목_조회:
+	case xing.TR현물_종목_조회_t8436:
 		if 길이%xing.SizeT8436OutBlock == 0 {
 			return xing.P자료형_T8436OutBlock, nil
 		}

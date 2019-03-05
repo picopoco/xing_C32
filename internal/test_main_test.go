@@ -56,7 +56,6 @@ func f테스트_준비() {
 	<-ch초기화
 
 	F초기화()
-	f초기화_작동_확인()
 }
 
 func f테스트_정리() {
@@ -78,21 +77,5 @@ func go테스트용_TR콜백_수신(ch초기화 chan lib.T신호) {
 		}
 
 		소켓REP_TR콜백.S송신(값.G변환_형식(0), lib.P신호_OK)
-	}
-}
-
-func f초기화_작동_확인() {
-	소켓REQ := lib.NewNano소켓REQ_단순형(lib.P주소_Xing_C함수_호출, lib.P10초)
-	defer 소켓REQ.Close()
-
-	질의값 := lib.New질의값_기본형(lib.TR접속됨, "")
-
-	if 응답 := 소켓REQ.G질의_응답_검사(lib.P변환형식_기본값, 질의값); 응답.G에러() != nil {
-		lib.F에러_출력(응답.G에러())
-		f초기화_작동_확인() // 재귀 호출로 재시도
-	} else if 접속됨, ok := 응답.G해석값_단순형(0).(bool); !ok {
-		panic(lib.New에러("예상하지 못한 자료형 : '%T'", 응답.G해석값_단순형(0)))
-	} else if !접속됨 {
-		panic(lib.New에러("이 시점에 접속되어 있어야 함."))
 	}
 }

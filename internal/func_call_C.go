@@ -260,21 +260,32 @@ func F계좌_수량() int {
 
 func F계좌_번호(인덱스 int) string {
 	버퍼_초기값 := "            " // 12자리 공백문자열
-	버퍼_크기 := C.int(len(버퍼_초기값))
+	버퍼_길이 := C.int(len(버퍼_초기값))
 
 	c버퍼 := C.CString(버퍼_초기값)
 	defer F메모리_해제(unsafe.Pointer(c버퍼))
 
 	cgo잠금.Lock()
-	C.etkGetAccountNo(C.int(인덱스), c버퍼, 버퍼_크기)
+	C.etkGetAccountNo(C.int(인덱스), c버퍼, 버퍼_길이)
 	cgo잠금.Unlock()
 
-	return lib.F2문자열_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기))
+	return lib.F2문자열_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
+}
+
+func F계좌번호_모음() []string {
+	수량 := F계좌_수량()
+	계좌번호_모음 = make([]string, 수량)
+
+	for i := range 계좌번호_모음 {
+		계좌번호_모음[i] = F계좌_번호(i)
+	}
+
+	return 계좌번호_모음
 }
 
 func F계좌_이름(계좌_번호 string) string {
 	버퍼_초기값 := "                                         "
-	버퍼_크기 := C.int(len(버퍼_초기값))
+	버퍼_길이 := C.int(len(버퍼_초기값))
 
 	c버퍼 := C.CString(버퍼_초기값)
 	defer F메모리_해제(unsafe.Pointer(c버퍼))
@@ -283,15 +294,15 @@ func F계좌_이름(계좌_번호 string) string {
 	defer F메모리_해제(unsafe.Pointer(c계좌번호))
 
 	cgo잠금.Lock()
-	C.etkGetAccountName(c계좌번호, c버퍼, 버퍼_크기)
+	C.etkGetAccountName(c계좌번호, c버퍼, 버퍼_길이)
 	cgo잠금.Unlock()
 
-	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기))
+	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
 func F계좌_상세명(계좌_번호 string) string {
 	버퍼_초기값 := "                                         "
-	버퍼_크기 := C.int(len(버퍼_초기값))
+	버퍼_길이 := C.int(len(버퍼_초기값))
 
 	c버퍼 := C.CString(버퍼_초기값)
 	defer F메모리_해제(unsafe.Pointer(c버퍼))
@@ -300,15 +311,15 @@ func F계좌_상세명(계좌_번호 string) string {
 	defer F메모리_해제(unsafe.Pointer(c계좌번호))
 
 	cgo잠금.Lock()
-	C.etkGetAccountDetailName(c계좌번호, c버퍼, 버퍼_크기)
+	C.etkGetAccountDetailName(c계좌번호, c버퍼, 버퍼_길이)
 	cgo잠금.Unlock()
 
-	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_크기))
+	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
 func F계좌_별명(계좌_번호 string) string {
 	버퍼_초기값 := "                                                     "
-	버퍼_크기 := len(버퍼_초기값)
+	버퍼_길이 := C.int(len(버퍼_초기값))
 
 	c버퍼 := C.CString(버퍼_초기값)
 	defer F메모리_해제(unsafe.Pointer(c버퍼))
@@ -317,10 +328,10 @@ func F계좌_별명(계좌_번호 string) string {
 	defer F메모리_해제(unsafe.Pointer(c계좌번호))
 
 	cgo잠금.Lock()
-	C.etkGetAccountNickName(c계좌번호, c버퍼, C.int(버퍼_크기))
+	C.etkGetAccountNickName(c계좌번호, c버퍼, C.int(버퍼_길이))
 	cgo잠금.Unlock()
 
-	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), C.int(버퍼_크기)))
+	return lib.F2문자열_EUC_KR(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
 func F서버_이름() string {

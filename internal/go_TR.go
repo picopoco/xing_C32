@@ -163,8 +163,8 @@ func f질의값_처리(질의값 lib.I질의값, ch회신값 chan interface{}, c
 		ch회신값 <- F에러_메시지(질의값.(*lib.S질의값_정수).M정수값)
 	case xing.TR계좌_수량:
 		ch회신값 <- F계좌_수량()
-	case xing.TR계좌_번호:
-		ch회신값 <- F계좌_번호(질의값.(*lib.S질의값_정수).M정수값)
+	case xing.TR계좌번호_모음:
+		ch회신값 <- F계좌번호_모음()
 	case xing.TR계좌_이름:
 		ch회신값 <- F계좌_이름(질의값.(*lib.S질의값_문자열).M문자열)
 	case xing.TR계좌_상세명:
@@ -199,49 +199,70 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	TR코드 := 질의값.(lib.I질의값).TR코드()
 
 	switch TR코드 {
-	case xing.TR현물_정상_주문:
-		c데이터 = unsafe.Pointer(xing.NewCSPAT00600InBlock(질의값.(*xing.S질의값_정상_주문)))
+	case xing.TR현물_정상_주문_CSPAT00600:
+		c데이터 = unsafe.Pointer(xing.NewCSPAT00600InBlock(질의값.(*xing.S질의값_정상_주문_CSPAT00600)))
 		길이 = xing.SizeCSPAT00600InBlock1
-	case xing.TR현물_정정_주문:
-		c데이터 = unsafe.Pointer(xing.NewCSPAT00700InBlock(질의값.(*xing.S질의값_정정_주문)))
+	case xing.TR현물_정정_주문_CSPAT00700:
+		c데이터 = unsafe.Pointer(xing.NewCSPAT00700InBlock(질의값.(*xing.S질의값_정정_주문_CSPAT00700)))
 		길이 = xing.SizeCSPAT00700InBlock1
-	case xing.TR현물_취소_주문:
-		c데이터 = unsafe.Pointer(xing.NewCSPAT00800InBlock(질의값.(*xing.S질의값_취소_주문)))
+	case xing.TR현물_취소_주문_CSPAT00800:
+		c데이터 = unsafe.Pointer(xing.NewCSPAT00800InBlock(질의값.(*xing.S질의값_취소_주문_CSPAT00800)))
 		길이 = xing.SizeCSPAT00800InBlock1
-	case xing.TR시간_조회:
+	case xing.TR시간_조회_t0167:
 		c데이터 = unsafe.Pointer(C.CString(""))
 		defer F메모리_해제(c데이터)
 
 		길이 = 0
-	case xing.TR현물_호가_조회:
+	case xing.TR체결_미체결_조회_t0425:
+		c데이터 = unsafe.Pointer(xing.NewT0425InBlock(질의값.(*xing.S질의값_체결_미체결_조회_t0425)))
+		길이 = xing.SizeT0425InBlock
+	case xing.TR현물_호가_조회_t1101:
 		g := new(xing.T1101InBlock)
 		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
 		c데이터 = unsafe.Pointer(g)
 		길이 = xing.SizeT1101InBlock
-	case xing.TR현물_시세_조회:
+	case xing.TR현물_시세_조회_t1102:
 		g := new(xing.T1102InBlock)
 		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
 		c데이터 = unsafe.Pointer(g)
 		길이 = xing.SizeT1102InBlock
-	case xing.TR현물_기간별_조회:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_기간별_조회).M연속키)
+	case xing.TR현물_기간별_조회_t1305:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_기간별_조회_t1305).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xing.NewT1305InBlock(질의값.(*xing.S질의값_현물_기간별_조회)))
+		c데이터 = unsafe.Pointer(xing.NewT1305InBlock(질의값.(*xing.S질의값_현물_기간별_조회_t1305)))
 		길이 = xing.SizeT1305InBlock
-	case xing.TR현물_당일_전일_분틱_조회:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_전일당일_분틱_조회).M연속키)
+	case xing.TR현물_당일_전일_분틱_조회_t1310:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_전일당일_분틱_조회_t1310).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xing.NewT1310InBlock(질의값.(*xing.S질의값_현물_전일당일_분틱_조회)))
+		c데이터 = unsafe.Pointer(xing.NewT1310InBlock(질의값.(*xing.S질의값_현물_전일당일_분틱_조회_t1310)))
 		길이 = xing.SizeT1310InBlock
-	case xing.TR_ETF_시간별_추이:
+	case xing.TR관리_불성실_투자유의_조회_t1404:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_관리종목_조회_t1404).M연속키)
+		if 연속키 != "" {
+			연속_조회_여부 = true
+			연속_조회_키 = 연속키
+		}
+
+		c데이터 = unsafe.Pointer(xing.NewT1404InBlock(질의값.(*xing.S질의값_관리종목_조회_t1404)))
+		길이 = xing.SizeT1404InBlock
+	case xing.TR투자경고_매매정지_정리매매_조회_t1405:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_투자경고_조회_t1405).M연속키)
+		if 연속키 != "" {
+			연속_조회_여부 = true
+			연속_조회_키 = 연속키
+		}
+
+		c데이터 = unsafe.Pointer(xing.NewT1405InBlock(질의값.(*xing.S질의값_투자경고_조회_t1405)))
+		길이 = xing.SizeT1405InBlock
+	case xing.TR_ETF_시간별_추이_t1902:
 		연속키 := lib.F2문자열_공백제거(질의값.(*lib.S질의값_단일종목_연속키).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
@@ -249,71 +270,56 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		}
 		c데이터 = unsafe.Pointer(xing.NewT1902InBlock(질의값.(*lib.S질의값_단일종목_연속키)))
 		길이 = xing.SizeT1902InBlock
-	case xing.TR기업정보_요약:
+	case xing.TR기업정보_요약_t3320:
 		c데이터 = unsafe.Pointer(xing.NewT3320InBlock(질의값.(*lib.S질의값_단일_종목)))
 		길이 = xing.SizeT3320InBlock
-	case xing.TR재무순위_종합:
+	case xing.TR재무순위_종합_t3341:
 		c데이터 = unsafe.Pointer(xing.NewT3341InBlock(질의값.(*xing.S질의값_재무순위_t3341)))
 		길이 = xing.SizeT3341InBlock
-	case xing.TR현물_차트_틱:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱).M연속일자) +
-			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱).M연속시간)
+	case xing.TR현물_차트_틱_t8411:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱_t8411).M연속일자) +
+			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_틱_t8411).M연속시간)
 
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xing.NewT8411InBlock(질의값.(*xing.S질의값_현물_차트_틱)))
+		c데이터 = unsafe.Pointer(xing.NewT8411InBlock(질의값.(*xing.S질의값_현물_차트_틱_t8411)))
 		길이 = xing.SizeT8411InBlock
-	case xing.TR현물_차트_분:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_분).M연속일자) +
-			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_분).M연속시간)
+	case xing.TR현물_차트_분_t8412:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_분_t8412).M연속일자) +
+			lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_분_t8412).M연속시간)
 
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xing.NewT8412InBlock(질의값.(*xing.S질의값_현물_차트_분)))
+		c데이터 = unsafe.Pointer(xing.NewT8412InBlock(질의값.(*xing.S질의값_현물_차트_분_t8412)))
 		길이 = xing.SizeT8412InBlock
-	case xing.TR현물_차트_일주월:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_일주월).M연속일자)
+	case xing.TR현물_차트_일주월_t8413:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_차트_일주월_t8413).M연속일자)
 
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xing.NewT8413InBlock(질의값.(*xing.S질의값_현물_차트_일주월)))
+		c데이터 = unsafe.Pointer(xing.NewT8413InBlock(질의값.(*xing.S질의값_현물_차트_일주월_t8413)))
 		길이 = xing.SizeT8413InBlock
-	case xing.TR증시_주변_자금_추이:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_증시주변자금추이).M연속키)
+	case xing.TR증시_주변_자금_추이_t8428:
+		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_증시주변자금추이_t8428).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xing.NewT8428InBlock(질의값.(*xing.S질의값_증시주변자금추이)))
+		c데이터 = unsafe.Pointer(xing.NewT8428InBlock(질의값.(*xing.S질의값_증시주변자금추이_t8428)))
 		길이 = xing.SizeT8428InBlock
-	case xing.TR현물_종목_조회:
+	case xing.TR현물_종목_조회_t8436:
 		c데이터 = unsafe.Pointer(xing.NewT8436InBlock(질의값.(*lib.S질의값_문자열)))
 		길이 = xing.SizeT8436InBlock
-	case xing.TR계좌_거래_내역,
-		xing.TR현물계좌_예수금_주문가능금액_총평가,
-		xing.TR현물계좌_잔고내역,
-		xing.TR현물계좌_주문체결내역,
-		xing.TR주식_체결_미체결,
-		xing.TR주식_매매일지_수수료_금일,
-		xing.TR주식_매매일지_수수료_날짜_지정,
-		xing.TR주식_잔고_2,
-		xing.TR주식계좌_기간별_수익률_상세,
-		xing.TR계좌별_신용한도,
-		xing.TR현물계좌_증거금률별_주문가능수량,
-		xing.TR종목별_증시_일정,
-		xing.TR해외_실시간_지수,
-		xing.TR해외_지수_조회:
-		fallthrough
 	default:
 		panic(lib.New에러("미구현 : '%v'", TR코드))
 	}
@@ -327,8 +333,8 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	}
 
 	switch TR코드 {
-	case xing.TR현물_당일_전일_분틱_조회: // 전일/당일 구분을 저장해야 함.
-		당일전일_구분 := 질의값.(*xing.S질의값_현물_전일당일_분틱_조회).M당일전일구분
+	case xing.TR현물_당일_전일_분틱_조회_t1310: // 전일/당일 구분을 저장해야 함.
+		당일전일_구분 := 질의값.(*xing.S질의값_현물_전일당일_분틱_조회_t1310).M당일전일구분
 		대기_항목 := New콜백_대기_항목(식별번호, TR코드, 당일전일_구분)
 		콜백_대기_저장소.S추가(식별번호, 대기_항목)
 	}
