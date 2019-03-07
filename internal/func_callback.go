@@ -39,11 +39,12 @@ package xing_C32
 import "C"
 
 import (
+	"github.com/ghts/lib"
+	"github.com/ghts/xing"
+
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/ghts/lib"
-	"github.com/ghts/xing"
 	"unsafe"
 )
 
@@ -109,7 +110,6 @@ func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
 	binary.Read(버퍼, binary.LittleEndian, &g.BlockName)
 
 	자료형_문자열 := lib.F확인(f자료형_문자열_해석(g)).(string)
-
 	raw값 := C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.DataLength))
 	바이트_변환값 := lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값, true)).(*lib.S바이트_변환)
 	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))

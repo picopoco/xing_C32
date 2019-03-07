@@ -57,8 +57,6 @@ func f초기화_XingAPI() {
 		API_초기화_완료.S값(true)
 	}
 
-	f의존성_확인()
-
 	lib.F조건부_패닉(lib.F환경변수("GOARCH") != "386", "C32 모듈은 32비트 전용입니다.")
 
 	// DLL파일이 있는 디렉토리로 이동. (빼먹으면 안 됨)
@@ -269,7 +267,7 @@ func F계좌_번호(인덱스 int) string {
 	C.etkGetAccountNo(C.int(인덱스), c버퍼, 버퍼_길이)
 	cgo잠금.Unlock()
 
-	return lib.F2문자열_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
+	return string(bytes.Trim(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이), "\x00"))
 }
 
 func F계좌번호_모음() []string {

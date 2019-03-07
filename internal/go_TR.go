@@ -211,20 +211,15 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	case xing.TR시간_조회_t0167:
 		c데이터 = unsafe.Pointer(C.CString(""))
 		defer F메모리_해제(c데이터)
-
 		길이 = 0
 	case xing.TR체결_미체결_조회_t0425:
 		c데이터 = unsafe.Pointer(xing.NewT0425InBlock(질의값.(*xing.S질의값_체결_미체결_조회_t0425)))
 		길이 = xing.SizeT0425InBlock
 	case xing.TR현물_호가_조회_t1101:
-		g := new(xing.T1101InBlock)
-		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
-		c데이터 = unsafe.Pointer(g)
+		c데이터 = unsafe.Pointer(xing.NewT1101InBlock(질의값.(*lib.S질의값_단일_종목)))
 		길이 = xing.SizeT1101InBlock
 	case xing.TR현물_시세_조회_t1102:
-		g := new(xing.T1102InBlock)
-		lib.F바이트_복사_문자열(g.Shcode[:], 질의값.(*lib.S질의값_단일_종목).M종목코드)
-		c데이터 = unsafe.Pointer(g)
+		c데이터 = unsafe.Pointer(xing.NewT1102InBlock(질의값.(*lib.S질의값_단일_종목)))
 		길이 = xing.SizeT1102InBlock
 	case xing.TR현물_기간별_조회_t1305:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xing.S질의값_현물_기간별_조회_t1305).M연속키)

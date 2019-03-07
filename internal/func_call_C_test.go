@@ -34,7 +34,6 @@ along with GHTS.  If not, see <http://www.gnu.org/licenses/>. */
 package xing_C32
 
 import (
-	"github.com/ghts/dep"
 	"github.com/ghts/lib"
 
 	"testing"
@@ -75,8 +74,5 @@ func TestF함수_존재함(t *testing.T) {
 func TestC컴파일러_의존성_확인(t *testing.T) {
 	t.Parallel()
 
-	dep.F의존관계_설정용_내용없는_함수()
-
-	gcc_파일경로 := lib.GOPATH() + `\src\github.com\ghts\dep\gcc32\mingw\bin\gcc.exe`
-	lib.F테스트_참임(t, lib.F파일_존재함(gcc_파일경로))
+	lib.F테스트_참임(t, lib.F파일_존재함(`C:\Rtools\mingw_32\bin\gcc.exe`))
 }
