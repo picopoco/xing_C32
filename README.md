@@ -8,7 +8,7 @@
 설치 준비물
   - Go언어 
     : https://golang.org/dl/
-  - Rtools 패키지 (32비트 및 64비트 C언어 컴파일러를 1번에 간편하게 설치)
+  - Rtools 패키지 (32비트 및 64비트 C언어 컴파일러를 1번에 간편하게 설치)  
     : https://cran.r-project.org/bin/windows/Rtools/index.html
   - Git 소스코드 관리 시스템
     : https://git-scm.com/download/win 
