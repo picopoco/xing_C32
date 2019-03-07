@@ -13,6 +13,7 @@
 
 #
 설치법
+
     go get github.com/ghts/xing_C32
 
 #   
