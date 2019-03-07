@@ -35,7 +35,8 @@ package xing_C32
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
+	"github.com/ghts/xing_common"
+
 	"path/filepath"
 	"reflect"
 	"sync"
@@ -56,13 +57,11 @@ var (
 	cgo잠금    sync.Mutex
 
 	ch로그인   = make(chan bool, 1)
-	ch콜백    = make(chan xing.I콜백, 1000)
+	ch콜백    = make(chan xt.I콜백, 1000)
 	Ch메인_종료 = make(chan lib.T신호, 1)
 
 	TR_수신_중    = lib.New안전한_bool(false)
 	API_초기화_완료 = lib.New안전한_bool(false)
-
-	콜백_대기_저장소 *S콜백_대기_저장소
 )
 
 // 초기화 이후에는 사실상 읽기 전용이어서, 다중 사용에 문제가 없는 값들.

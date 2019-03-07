@@ -27,7 +27,7 @@ package main
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
+	"github.com/ghts/xing_common"
 	"github.com/ghts/xing_C32/internal"
 )
 
@@ -38,7 +38,7 @@ func main() {
 
 	defer func() {
 		xing_C32.F리소스_정리()
-		xing_C32.F콜백(xing.New콜백_신호(xing.P신호_C32_종료))
+		xing_C32.F콜백(xt.New콜백_신호(xt.P신호_C32_종료))
 	}()
 
 	xing_C32.F초기화()

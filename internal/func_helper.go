@@ -35,12 +35,12 @@ package xing_C32
 
 // #cgo CFLAGS: -Wall
 // #include <stdlib.h>
-// #include <../../xing/types_c.h>
+// #include <../../xing_common/types_c.h>
 import "C"
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
+	"github.com/ghts/xing_common"
 	"os"
 )
 
@@ -75,134 +75,134 @@ func XingAPI디렉토리() (string, error) {
 	return "", lib.New에러("DLL파일을 찾을 수 없습니다.")
 }
 
-func f자료형_문자열_해석(g *xing.TR_DATA) (자료형_문자열 string, 에러 error) {
+func f자료형_문자열_해석(g *xt.TR_DATA) (자료형_문자열 string, 에러 error) {
 	defer lib.S예외처리{M에러: &에러, M함수: func() { 자료형_문자열 = "" }}.S실행()
 
 	TR코드 := lib.F2문자열_공백제거(g.TrCode)
 	길이 := lib.F2정수_단순형(g.DataLength)
 
 	switch TR코드 {
-	case xing.TR현물_정상_주문_CSPAT00600:
+	case xt.TR현물_정상_주문_CSPAT00600:
 		switch 길이 {
-		case xing.SizeCSPAT00600OutBlock:
-			return xing.P자료형_CSPAT00600OutBlock, nil
-		case xing.SizeCSPAT00600OutBlock1:
-			return xing.P자료형_CSPAT00600OutBlock1, nil
-		case xing.SizeCSPAT00600OutBlock2:
-			return xing.P자료형_CSPAT00600OutBlock2, nil
+		case xt.SizeCSPAT00600OutBlock:
+			return xt.P자료형_CSPAT00600OutBlock, nil
+		case xt.SizeCSPAT00600OutBlock1:
+			return xt.P자료형_CSPAT00600OutBlock1, nil
+		case xt.SizeCSPAT00600OutBlock2:
+			return xt.P자료형_CSPAT00600OutBlock2, nil
 		}
-	case xing.TR현물_정정_주문_CSPAT00700:
+	case xt.TR현물_정정_주문_CSPAT00700:
 		switch 길이 {
-		case xing.SizeCSPAT00700OutBlock:
-			return xing.P자료형_CSPAT00700OutBlock, nil
-		case xing.SizeCSPAT00700OutBlock1:
-			return xing.P자료형_CSPAT00700OutBlock1, nil
-		case xing.SizeCSPAT00700OutBlock2:
-			return xing.P자료형_CSPAT00700OutBlock2, nil
+		case xt.SizeCSPAT00700OutBlock:
+			return xt.P자료형_CSPAT00700OutBlock, nil
+		case xt.SizeCSPAT00700OutBlock1:
+			return xt.P자료형_CSPAT00700OutBlock1, nil
+		case xt.SizeCSPAT00700OutBlock2:
+			return xt.P자료형_CSPAT00700OutBlock2, nil
 		}
-	case xing.TR현물_취소_주문_CSPAT00800:
+	case xt.TR현물_취소_주문_CSPAT00800:
 		switch 길이 {
-		case xing.SizeCSPAT00800OutBlock:
-			return xing.P자료형_CSPAT00800OutBlock, nil
-		case xing.SizeCSPAT00800OutBlock1:
-			return xing.P자료형_CSPAT00800OutBlock1, nil
-		case xing.SizeCSPAT00800OutBlock2:
-			return xing.P자료형_CSPAT00800OutBlock2, nil
+		case xt.SizeCSPAT00800OutBlock:
+			return xt.P자료형_CSPAT00800OutBlock, nil
+		case xt.SizeCSPAT00800OutBlock1:
+			return xt.P자료형_CSPAT00800OutBlock1, nil
+		case xt.SizeCSPAT00800OutBlock2:
+			return xt.P자료형_CSPAT00800OutBlock2, nil
 		}
-	case xing.TR시간_조회_t0167:
-		return xing.P자료형_T0167OutBlock, nil
-	case xing.TR체결_미체결_조회_t0425:
+	case xt.TR시간_조회_t0167:
+		return xt.P자료형_T0167OutBlock, nil
+	case xt.TR체결_미체결_조회_t0425:
 		// Non-block 모드는 Occurs데이터 수량을 나타내는 5바이트 추가됨.
-		if 길이 < (xing.SizeT0425OutBlock+5) ||
-			(길이-(xing.SizeT0425OutBlock+5))%xing.SizeT0425OutBlock1 != 0 {
+		if 길이 < (xt.SizeT0425OutBlock+5) ||
+			(길이-(xt.SizeT0425OutBlock+5))%xt.SizeT0425OutBlock1 != 0 {
 			break
 		}
 
-		return xing.P자료형_T0425OutBlockAll, nil
-	case xing.TR현물_호가_조회_t1101:
-		return xing.P자료형_T1101OutBlock, nil
-	case xing.TR현물_시세_조회_t1102:
-		return xing.P자료형_T1102OutBlock, nil
-	case xing.TR현물_기간별_조회_t1305:
+		return xt.P자료형_T0425OutBlockAll, nil
+	case xt.TR현물_호가_조회_t1101:
+		return xt.P자료형_T1101OutBlock, nil
+	case xt.TR현물_시세_조회_t1102:
+		return xt.P자료형_T1102OutBlock, nil
+	case xt.TR현물_기간별_조회_t1305:
 		switch {
-		case 길이 == xing.SizeT1305OutBlock:
-			return xing.P자료형_T1305OutBlock, nil
-		case 길이%xing.SizeT1305OutBlock1 == 0:
-			return xing.P자료형_T1305OutBlock1, nil
+		case 길이 == xt.SizeT1305OutBlock:
+			return xt.P자료형_T1305OutBlock, nil
+		case 길이%xt.SizeT1305OutBlock1 == 0:
+			return xt.P자료형_T1305OutBlock1, nil
 		}
-	case xing.TR현물_당일_전일_분틱_조회_t1310:
+	case xt.TR현물_당일_전일_분틱_조회_t1310:
 		switch {
-		case 길이 == xing.SizeT1310OutBlock:
-			return xing.P자료형_T1310OutBlock, nil
-		case 길이%xing.SizeT1310OutBlock1 == 0:
-			return xing.P자료형_T1310OutBlock1, nil
+		case 길이 == xt.SizeT1310OutBlock:
+			return xt.P자료형_T1310OutBlock, nil
+		case 길이%xt.SizeT1310OutBlock1 == 0:
+			return xt.P자료형_T1310OutBlock1, nil
 		}
-	case xing.TR관리_불성실_투자유의_조회_t1404:
+	case xt.TR관리_불성실_투자유의_조회_t1404:
 		switch {
-		case 길이 == xing.SizeT1404OutBlock:
-			return xing.P자료형_T1404OutBlock, nil
-		case 길이%xing.SizeT1404OutBlock1 == 0:
-			return xing.P자료형_T1404OutBlock1, nil
+		case 길이 == xt.SizeT1404OutBlock:
+			return xt.P자료형_T1404OutBlock, nil
+		case 길이%xt.SizeT1404OutBlock1 == 0:
+			return xt.P자료형_T1404OutBlock1, nil
 		}
-	case xing.TR투자경고_매매정지_정리매매_조회_t1405:
+	case xt.TR투자경고_매매정지_정리매매_조회_t1405:
 		switch {
-		case 길이 == xing.SizeT1405OutBlock:
-			return xing.P자료형_T1405OutBlock, nil
-		case 길이%xing.SizeT1405OutBlock1 == 0:
-			return xing.P자료형_T1405OutBlock1, nil
+		case 길이 == xt.SizeT1405OutBlock:
+			return xt.P자료형_T1405OutBlock, nil
+		case 길이%xt.SizeT1405OutBlock1 == 0:
+			return xt.P자료형_T1405OutBlock1, nil
 		}
-	case xing.TR_ETF_시간별_추이_t1902:
+	case xt.TR_ETF_시간별_추이_t1902:
 		switch {
-		case 길이 == xing.SizeT1902OutBlock:
-			return xing.P자료형_T1902OutBlock, nil
-		case 길이%xing.SizeT1902OutBlock1 == 0:
-			return xing.P자료형_T1902OutBlock1, nil
+		case 길이 == xt.SizeT1902OutBlock:
+			return xt.P자료형_T1902OutBlock, nil
+		case 길이%xt.SizeT1902OutBlock1 == 0:
+			return xt.P자료형_T1902OutBlock1, nil
 		}
-	case xing.TR기업정보_요약_t3320:
+	case xt.TR기업정보_요약_t3320:
 		switch 길이 {
-		case xing.SizeT3320OutBlock:
-			return xing.P자료형_T3320OutBlock, nil
-		case xing.SizeT3320OutBlock1:
-			return xing.P자료형_T3320OutBlock1, nil
+		case xt.SizeT3320OutBlock:
+			return xt.P자료형_T3320OutBlock, nil
+		case xt.SizeT3320OutBlock1:
+			return xt.P자료형_T3320OutBlock1, nil
 		}
-	case xing.TR재무순위_종합_t3341:
+	case xt.TR재무순위_종합_t3341:
 		switch {
-		case 길이 == xing.SizeT3341OutBlock:
-			return xing.P자료형_T3341OutBlock, nil
-		case 길이%xing.SizeT3341OutBlock1 == 0:
-			return xing.P자료형_T3341OutBlock1, nil
+		case 길이 == xt.SizeT3341OutBlock:
+			return xt.P자료형_T3341OutBlock, nil
+		case 길이%xt.SizeT3341OutBlock1 == 0:
+			return xt.P자료형_T3341OutBlock1, nil
 		}
-	case xing.TR현물_차트_틱_t8411:
+	case xt.TR현물_차트_틱_t8411:
 		switch {
-		case 길이 == xing.SizeT8411OutBlock:
-			return xing.P자료형_T8411OutBlock, nil
-		case 길이%xing.SizeT8411OutBlock1 == 0:
-			return xing.P자료형_T8411OutBlock1, nil
+		case 길이 == xt.SizeT8411OutBlock:
+			return xt.P자료형_T8411OutBlock, nil
+		case 길이%xt.SizeT8411OutBlock1 == 0:
+			return xt.P자료형_T8411OutBlock1, nil
 		}
-	case xing.TR현물_차트_분_t8412:
+	case xt.TR현물_차트_분_t8412:
 		switch {
-		case 길이 == xing.SizeT8412OutBlock:
-			return xing.P자료형_T8412OutBlock, nil
-		case 길이%xing.SizeT8412OutBlock1 == 0:
-			return xing.P자료형_T8412OutBlock1, nil
+		case 길이 == xt.SizeT8412OutBlock:
+			return xt.P자료형_T8412OutBlock, nil
+		case 길이%xt.SizeT8412OutBlock1 == 0:
+			return xt.P자료형_T8412OutBlock1, nil
 		}
-	case xing.TR현물_차트_일주월_t8413:
+	case xt.TR현물_차트_일주월_t8413:
 		switch {
-		case 길이 == xing.SizeT8413OutBlock:
-			return xing.P자료형_T8413OutBlock, nil
-		case 길이%xing.SizeT8413OutBlock1 == 0:
-			return xing.P자료형_T8413OutBlock1, nil
+		case 길이 == xt.SizeT8413OutBlock:
+			return xt.P자료형_T8413OutBlock, nil
+		case 길이%xt.SizeT8413OutBlock1 == 0:
+			return xt.P자료형_T8413OutBlock1, nil
 		}
-	case xing.TR증시_주변_자금_추이_t8428:
+	case xt.TR증시_주변_자금_추이_t8428:
 		switch {
-		case 길이 == xing.SizeT8428OutBlock:
-			return xing.P자료형_T8428OutBlock, nil
-		case 길이%xing.SizeT8428OutBlock1 == 0:
-			return xing.P자료형_T8428OutBlock1, nil
+		case 길이 == xt.SizeT8428OutBlock:
+			return xt.P자료형_T8428OutBlock, nil
+		case 길이%xt.SizeT8428OutBlock1 == 0:
+			return xt.P자료형_T8428OutBlock1, nil
 		}
-	case xing.TR현물_종목_조회_t8436:
-		if 길이%xing.SizeT8436OutBlock == 0 {
-			return xing.P자료형_T8436OutBlock, nil
+	case xt.TR현물_종목_조회_t8436:
+		if 길이%xt.SizeT8436OutBlock == 0 {
+			return xt.P자료형_T8436OutBlock, nil
 		}
 	}
 

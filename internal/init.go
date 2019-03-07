@@ -39,18 +39,14 @@ import "C"
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
+	"github.com/ghts/xing_common"
 
 	"fmt"
 	"time"
 )
 
 func init() {
-	lib.TR구분_String = xing.TR구분_String
-
-	// t1310은 전일/당일 구분이 필요함.
-	콜백_대기_저장소 = new(S콜백_대기_저장소)
-	콜백_대기_저장소.저장소 = make(map[int]*S콜백_대기_항목)
+	lib.TR구분_String = xt.TR구분_String
 }
 
 func F초기화() (에러 error) {
@@ -115,7 +111,7 @@ func f초기화_서버_접속() (에러 error) {
 		break
 	}
 
-	F콜백(xing.New콜백_신호(xing.P신호_C32_READY))
+	F콜백(xt.New콜백_신호(xt.P신호_C32_READY))
 
 	fmt.Println("**     C32 READY     **")
 

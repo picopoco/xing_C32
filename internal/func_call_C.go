@@ -40,10 +40,11 @@ package xing_C32
 import "C"
 
 import (
-	"bytes"
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
+	"github.com/ghts/xing_common"
 	"gopkg.in/ini.v1"
+
+	"bytes"
 	"os"
 	"path/filepath"
 	"time"
@@ -77,7 +78,7 @@ func f초기화_XingAPI() {
 	lib.F확인(os.Chdir(원래_디렉토리))
 }
 
-func F접속(서버_구분 xing.T서버_구분) bool {
+func F접속(서버_구분 xt.T서버_구분) bool {
 	if F접속됨() {
 		return true
 	}
@@ -86,7 +87,7 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 	var c포트_번호 C.int
 
 	switch 서버_구분 {
-	case xing.P서버_실거래:
+	case xt.P서버_실거래:
 		if lib.F테스트_모드_실행_중() {
 			panic("테스트 모드에서 실서버 접속 시도.")
 		}
@@ -95,7 +96,7 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 		defer F메모리_해제(unsafe.Pointer(c서버_이름))
 
 		c포트_번호 = C.int(20001)
-	case xing.P서버_모의투자:
+	case xt.P서버_모의투자:
 		if !lib.F테스트_모드_실행_중() {
 			panic("실제 운용 모드에서 모의투자서버 접속 시도.")
 		}
@@ -104,7 +105,7 @@ func F접속(서버_구분 xing.T서버_구분) bool {
 		defer F메모리_해제(unsafe.Pointer(c서버_이름))
 
 		c포트_번호 = C.int(20001)
-	case xing.P서버_XingACE:
+	case xt.P서버_XingACE:
 		if !lib.F테스트_모드_실행_중() {
 			panic("실제 운용 모드에서 XingACE 가상거래소 접속 시도.")
 		}
@@ -377,12 +378,12 @@ func F에러_메시지(에러_코드 int) string {
 	return lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(c버퍼), 버퍼_길이))
 }
 
-func TR코드별_전송_제한(TR코드_모음 []string) (정보_모음 *xing.TR코드별_전송_제한_정보_모음) {
-	정보_모음 = new(xing.TR코드별_전송_제한_정보_모음)
-	정보_모음.M배열 = make([]*xing.TR코드별_전송_제한_정보, len(TR코드_모음))
+func TR코드별_전송_제한(TR코드_모음 []string) (정보_모음 *xt.TR코드별_전송_제한_정보_모음) {
+	정보_모음 = new(xt.TR코드별_전송_제한_정보_모음)
+	정보_모음.M배열 = make([]*xt.TR코드별_전송_제한_정보, len(TR코드_모음))
 
 	for i, TR코드 := range TR코드_모음 {
-		값 := new(xing.TR코드별_전송_제한_정보)
+		값 := new(xt.TR코드별_전송_제한_정보)
 		값.TR코드 = TR코드
 		값.M초당_전송_제한 = f초당_TR쿼터(TR코드)
 		값.M초_베이스 = f초_베이스_TR쿼터(TR코드)

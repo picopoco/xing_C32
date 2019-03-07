@@ -35,12 +35,12 @@ package xing_C32
 
 // #cgo CFLAGS: -Wall
 // #include <windows.h>
-// #include "../../xing/types_c.h"
+// #include "../../xing_common/types_c.h"
 import "C"
 
 import (
 	"github.com/ghts/lib"
-	"github.com/ghts/xing"
+	"github.com/ghts/xing_common"
 
 	"bytes"
 	"encoding/binary"
@@ -48,7 +48,7 @@ import (
 	"unsafe"
 )
 
-func F콜백(콜백값 xing.I콜백) (에러 error) {
+func F콜백(콜백값 xt.I콜백) (에러 error) {
 	ch콜백 <- 콜백값
 	return nil
 	//return f콜백_동기식(콜백값)	// 동기식으로 전환할 때 사용.
@@ -69,7 +69,7 @@ func go콜백(ch초기화 chan lib.T신호) (에러 error) {
 	}
 }
 
-func f콜백_동기식(콜백값 xing.I콜백) (에러 error) {
+func f콜백_동기식(콜백값 xt.I콜백) (에러 error) {
 	defer lib.S예외처리{M에러: &에러}.S실행()
 
 	소켓REQ := 소켓REQ_저장소.G소켓()
@@ -91,9 +91,9 @@ func f콜백_동기식(콜백값 xing.I콜백) (에러 error) {
 
 //export OnTrData_Go
 func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
-	c데이터 := C.GoBytes(unsafe.Pointer(TR데이터), C.int(xing.Sizeof_C_TR_DATA))
+	c데이터 := C.GoBytes(unsafe.Pointer(TR데이터), C.int(xt.Sizeof_C_TR_DATA))
 	버퍼 := bytes.NewBuffer(c데이터)
-	g := new(xing.TR_DATA)
+	g := new(xt.TR_DATA)
 
 	// 데이터 포인터는 제대로 전달되지 않기에, 별도 인수로 전달 받음.
 	binary.Read(버퍼, binary.LittleEndian, &g.RequestID)
@@ -112,15 +112,15 @@ func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
 	자료형_문자열 := lib.F확인(f자료형_문자열_해석(g)).(string)
 	raw값 := C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.DataLength))
 	바이트_변환값 := lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값, true)).(*lib.S바이트_변환)
-	콜백값 := xing.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
+	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
 	F콜백(콜백값)
 }
 
 //export OnMessageAndError_Go
 func OnMessageAndError_Go(MSG데이터 *C.MSG_DATA, 데이터_포인터 *C.char) {
-	c데이터 := C.GoBytes(unsafe.Pointer(MSG데이터), C.int(xing.Sizeof_C_MSG_DATA))
+	c데이터 := C.GoBytes(unsafe.Pointer(MSG데이터), C.int(xt.Sizeof_C_MSG_DATA))
 	버퍼 := bytes.NewBuffer(c데이터)
-	g := new(xing.MSG_DATA)
+	g := new(xt.MSG_DATA)
 
 	// 데이터 포인터는 제대로 전달되지 않는 듯 해서 별도 인수로 전달 받음.
 	binary.Read(버퍼, binary.LittleEndian, &g.RequestID)
@@ -141,8 +141,8 @@ func OnMessageAndError_Go(MSG데이터 *C.MSG_DATA, 데이터_포인터 *C.char)
 		panic(lib.New에러("예상하지 못한 구분값. '%v'", g.SystemError))
 	}
 
-	콜백값 := new(xing.S콜백_메시지_및_에러)
-	콜백값.S콜백_기본형 = xing.New콜백_기본형(xing.P콜백_메시지_및_에러)
+	콜백값 := new(xt.S콜백_메시지_및_에러)
+	콜백값.S콜백_기본형 = xt.New콜백_기본형(xt.P콜백_메시지_및_에러)
 	콜백값.M식별번호 = int(g.RequestID)
 	콜백값.M코드 = lib.F2문자열_공백제거(g.MsgCode)
 	콜백값.M내용 = lib.F2문자열_EUC_KR_공백제거(C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.MsgLength)))
@@ -156,14 +156,14 @@ func OnMessageAndError_Go(MSG데이터 *C.MSG_DATA, 데이터_포인터 *C.char)
 //export OnReleaseData_Go
 func OnReleaseData_Go(식별번호 C.int) {
 	f데이터_해제(int(식별번호))
-	F콜백(xing.New콜백_TR완료(int(식별번호)))
+	F콜백(xt.New콜백_TR완료(int(식별번호)))
 }
 
 //export OnRealtimeData_Go
 func OnRealtimeData_Go(REALTIME데이터 *C.REALTIME_DATA, 데이터_포인터 *C.char) {
-	c데이터 := C.GoBytes(unsafe.Pointer(REALTIME데이터), C.int(xing.Sizeof_C_REALTIME_DATA))
+	c데이터 := C.GoBytes(unsafe.Pointer(REALTIME데이터), C.int(xt.Sizeof_C_REALTIME_DATA))
 	버퍼 := bytes.NewBuffer(c데이터)
-	g := new(xing.REALTIME_DATA)
+	g := new(xt.REALTIME_DATA)
 
 	// 데이터 포인터는 제대로 전달되지 않는 듯 해서 별도 인수로 전달 받음.
 	binary.Read(버퍼, binary.LittleEndian, &g.TrCode)
@@ -214,15 +214,15 @@ func OnDisconnected_Go() {
 
 //export OnTimeout_Go
 func OnTimeout_Go(c C.int) {
-	F콜백(xing.New콜백_타임아웃(int(c)))
+	F콜백(xt.New콜백_타임아웃(int(c)))
 }
 
 //export OnLinkData_Go
 func OnLinkData_Go() {
-	F콜백(xing.New콜백_기본형(xing.P콜백_링크_데이터)) // TODO
+	F콜백(xt.New콜백_기본형(xt.P콜백_링크_데이터)) // TODO
 }
 
 //export OnRealtimeDataChart_Go
 func OnRealtimeDataChart_Go() {
-	F콜백(xing.New콜백_기본형(xing.P콜백_실시간_차트_데이터)) // TODO
+	F콜백(xt.New콜백_기본형(xt.P콜백_실시간_차트_데이터)) // TODO
 }
