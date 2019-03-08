@@ -200,20 +200,20 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 
 	switch TR코드 {
 	case xt.TR현물_정상_주문_CSPAT00600:
-		c데이터 = unsafe.Pointer(xt.NewCSPAT00600InBlock(질의값.(*xt.S질의값_정상_주문_CSPAT00600)))
+		c데이터 = unsafe.Pointer(xt.NewCSPAT00600InBlock(질의값.(*xt.CSPAT00600_현물_정상_주문_질의값)))
 		길이 = xt.SizeCSPAT00600InBlock1
 	case xt.TR현물_정정_주문_CSPAT00700:
-		c데이터 = unsafe.Pointer(xt.NewCSPAT00700InBlock(질의값.(*xt.S질의값_정정_주문_CSPAT00700)))
+		c데이터 = unsafe.Pointer(xt.NewCSPAT00700InBlock(질의값.(*xt.CSPAT00700_현물_정정_주문_질의값)))
 		길이 = xt.SizeCSPAT00700InBlock1
 	case xt.TR현물_취소_주문_CSPAT00800:
-		c데이터 = unsafe.Pointer(xt.NewCSPAT00800InBlock(질의값.(*xt.S질의값_취소_주문_CSPAT00800)))
+		c데이터 = unsafe.Pointer(xt.NewCSPAT00800InBlock(질의값.(*xt.CSPAT00800_현물_취소_주문_질의값)))
 		길이 = xt.SizeCSPAT00800InBlock1
 	case xt.TR시간_조회_t0167:
 		c데이터 = unsafe.Pointer(C.CString(""))
 		defer F메모리_해제(c데이터)
 		길이 = 0
 	case xt.TR체결_미체결_조회_t0425:
-		c데이터 = unsafe.Pointer(xt.NewT0425InBlock(질의값.(*xt.S질의값_체결_미체결_조회_t0425)))
+		c데이터 = unsafe.Pointer(xt.NewT0425InBlock(질의값.(*xt.T0425_현물_체결_미체결_조회_질의값)))
 		길이 = xt.SizeT0425InBlock
 	case xt.TR현물_호가_조회_t1101:
 		c데이터 = unsafe.Pointer(xt.NewT1101InBlock(질의값.(*lib.S질의값_단일_종목)))
@@ -222,40 +222,40 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xt.NewT1102InBlock(질의값.(*lib.S질의값_단일_종목)))
 		길이 = xt.SizeT1102InBlock
 	case xt.TR현물_기간별_조회_t1305:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_기간별_조회_t1305).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1305_현물_기간별_조회_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT1305InBlock(질의값.(*xt.S질의값_현물_기간별_조회_t1305)))
+		c데이터 = unsafe.Pointer(xt.NewT1305InBlock(질의값.(*xt.T1305_현물_기간별_조회_질의값)))
 		길이 = xt.SizeT1305InBlock
 	case xt.TR현물_당일_전일_분틱_조회_t1310:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_전일당일_분틱_조회_t1310).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1310_현물_전일당일_분틱_조회_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT1310InBlock(질의값.(*xt.S질의값_현물_전일당일_분틱_조회_t1310)))
+		c데이터 = unsafe.Pointer(xt.NewT1310InBlock(질의값.(*xt.T1310_현물_전일당일_분틱_조회_질의값)))
 		길이 = xt.SizeT1310InBlock
 	case xt.TR관리_불성실_투자유의_조회_t1404:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_관리종목_조회_t1404).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1404_관리종목_조회_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT1404InBlock(질의값.(*xt.S질의값_관리종목_조회_t1404)))
+		c데이터 = unsafe.Pointer(xt.NewT1404InBlock(질의값.(*xt.T1404_관리종목_조회_질의값)))
 		길이 = xt.SizeT1404InBlock
 	case xt.TR투자경고_매매정지_정리매매_조회_t1405:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_투자경고_조회_t1405).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1405_투자경고_조회_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT1405InBlock(질의값.(*xt.S질의값_투자경고_조회_t1405)))
+		c데이터 = unsafe.Pointer(xt.NewT1405InBlock(질의값.(*xt.T1405_투자경고_조회_질의값)))
 		길이 = xt.SizeT1405InBlock
 	case xt.TR_ETF_시간별_추이_t1902:
 		연속키 := lib.F2문자열_공백제거(질의값.(*lib.S질의값_단일종목_연속키).M연속키)
@@ -269,48 +269,48 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xt.NewT3320InBlock(질의값.(*lib.S질의값_단일_종목)))
 		길이 = xt.SizeT3320InBlock
 	case xt.TR재무순위_종합_t3341:
-		c데이터 = unsafe.Pointer(xt.NewT3341InBlock(질의값.(*xt.S질의값_재무순위_t3341)))
+		c데이터 = unsafe.Pointer(xt.NewT3341InBlock(질의값.(*xt.T3341_재무순위_질의값)))
 		길이 = xt.SizeT3341InBlock
 	case xt.TR현물_차트_틱_t8411:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_차트_틱_t8411).M연속일자) +
-			lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_차트_틱_t8411).M연속시간)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T8411_현물_차트_틱_질의값).M연속일자) +
+			lib.F2문자열_공백제거(질의값.(*xt.T8411_현물_차트_틱_질의값).M연속시간)
 
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT8411InBlock(질의값.(*xt.S질의값_현물_차트_틱_t8411)))
+		c데이터 = unsafe.Pointer(xt.NewT8411InBlock(질의값.(*xt.T8411_현물_차트_틱_질의값)))
 		길이 = xt.SizeT8411InBlock
 	case xt.TR현물_차트_분_t8412:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_차트_분_t8412).M연속일자) +
-			lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_차트_분_t8412).M연속시간)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T8412_현물_차트_분_질의값).M연속일자) +
+			lib.F2문자열_공백제거(질의값.(*xt.T8412_현물_차트_분_질의값).M연속시간)
 
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT8412InBlock(질의값.(*xt.S질의값_현물_차트_분_t8412)))
+		c데이터 = unsafe.Pointer(xt.NewT8412InBlock(질의값.(*xt.T8412_현물_차트_분_질의값)))
 		길이 = xt.SizeT8412InBlock
 	case xt.TR현물_차트_일주월_t8413:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_현물_차트_일주월_t8413).M연속일자)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T8413_현물_차트_일주월_질의값).M연속일자)
 
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT8413InBlock(질의값.(*xt.S질의값_현물_차트_일주월_t8413)))
+		c데이터 = unsafe.Pointer(xt.NewT8413InBlock(질의값.(*xt.T8413_현물_차트_일주월_질의값)))
 		길이 = xt.SizeT8413InBlock
 	case xt.TR증시_주변_자금_추이_t8428:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.S질의값_증시주변자금추이_t8428).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T8428_증시주변자금추이_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT8428InBlock(질의값.(*xt.S질의값_증시주변자금추이_t8428)))
+		c데이터 = unsafe.Pointer(xt.NewT8428InBlock(질의값.(*xt.T8428_증시주변자금추이_질의값)))
 		길이 = xt.SizeT8428InBlock
 	case xt.TR현물_종목_조회_t8436:
 		c데이터 = unsafe.Pointer(xt.NewT8436InBlock(질의값.(*lib.S질의값_문자열)))
