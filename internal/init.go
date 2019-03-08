@@ -66,7 +66,7 @@ func f초기화_Go루틴() {
 		go 고루틴_함수(ch초기화)
 	}
 
-	for _ = range 고루틴_함수_모음 {
+	for range 고루틴_함수_모음 {
 		<-ch초기화
 	}
 }

@@ -131,7 +131,7 @@ func go소켓_C함수_호출_도우미(ch초기화, ch종료 chan lib.T신호,
 		default: // PASS
 		}
 
-		lib.F윈도우_메시지_처리()
+		F윈도우_메시지_처리()
 		lib.F실행권한_양보()
 	}
 }
