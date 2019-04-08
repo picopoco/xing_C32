@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  < unha.kim.ghts at gmail dot com >
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, In,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
-Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (< unha.kim.ghts at gmail dot com >)
 
 This file is part of GHTS.
 
@@ -208,6 +208,9 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 	case xt.TR현물_취소_주문_CSPAT00800:
 		c데이터 = unsafe.Pointer(xt.NewCSPAT00800InBlock(질의값.(*xt.CSPAT00800_현물_취소_주문_질의값)))
 		길이 = xt.SizeCSPAT00800InBlock1
+	case xt.TR현물_당일_매매일지_수수료_t0150:
+		c데이터 = unsafe.Pointer(xt.NewT0150InBlock(질의값.(*xt.T0150_현물_당일_매매일지_수수료_질의값)))
+		길이 = xt.SizeT0150InBlock
 	case xt.TR시간_조회_t0167:
 		c데이터 = unsafe.Pointer(C.CString(""))
 		defer F메모리_해제(c데이터)
@@ -231,13 +234,13 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xt.NewT1305InBlock(질의값.(*xt.T1305_현물_기간별_조회_질의값)))
 		길이 = xt.SizeT1305InBlock
 	case xt.TR현물_당일_전일_분틱_조회_t1310:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1310_현물_전일당일_분틱_조회_질의값).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1310_현물_전일당일분틱조회_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT1310InBlock(질의값.(*xt.T1310_현물_전일당일_분틱_조회_질의값)))
+		c데이터 = unsafe.Pointer(xt.NewT1310InBlock(질의값.(*xt.T1310_현물_전일당일분틱조회_질의값)))
 		길이 = xt.SizeT1310InBlock
 	case xt.TR관리_불성실_투자유의_조회_t1404:
 		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T1404_관리종목_조회_질의값).M연속키)
@@ -304,13 +307,13 @@ func f조회_및_주문_질의_처리(질의값 lib.I질의값) (식별번호 in
 		c데이터 = unsafe.Pointer(xt.NewT8413InBlock(질의값.(*xt.T8413_현물_차트_일주월_질의값)))
 		길이 = xt.SizeT8413InBlock
 	case xt.TR증시_주변_자금_추이_t8428:
-		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T8428_증시주변자금추이_질의값).M연속키)
+		연속키 := lib.F2문자열_공백제거(질의값.(*xt.T8428_증시주변_자금추이_질의값).M연속키)
 		if 연속키 != "" {
 			연속_조회_여부 = true
 			연속_조회_키 = 연속키
 		}
 
-		c데이터 = unsafe.Pointer(xt.NewT8428InBlock(질의값.(*xt.T8428_증시주변자금추이_질의값)))
+		c데이터 = unsafe.Pointer(xt.NewT8428InBlock(질의값.(*xt.T8428_증시주변_자금추이_질의값)))
 		길이 = xt.SizeT8428InBlock
 	case xt.TR현물_종목_조회_t8436:
 		c데이터 = unsafe.Pointer(xt.NewT8436InBlock(질의값.(*lib.S질의값_문자열)))

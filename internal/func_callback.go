@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  < unha.kim.ghts at gmail dot com >
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
-Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (< unha.kim.ghts at gmail dot com >)
 
 This file is part of GHTS.
 
@@ -111,8 +111,29 @@ func OnTrData_Go(TR데이터 *C.TR_DATA, 데이터_포인터 *C.uchar) {
 
 	자료형_문자열 := lib.F확인(f자료형_문자열_해석(g)).(string)
 	raw값 := C.GoBytes(unsafe.Pointer(데이터_포인터), C.int(g.DataLength))
+
+	if lib.F2문자열(g.TrCode) == "t0150" {
+		lib.F체크포인트(자료형_문자열, g.DataLength)
+	}
+
+	TR코드 := lib.F2문자열_공백제거(g.TrCode)
+	추가_연속조회_필요 := false
+	연속키 := ""
+
+	추가_연속조회_필요_문자열 := lib.F2문자열(g.Cont)
+
+	switch 추가_연속조회_필요_문자열 {
+	case "", "0", "N":
+		추가_연속조회_필요 = false
+	case "1", "Y":
+		추가_연속조회_필요 = true
+		연속키 = lib.F2문자열_공백제거(g.ContKey)
+	default:
+		panic(lib.New에러with출력("예상하지 못한 경우. '%v' '%v'", TR코드, 추가_연속조회_필요_문자열))
+	}
+
 	바이트_변환값 := lib.F확인(lib.New바이트_변환Raw(자료형_문자열, raw값, true)).(*lib.S바이트_변환)
-	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, lib.F2문자열_공백제거(g.TrCode))
+	콜백값 := xt.New콜백_TR데이터(int(g.RequestID), 바이트_변환값, TR코드, 추가_연속조회_필요, 연속키)
 	F콜백(콜백값)
 }
 

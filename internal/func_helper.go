@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2019 김운하(UnHa Kim)  unha.kim@kuh.pe.kr
+/* Copyright (C) 2015-2019 김운하(UnHa Kim)  < unha.kim.ghts at gmail dot com >
 
 이 파일은 GHTS의 일부입니다.
 
@@ -15,7 +15,7 @@ GNU LGPL 2.1판은 이 프로그램과 함께 제공됩니다.
 (자유 소프트웨어 재단 : Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA)
 
-Copyright (C) 2015-2019년 UnHa Kim (unha.kim@kuh.pe.kr)
+Copyright (C) 2015-2019년 UnHa Kim (< unha.kim.ghts at gmail dot com >)
 
 This file is part of GHTS.
 
@@ -82,6 +82,26 @@ func f자료형_문자열_해석(g *xt.TR_DATA) (자료형_문자열 string, 에
 	길이 := lib.F2정수_단순형(g.DataLength)
 
 	switch TR코드 {
+	case xt.TR현물계좌_잔고내역_조회_CSPAQ12300:
+		// Non-block 모드는 Occurs데이터 수량을 나타내는 5바이트 추가됨.
+		if 길이 == 0 {
+			return xt.P자료형_nil, nil
+		} else if 길이 < (xt.SizeCSPAQ12300OutBlock1+xt.SizeCSPAQ12300OutBlock2+5) ||
+			(길이-(xt.SizeCSPAQ12300OutBlock1+xt.SizeCSPAQ12300OutBlock2+5))%xt.SizeCSPAQ12300OutBlock3 != 0 {
+			break
+		}
+
+		return xt.P자료형_CSPAQ12300OutBlock, nil
+	case xt.TR현물계좌_주문체결내역_조회_CSPAQ13700:
+		// Non-block 모드는 Occurs데이터 수량을 나타내는 5바이트 추가됨.
+		if 길이 == 0 {
+			return xt.P자료형_nil, nil
+		} else if 길이 < (xt.SizeCSPAQ13700OutBlock1+xt.SizeCSPAQ13700OutBlock2+5) ||
+			(길이-(xt.SizeCSPAQ13700OutBlock1+xt.SizeCSPAQ13700OutBlock2+5))%xt.SizeCSPAQ13700OutBlock3 != 0 {
+			break
+		}
+
+		return xt.P자료형_CSPAQ13700OutBlock, nil
 	case xt.TR현물_정상_주문_CSPAT00600:
 		switch 길이 {
 		case xt.SizeCSPAT00600OutBlock:
@@ -109,16 +129,36 @@ func f자료형_문자열_해석(g *xt.TR_DATA) (자료형_문자열 string, 에
 		case xt.SizeCSPAT00800OutBlock2:
 			return xt.P자료형_CSPAT00800OutBlock2, nil
 		}
+	case xt.TR현물_당일_매매일지_수수료_t0150:
+		switch 길이 {
+		case 0:
+			return xt.P자료형_nil, nil
+		case xt.SizeT0150OutBlock:
+			return xt.P자료형_T0150OutBlock, nil
+		case xt.SizeT0150OutBlock1:
+			return xt.P자료형_T0150OutBlock1, nil
+		}
+	case xt.TR현물_전일_매매일지_수수료_t0151:
+		switch 길이 {
+		case 0:
+			return xt.P자료형_nil, nil
+		case xt.SizeT0151OutBlock:
+			return xt.P자료형_T0151OutBlock, nil
+		case xt.SizeT0151OutBlock1:
+			return xt.P자료형_T0151OutBlock1, nil
+		}
 	case xt.TR시간_조회_t0167:
 		return xt.P자료형_T0167OutBlock, nil
 	case xt.TR체결_미체결_조회_t0425:
 		// Non-block 모드는 Occurs데이터 수량을 나타내는 5바이트 추가됨.
-		if 길이 < (xt.SizeT0425OutBlock+5) ||
+		if 길이 == 0 {
+			return xt.P자료형_nil, nil
+		} else if 길이 < (xt.SizeT0425OutBlock+5) ||
 			(길이-(xt.SizeT0425OutBlock+5))%xt.SizeT0425OutBlock1 != 0 {
 			break
 		}
 
-		return xt.P자료형_T0425OutBlockAll, nil
+		return xt.P자료형_T0425OutBlock, nil
 	case xt.TR현물_호가_조회_t1101:
 		return xt.P자료형_T1101OutBlock, nil
 	case xt.TR현물_시세_조회_t1102:
