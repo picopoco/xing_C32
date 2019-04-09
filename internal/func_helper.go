@@ -248,3 +248,25 @@ func f자료형_문자열_해석(g *xt.TR_DATA) (자료형_문자열 string, 에
 
 	panic(lib.New에러("예상하지 못한 TR코드 & 길이 : '%v' '%v'", TR코드, 길이))
 }
+
+func f민감정보_삭제(raw값 []byte, 구분_문자열 string) []byte {
+	switch 구분_문자열 {
+	case xt.P자료형_CSPAQ12300OutBlock,
+		xt.P자료형_CSPAQ13700OutBlock,
+		xt.P자료형_CSPAT00600OutBlock1:
+		for i:=25; i< 25+8 ; i++ {
+			raw값[i] = 0
+		}
+	case xt.P자료형_CSPAT00700OutBlock1,
+		xt.P자료형_CSPAT00800OutBlock1:
+		for i:=35; i< 35+8 ; i++ {
+			raw값[i] = 0
+		}
+	case xt.RT현물_주문_접수_SC0:
+		for i:=277; i< 277+8 ; i++ {
+			raw값[i] = 0
+		}
+	}
+
+	return raw값
+}
